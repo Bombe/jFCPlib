@@ -685,6 +685,7 @@ public class FcpConnection {
 		FcpUtils.close(remoteSocket);
 		connectionHandler.stop();
 		connectionHandler = null;
+		fireConnectionClosed();
 	}
 
 	/**
