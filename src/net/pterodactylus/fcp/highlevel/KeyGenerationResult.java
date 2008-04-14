@@ -1,5 +1,5 @@
 /*
- * fcplib - HighLevelResult.java -
+ * jFCPlib-high-level-client - KeyGenerationResult.java -
  * Copyright © 2008 David Roden
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,35 +20,61 @@
 package net.pterodactylus.fcp.highlevel;
 
 /**
- * Base class for results of {@link HighLevelClient} operations.
+ * Result of a {@link HighLevelClient#generateKey()} operation.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
  */
-public abstract class HighLevelResult {
+public class KeyGenerationResult extends HighLevelResult {
 
-	/** Whether the operation failed. */
-	private boolean failed;
+	/** The insert URI. */
+	private String insertURI;
+
+	/** The request URI. */
+	private String requestURI;
 
 	/**
-	 * Returns whether the operation failed.
-	 * 
-	 * @return <code>true</code> if the operation failed, <code>false</code>
-	 *         otherwise
+	 * Package-private constructor.
 	 */
-	public boolean isFailed() {
-		return failed;
+	KeyGenerationResult() {
 	}
 
 	/**
-	 * Sets whether the operation failed.
+	 * Returns the insert URI.
 	 * 
-	 * @param failed
-	 *            <code>true</code> if the operation failed,
-	 *            <code>false</code> otherwise
+	 * @return The insert URI
 	 */
-	void setFailed(boolean failed) {
-		this.failed = failed;
+	public String getInsertURI() {
+		return insertURI;
+	}
+
+	/**
+	 * Sets the insert URI.
+	 * 
+	 * @param insertURI
+	 *            The insert URI
+	 */
+	void setInsertURI(String insertURI) {
+		this.insertURI = insertURI;
+	}
+
+	/**
+	 * Returns the request URI.
+	 * 
+	 * @return The request URI
+	 */
+	public String getRequestURI() {
+		return requestURI;
+	}
+
+	/**
+	 * Sets the request URI.
+	 * 
+	 * @param requestURI
+	 *            The request URI
+	 */
+	void setRequestURI(String requestURI) {
+		this.requestURI = requestURI;
 	}
 
 }

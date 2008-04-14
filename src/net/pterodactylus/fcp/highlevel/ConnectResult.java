@@ -25,7 +25,7 @@ package net.pterodactylus.fcp.highlevel;
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
  */
-public class ConnectResult implements HighLevelResult {
+public class ConnectResult extends HighLevelResult {
 
 	/** Whether the node is now connected. */
 	private boolean connected;

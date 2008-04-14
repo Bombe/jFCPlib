@@ -22,6 +22,9 @@ package net.pterodactylus.fcp.highlevel;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.pterodactylus.fcp.AllData;
 import net.pterodactylus.fcp.ClientHello;
@@ -36,6 +39,7 @@ import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
 import net.pterodactylus.fcp.FcpMessage;
 import net.pterodactylus.fcp.FinishedCompression;
+import net.pterodactylus.fcp.GenerateSSK;
 import net.pterodactylus.fcp.GetFailed;
 import net.pterodactylus.fcp.IdentifierCollision;
 import net.pterodactylus.fcp.NodeData;
@@ -92,6 +96,9 @@ public class HighLevelClient {
 
 	/** The callback for {@link #connect()}. */
 	private HighLevelCallback<ConnectResult> connectCallback;
+
+	/** Mapping from request identifiers to callbacks. */
+	private Map<String, HighLevelCallback<KeyGenerationResult>> keyGenerationCallbacks = Collections.synchronizedMap(new HashMap<String, HighLevelCallback<KeyGenerationResult>>());
 
 	/**
 	 * Creates a new high-level client that connects to a node on
@@ -183,6 +190,33 @@ public class HighLevelClient {
 	 * Disconnects the client from the node.
 	 */
 	public void disconnect() {
+	}
+
+	/**
+	 * Generates a new SSK keypair.
+	 * 
+	 * @return A callback with the keypair
+	 * @throws IOException
+	 *             if an I/O error occurs communicating with the node
+	 */
+	public HighLevelCallback<KeyGenerationResult> generateKey() throws IOException {
+		String identifier = generateIdentifier("generateSSK");
+		GenerateSSK generateSSK = new GenerateSSK(identifier);
+		HighLevelCallback<KeyGenerationResult> keyGenerationCallback = new HighLevelCallback<KeyGenerationResult>();
+		keyGenerationCallbacks.put(identifier, keyGenerationCallback);
+		fcpConnection.sendMessage(generateSSK);
+		return keyGenerationCallback;
+	}
+
+	/**
+	 * Generates an identifier for the given function.
+	 * 
+	 * @param function
+	 *            The name of the function
+	 * @return An identifier
+	 */
+	private String generateIdentifier(String function) {
+		return "jFCPlib-" + function + "-" + System.currentTimeMillis();
 	}
 
 	/**
@@ -400,7 +434,19 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedSSKKeypair(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.SSKKeypair)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedSSKKeypair(FcpConnection fcpConnection, SSKKeypair sskKeypair) {
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			HighLevelCallback<KeyGenerationResult> keyGenerationCallback = keyGenerationCallbacks.remove(sskKeypair.getIdentifier());
+			if (keyGenerationCallback == null) {
+				return;
+			}
+			KeyGenerationResult keyGenerationResult = new KeyGenerationResult();
+			keyGenerationResult.setInsertURI(sskKeypair.getInsertURI());
+			keyGenerationResult.setRequestURI(sskKeypair.getRequestURI());
+			keyGenerationCallback.setResult(keyGenerationResult);
 		}
 
 		/**
