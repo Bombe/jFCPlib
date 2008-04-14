@@ -44,6 +44,12 @@ public class HighLevelCallback<R extends HighLevelResult> {
 	private R result = null;
 
 	/**
+	 * Package-private construtor.
+	 */
+	HighLevelCallback() {
+	}
+
+	/**
 	 * Adds a callback listener to this callback. The callback listener will be
 	 * called as soon as the result of the operation is known. If the result is
 	 * already known, the listener will be called immediately. Also, as soon as
