@@ -337,6 +337,7 @@ public class HighLevelClient {
 			synchronized (syncObject) {
 				connectCallback.setResult(connectResult);
 			}
+			connectCallback = null;
 		}
 
 		/**
