@@ -185,7 +185,7 @@ public class HighLevelClient {
 		fcpConnection = new FcpConnection(address, port);
 		fcpConnection.addFcpListener(highLevelClientFcpListener);
 		ClientHello clientHello = new ClientHello(clientName);
-		connectCallback = new HighLevelCallback<ConnectResult>();
+		connectCallback = new HighLevelCallback<ConnectResult>(new ConnectResult());
 		fcpConnection.sendMessage(clientHello);
 		return connectCallback;
 	}
@@ -206,7 +206,7 @@ public class HighLevelClient {
 	public HighLevelCallback<KeyGenerationResult> generateKey() throws IOException {
 		String identifier = generateIdentifier("generateSSK");
 		GenerateSSK generateSSK = new GenerateSSK(identifier);
-		HighLevelCallback<KeyGenerationResult> keyGenerationCallback = new HighLevelCallback<KeyGenerationResult>();
+		HighLevelCallback<KeyGenerationResult> keyGenerationCallback = new HighLevelCallback<KeyGenerationResult>(new KeyGenerationResult());
 		keyGenerationCallbacks.put(identifier, keyGenerationCallback);
 		fcpConnection.sendMessage(generateSSK);
 		return keyGenerationCallback;
@@ -222,7 +222,7 @@ public class HighLevelClient {
 	public HighLevelCallback<PeerListResult> getPeers() throws IOException {
 		String identifier = generateIdentifier("listPeers");
 		ListPeers listPeers = new ListPeers(identifier, true, true);
-		HighLevelCallback<PeerListResult> peerListCallback = new HighLevelCallback<PeerListResult>();
+		HighLevelCallback<PeerListResult> peerListCallback = new HighLevelCallback<PeerListResult>(new PeerListResult());
 		peerListCallbacks.put(identifier, peerListCallback);
 		fcpConnection.sendMessage(listPeers);
 		return peerListCallback;
@@ -298,7 +298,17 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedEndListPeers(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.EndListPeers)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedEndListPeers(FcpConnection fcpConnection, EndListPeers endListPeers) {
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = endListPeers.getIdentifier();
+			HighLevelCallback<PeerListResult> peerListCallback = peerListCallbacks.remove(identifier);
+			if (peerListCallback == null) {
+				return;
+			}
+			peerListCallback.setDone();
 		}
 
 		/**
@@ -352,12 +362,11 @@ public class HighLevelClient {
 			if (fcpConnection != HighLevelClient.this.fcpConnection) {
 				return;
 			}
-			ConnectResult connectResult = new ConnectResult();
-
 			synchronized (syncObject) {
-				connectCallback.setResult(connectResult);
+				connectCallback.getIntermediaryResult().setFailed(false);
+				connectCallback.setDone();
+				connectCallback = null;
 			}
-			connectCallback = null;
 		}
 
 		/**
@@ -371,11 +380,10 @@ public class HighLevelClient {
 			}
 			String identifier = peer.getIdentifier();
 			HighLevelCallback<PeerListResult> peerListCallback = peerListCallbacks.get(identifier);
-			PeerListResult peerListResult = peerListCallback.getIntermediaryResult();
-			if (peerListResult == null) {
-				peerListResult = new PeerListResult();
-				peerListCallback.setResult(peerListResult, false);
+			if (peerListCallback == null) {
+				return;
 			}
+			peerListCallback.getIntermediaryResult().addPeer(peer);
 		}
 
 		/**
@@ -438,7 +446,28 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedProtocolError(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.ProtocolError)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedProtocolError(FcpConnection fcpConnection, ProtocolError protocolError) {
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = protocolError.getIdentifier();
+			if (identifier == null) {
+				return;
+			}
+			/* now check all callbacks. */
+			synchronized (syncObject) {
+				if (connectCallback != null) {
+					connectCallback.getIntermediaryResult().setFailed(true);
+					connectCallback.setDone();
+					connectCallback = null;
+				}
+			}
+			HighLevelCallback<KeyGenerationResult> keyGenerationCallback = keyGenerationCallbacks.remove(identifier);
+			if (keyGenerationCallback != null) {
+				keyGenerationCallback.getIntermediaryResult().setFailed(true);
+				keyGenerationCallback.setDone();
+			}
 		}
 
 		/**
@@ -475,10 +504,10 @@ public class HighLevelClient {
 			if (keyGenerationCallback == null) {
 				return;
 			}
-			KeyGenerationResult keyGenerationResult = new KeyGenerationResult();
+			KeyGenerationResult keyGenerationResult = keyGenerationCallback.getIntermediaryResult();
 			keyGenerationResult.setInsertURI(sskKeypair.getInsertURI());
 			keyGenerationResult.setRequestURI(sskKeypair.getRequestURI());
-			keyGenerationCallback.setResult(keyGenerationResult);
+			keyGenerationCallback.setDone();
 		}
 
 		/**

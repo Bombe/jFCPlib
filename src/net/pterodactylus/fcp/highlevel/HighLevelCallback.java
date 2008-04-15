@@ -48,8 +48,12 @@ public class HighLevelCallback<R extends HighLevelResult> {
 
 	/**
 	 * Package-private construtor.
+	 * 
+	 * @param result
+	 *            The result of the operation
 	 */
-	HighLevelCallback() {
+	HighLevelCallback(R result) {
+		this.result = result;
 	}
 
 	/**
@@ -137,44 +141,6 @@ public class HighLevelCallback<R extends HighLevelResult> {
 	}
 
 	/**
-	 * Sets the complete result of the operation. Calling this method will
-	 * result in all listeners being notified.
-	 * 
-	 * @see #fireGotResult()
-	 * @param result
-	 *            The result of the operation
-	 */
-	void setResult(R result) {
-		setResult(result, true);
-	}
-
-	/**
-	 * Sets the result of the operation. Depending on the <code>notify</code>
-	 * parameter the listeners are notified. You have to call this method with
-	 * <code>notify = true</code> after your result is completed, otherwise
-	 * clients will block endlessly!
-	 * 
-	 * @param result
-	 *            The result of the operation
-	 * @param notify
-	 *            <code>true</code> to finalize the result and notify all
-	 *            listeners, <code>false</code> if something in the result
-	 *            might still change
-	 */
-	void setResult(R result, boolean notify) {
-		synchronized (syncObject) {
-			this.result = result;
-			if (notify) {
-				resultComplete = true;
-				syncObject.notifyAll();
-			}
-		}
-		if (notify) {
-			fireGotResult();
-		}
-	}
-
-	/**
 	 * Returns the result even if it is not yet complete.
 	 * 
 	 * @return The result of the operation
@@ -186,9 +152,8 @@ public class HighLevelCallback<R extends HighLevelResult> {
 	}
 
 	/**
-	 * Marks the result given in with
-	 * {@link #setResult(HighLevelResult, boolean)} as complete and notify the
-	 * listeners. If the result was already complete, nothing will be done.
+	 * Marks the result as complete and notify the listeners. If the result was
+	 * already complete, nothing will be done.
 	 */
 	void setDone() {
 		synchronized (syncObject) {

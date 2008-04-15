@@ -19,12 +19,60 @@
 
 package net.pterodactylus.fcp.highlevel;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import net.pterodactylus.fcp.Peer;
+
 /**
  * The result of a {@link HighLevelClient#getPeers()} operation.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
  */
-public class PeerListResult extends HighLevelResult {
+public class PeerListResult extends HighLevelResult implements Iterable<Peer> {
+
+	/** The list of peers. */
+	private final List<Peer> peers = new ArrayList<Peer>();
+
+	/**
+	 * Adds a peer to the list.
+	 * 
+	 * @param peer
+	 *            The peer to add
+	 */
+	public void addPeer(Peer peer) {
+		peers.add(peer);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Iterator<Peer> iterator() {
+		return peers.iterator();
+	}
+
+	/**
+	 * Returns the peer at the given index.
+	 * 
+	 * @param index
+	 *            The index of the peer
+	 * @return The peer
+	 * @see java.util.List#get(int)
+	 */
+	public Peer get(int index) {
+		return peers.get(index);
+	}
+
+	/**
+	 * Returns the size of the peer list.
+	 * 
+	 * @return The size of the peer list
+	 * @see java.util.List#size()
+	 */
+	public int size() {
+		return peers.size();
+	}
 
 }
