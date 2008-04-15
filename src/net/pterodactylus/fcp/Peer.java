@@ -183,4 +183,33 @@ public class Peer extends BaseMessage {
 		return FcpUtils.decodeMultiIntegerField(getField("auth.negTypes"));
 	}
 
+	/**
+	 * Returns one of the volatile fields from the message. The given field name
+	 * is prepended with “volatile.” so if you want to get the value of the
+	 * field with the name “volatile.status” you only need to specify “status”.
+	 * 
+	 * @param field
+	 *            The name of the field
+	 * @return The value of the field, or <code>null</code> if there is no
+	 *         such field
+	 */
+	public String getVolatile(String field) {
+		return getField("volatile." + field);
+	}
+
+	/**
+	 * Returns one of the metadata fields from the message. The given field name
+	 * is prepended with “metadata.” so if you want to get the value of the
+	 * field with the name “metadata.timeLastRoutable” you only need to specify
+	 * “timeLastRoutable”.
+	 * 
+	 * @param field
+	 *            The name of the field
+	 * @return The value of the field, or <code>null</code> if there is no
+	 *         such field
+	 */
+	public String getMetadata(String field) {
+		return getField("metadata." + field);
+	}
+
 }
