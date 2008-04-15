@@ -21,12 +21,14 @@ package net.pterodactylus.fcp.highlevel;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.pterodactylus.fcp.AddPeer;
 import net.pterodactylus.fcp.AllData;
 import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
@@ -46,6 +48,7 @@ import net.pterodactylus.fcp.IdentifierCollision;
 import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.NodeData;
 import net.pterodactylus.fcp.NodeHello;
+import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.PeerNote;
 import net.pterodactylus.fcp.PeerRemoved;
@@ -104,6 +107,9 @@ public class HighLevelClient {
 
 	/** Mapping from request identifier to peer list callbacks. */
 	private Map<String, HighLevelCallback<PeerListResult>> peerListCallbacks = Collections.synchronizedMap(new HashMap<String, HighLevelCallback<PeerListResult>>());
+
+	/** Mapping from request identifier to peer callbacks. */
+	private Map<String, HighLevelCallback<PeerResult>> peerCallbacks = Collections.synchronizedMap(new HashMap<String, HighLevelCallback<PeerResult>>());
 
 	/**
 	 * Creates a new high-level client that connects to a node on
@@ -230,6 +236,64 @@ public class HighLevelClient {
 	}
 
 	/**
+	 * Adds the peer whose noderef is stored in the given file.
+	 * 
+	 * @param nodeRefFile
+	 *            The name of the file the peer’s noderef is stored in
+	 * @return A peer callback
+	 * @throws IOException
+	 *             if an I/O error occurs communicating with the node
+	 */
+	public HighLevelCallback<PeerResult> addPeer(String nodeRefFile) throws IOException {
+		String identifier = generateIdentifier("addPeer");
+		AddPeer addPeer = new AddPeer(nodeRefFile);
+		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult());
+		peerCallbacks.put(identifier, peerCallback);
+		fcpConnection.sendMessage(addPeer);
+		return peerCallback;
+	}
+
+	/**
+	 * Adds the peer whose noderef is stored in the given file.
+	 * 
+	 * @param nodeRefURL
+	 *            The URL where the peer’s noderef is stored
+	 * @return A peer callback
+	 * @throws IOException
+	 *             if an I/O error occurs communicating with the node
+	 */
+	public HighLevelCallback<PeerResult> addPeer(URL nodeRefURL) throws IOException {
+		String identifier = generateIdentifier("addPeer");
+		AddPeer addPeer = new AddPeer(nodeRefURL);
+		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult());
+		peerCallbacks.put(identifier, peerCallback);
+		fcpConnection.sendMessage(addPeer);
+		return peerCallback;
+	}
+
+	/**
+	 * Adds the peer whose noderef is stored in the given file.
+	 * 
+	 * @param nodeRef
+	 *            The peer’s noderef
+	 * @return A peer callback
+	 * @throws IOException
+	 *             if an I/O error occurs communicating with the node
+	 */
+	public HighLevelCallback<PeerResult> addPeer(NodeRef nodeRef) throws IOException {
+		String identifier = generateIdentifier("addPeer");
+		AddPeer addPeer = new AddPeer(nodeRef);
+		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult());
+		peerCallbacks.put(identifier, peerCallback);
+		fcpConnection.sendMessage(addPeer);
+		return peerCallback;
+	}
+
+	//
+	// PRIVATE METHODS
+	//
+
+	/**
 	 * Generates an identifier for the given function.
 	 * 
 	 * @param function
@@ -288,6 +352,12 @@ public class HighLevelClient {
 					peerListEntry.getValue().setDone();
 				}
 				peerListCallbacks.clear();
+				/* peer callbacks. */
+				for (Entry<String, HighLevelCallback<PeerResult>> peerEntry: peerCallbacks.entrySet()) {
+					peerEntry.getValue().getIntermediaryResult().setFailed(true);
+					peerEntry.getValue().setDone();
+				}
+				peerCallbacks.clear();
 			} else {
 				HighLevelCallback<KeyGenerationResult> keyGenerationCallback = keyGenerationCallbacks.remove(identifier);
 				if (keyGenerationCallback != null) {
@@ -299,6 +369,12 @@ public class HighLevelClient {
 				if (peerListCallback != null) {
 					peerListCallback.getIntermediaryResult().setFailed(true);
 					peerListCallback.setDone();
+					return;
+				}
+				HighLevelCallback<PeerResult> peerCallback = peerCallbacks.remove(identifier);
+				if (peerCallback != null) {
+					peerCallback.getIntermediaryResult().setFailed(true);
+					peerCallback.setDone();
 					return;
 				}
 			}
@@ -439,11 +515,19 @@ public class HighLevelClient {
 				return;
 			}
 			String identifier = peer.getIdentifier();
-			HighLevelCallback<PeerListResult> peerListCallback = peerListCallbacks.get(identifier);
-			if (peerListCallback == null) {
+			if (identifier == null) {
 				return;
 			}
-			peerListCallback.getIntermediaryResult().addPeer(peer);
+			HighLevelCallback<PeerListResult> peerListCallback = peerListCallbacks.get(identifier);
+			if (peerListCallback != null) {
+				peerListCallback.getIntermediaryResult().addPeer(peer);
+				return;
+			}
+			HighLevelCallback<PeerResult> peerResult = peerCallbacks.remove(identifier);
+			if (peerResult != null) {
+				peerResult.getIntermediaryResult().setPeer(peer);
+				peerResult.setDone();
+			}
 		}
 
 		/**
