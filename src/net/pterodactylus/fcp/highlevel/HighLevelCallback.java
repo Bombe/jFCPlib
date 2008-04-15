@@ -40,6 +40,9 @@ public class HighLevelCallback<R extends HighLevelResult> {
 	/** The list of callback listeners. */
 	private final List<HighLevelCallbackListener<R>> highLevelCallbackListeners = Collections.synchronizedList(new ArrayList<HighLevelCallbackListener<R>>());
 
+	/** Whether the result is complete. */
+	private boolean resultComplete = false;
+
 	/** The result of the operation. */
 	private R result = null;
 
@@ -97,7 +100,7 @@ public class HighLevelCallback<R extends HighLevelResult> {
 	 */
 	public boolean isDone() {
 		synchronized (syncObject) {
-			return result != null;
+			return resultComplete;
 		}
 	}
 
@@ -126,7 +129,7 @@ public class HighLevelCallback<R extends HighLevelResult> {
 	 */
 	public R getResult(long waitTime) throws InterruptedException {
 		synchronized (syncObject) {
-			if (result == null) {
+			if (!resultComplete) {
 				syncObject.wait(waitTime);
 			}
 			return result;
@@ -134,19 +137,52 @@ public class HighLevelCallback<R extends HighLevelResult> {
 	}
 
 	/**
-	 * Sets the result of the operation. Calling this method will result in all
-	 * listeners being notified.
+	 * Sets the complete result of the operation. Calling this method will
+	 * result in all listeners being notified.
 	 * 
 	 * @see #fireGotResult()
 	 * @param result
 	 *            The result of the operation
 	 */
 	void setResult(R result) {
+		setResult(result, true);
+	}
+
+	/**
+	 * Sets the result of the operation. Depending on the <code>notify</code>
+	 * parameter the listeners are notified. You have to call this method with
+	 * <code>notify = true</code> after your result is completed, otherwise
+	 * clients will block endlessly!
+	 * 
+	 * @param result
+	 *            The result of the operation
+	 * @param notify
+	 *            <code>true</code> to finalize the result and notify all
+	 *            listeners, <code>false</code> if something in the result
+	 *            might still change
+	 */
+	void setResult(R result, boolean notify) {
 		synchronized (syncObject) {
 			this.result = result;
-			syncObject.notifyAll();
+			if (notify) {
+				resultComplete = true;
+				syncObject.notifyAll();
+			}
 		}
-		fireGotResult();
+		if (notify) {
+			fireGotResult();
+		}
+	}
+
+	/**
+	 * Returns the result even if it is not yet complete.
+	 * 
+	 * @return The result of the operation
+	 */
+	R getIntermediaryResult() {
+		synchronized (syncObject) {
+			return result;
+		}
 	}
 
 }
