@@ -185,4 +185,20 @@ public class HighLevelCallback<R extends HighLevelResult> {
 		}
 	}
 
+	/**
+	 * Marks the result given in with
+	 * {@link #setResult(HighLevelResult, boolean)} as complete and notify the
+	 * listeners. If the result was already complete, nothing will be done.
+	 */
+	void setDone() {
+		synchronized (syncObject) {
+			if (resultComplete) {
+				return;
+			}
+			resultComplete = true;
+			syncObject.notify();
+		}
+		fireGotResult();
+	}
+
 }
