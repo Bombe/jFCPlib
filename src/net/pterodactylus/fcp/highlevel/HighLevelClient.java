@@ -42,6 +42,7 @@ import net.pterodactylus.fcp.FinishedCompression;
 import net.pterodactylus.fcp.GenerateSSK;
 import net.pterodactylus.fcp.GetFailed;
 import net.pterodactylus.fcp.IdentifierCollision;
+import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.NodeData;
 import net.pterodactylus.fcp.NodeHello;
 import net.pterodactylus.fcp.Peer;
@@ -99,6 +100,9 @@ public class HighLevelClient {
 
 	/** Mapping from request identifiers to callbacks. */
 	private Map<String, HighLevelCallback<KeyGenerationResult>> keyGenerationCallbacks = Collections.synchronizedMap(new HashMap<String, HighLevelCallback<KeyGenerationResult>>());
+
+	/** Mapping from request identifier to peer list callbacks. */
+	private Map<String, HighLevelCallback<PeerListResult>> peerListCallbacks = Collections.synchronizedMap(new HashMap<String, HighLevelCallback<PeerListResult>>());
 
 	/**
 	 * Creates a new high-level client that connects to a node on
@@ -206,6 +210,22 @@ public class HighLevelClient {
 		keyGenerationCallbacks.put(identifier, keyGenerationCallback);
 		fcpConnection.sendMessage(generateSSK);
 		return keyGenerationCallback;
+	}
+
+	/**
+	 * Gets a list of all peers from the node.
+	 * 
+	 * @return A callback with the peer list
+	 * @throws IOException
+	 *             if an I/O error occurs with the node
+	 */
+	public HighLevelCallback<PeerListResult> getPeers() throws IOException {
+		String identifier = generateIdentifier("listPeers");
+		ListPeers listPeers = new ListPeers(identifier, true, true);
+		HighLevelCallback<PeerListResult> peerListCallback = new HighLevelCallback<PeerListResult>();
+		peerListCallbacks.put(identifier, peerListCallback);
+		fcpConnection.sendMessage(listPeers);
+		return peerListCallback;
 	}
 
 	/**
@@ -344,7 +364,18 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedPeer(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.Peer)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = peer.getIdentifier();
+			HighLevelCallback<PeerListResult> peerListCallback = peerListCallbacks.get(identifier);
+			PeerListResult peerListResult = peerListCallback.getIntermediaryResult();
+			if (peerListResult == null) {
+				peerListResult = new PeerListResult();
+				peerListCallback.setResult(peerListResult, false);
+			}
 		}
 
 		/**
