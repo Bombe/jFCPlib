@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="javadoc">
 	<target name="javadoc">
-		<javadoc access="public" author="true" destdir="doc/api" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="net.pterodactylus.fcp,net.pterodactylus.fcp.highlevel" source="1.5" sourcepath="src" splitindex="true" use="true" version="true" encoding="utf-8" docencoding="utf-8" charset="utf-8" Windowtitle="pterodactylus.net FCP library" Footer="© 2008 by &lt;a href=&quot;mailto:bombe@freenetproject.org&quot;&gt;David ‘Bombe’ Roden&lt;/a&gt;">
+		<exec executable="date" outputproperty="date">
+			<arg value="+%a %b %d %T %Z %Y" />
+		</exec>
+		<javadoc access="public" author="true" destdir="doc/api" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="net.pterodactylus.fcp" source="1.5" sourcepath="src" splitindex="true" use="true" version="true" encoding="utf-8" docencoding="utf-8" charset="utf-8" Windowtitle="pterodactylus.net FCP library" Footer="© 2008 by &lt;a href=&quot;mailto:bombe@freenetproject.org&quot;&gt;David ‘Bombe’ Roden&lt;/a&gt;&lt;br&gt;&lt;small&gt;generated ${date}&lt;/small&gt;">
 			<link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
 		</javadoc>
 	</target>
