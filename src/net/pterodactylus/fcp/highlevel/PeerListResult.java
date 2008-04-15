@@ -42,7 +42,7 @@ public class PeerListResult extends HighLevelResult implements Iterable<Peer> {
 	 * @param peer
 	 *            The peer to add
 	 */
-	public void addPeer(Peer peer) {
+	void addPeer(Peer peer) {
 		peers.add(peer);
 	}
 
