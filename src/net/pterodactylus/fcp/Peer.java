@@ -59,6 +59,15 @@ public class Peer extends BaseMessage {
 	}
 
 	/**
+	 * Returns the identifier of the request.
+	 * 
+	 * @return The identifier of the request
+	 */
+	public String getIdentifier() {
+		return getField("Identifier");
+	}
+
+	/**
 	 * Returns the “physical.udp” line from the message. It contains all IP
 	 * addresses and port numbers of the peer.
 	 * 

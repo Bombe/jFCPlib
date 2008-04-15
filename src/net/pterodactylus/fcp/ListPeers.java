@@ -30,14 +30,19 @@ public class ListPeers extends FcpMessage {
 	/**
 	 * Creates a new “ListPeers” request that only includes basic data of the
 	 * peers.
+	 * 
+	 * @param identifier
+	 *            The identifier of the request
 	 */
-	public ListPeers() {
-		this(false, false);
+	public ListPeers(String identifier) {
+		this(identifier, false, false);
 	}
 
 	/**
 	 * Creates a new “ListPeers” request that includes wanted data of the peers.
 	 * 
+	 * @param identifier
+	 *            The identifier of the request
 	 * @param withMetadata
 	 *            If <code>true</code> metadata of the peers is included in
 	 *            the reply
@@ -45,8 +50,9 @@ public class ListPeers extends FcpMessage {
 	 *            if <code>true</code> volatile data of the peers is included
 	 *            in the reply
 	 */
-	public ListPeers(boolean withMetadata, boolean withVolatile) {
+	public ListPeers(String identifier, boolean withMetadata, boolean withVolatile) {
 		super("ListPeers");
+		setField("Identifier", identifier);
 		setField("WithMetadata", String.valueOf(withMetadata));
 		setField("WithVolatile", String.valueOf(withVolatile));
 	}

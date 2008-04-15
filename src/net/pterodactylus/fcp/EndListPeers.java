@@ -37,4 +37,13 @@ public class EndListPeers extends BaseMessage {
 		super(receivedMessage);
 	}
 
+	/**
+	 * Returns the identifier of the request.
+	 * 
+	 * @return The identifier of the request
+	 */
+	public String getIdentifier() {
+		return getField("Identifier");
+	}
+
 }
