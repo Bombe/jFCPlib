@@ -25,6 +25,7 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.pterodactylus.fcp.AllData;
 import net.pterodactylus.fcp.ClientHello;
@@ -253,10 +254,69 @@ public class HighLevelClient {
 		HighLevelClientFcpListener() {
 		}
 
+		//
+		// PRIVATE METHODS
+		//
+
+		/**
+		 * Searches all callback collections for a callback with the given
+		 * identifier and cancels it.
+		 * 
+		 * @param identifier
+		 *            The identifier to search for, or <code>null</code> to
+		 *            cancel all pending requests
+		 */
+		@SuppressWarnings("synthetic-access")
+		private void cancelIdentifier(String identifier) {
+			synchronized (syncObject) {
+				if (connectCallback != null) {
+					connectCallback.getIntermediaryResult().setFailed(true);
+					connectCallback.setDone();
+					connectCallback = null;
+				}
+			}
+			if (identifier == null) {
+				/* key generation callbacks */
+				for (Entry<String, HighLevelCallback<KeyGenerationResult>> keyGenerationEntry: keyGenerationCallbacks.entrySet()) {
+					keyGenerationEntry.getValue().getIntermediaryResult().setFailed(true);
+					keyGenerationEntry.getValue().setDone();
+				}
+				keyGenerationCallbacks.clear();
+				/* peer list callbacks. */
+				for (Entry<String, HighLevelCallback<PeerListResult>> peerListEntry: peerListCallbacks.entrySet()) {
+					peerListEntry.getValue().getIntermediaryResult().setFailed(true);
+					peerListEntry.getValue().setDone();
+				}
+				peerListCallbacks.clear();
+			} else {
+				HighLevelCallback<KeyGenerationResult> keyGenerationCallback = keyGenerationCallbacks.remove(identifier);
+				if (keyGenerationCallback != null) {
+					keyGenerationCallback.getIntermediaryResult().setFailed(true);
+					keyGenerationCallback.setDone();
+					return;
+				}
+				HighLevelCallback<PeerListResult> peerListCallback = peerListCallbacks.remove(identifier);
+				if (peerListCallback != null) {
+					peerListCallback.getIntermediaryResult().setFailed(true);
+					peerListCallback.setDone();
+					return;
+				}
+			}
+		}
+
+		//
+		// INTERFACE FcpListener
+		//
+
 		/**
 		 * @see net.pterodactylus.fcp.FcpListener#connectionClosed(net.pterodactylus.fcp.FcpConnection)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void connectionClosed(FcpConnection fcpConnection) {
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			cancelIdentifier(null);
 		}
 
 		/**
@@ -455,19 +515,7 @@ public class HighLevelClient {
 			if (identifier == null) {
 				return;
 			}
-			/* now check all callbacks. */
-			synchronized (syncObject) {
-				if (connectCallback != null) {
-					connectCallback.getIntermediaryResult().setFailed(true);
-					connectCallback.setDone();
-					connectCallback = null;
-				}
-			}
-			HighLevelCallback<KeyGenerationResult> keyGenerationCallback = keyGenerationCallbacks.remove(identifier);
-			if (keyGenerationCallback != null) {
-				keyGenerationCallback.getIntermediaryResult().setFailed(true);
-				keyGenerationCallback.setDone();
-			}
+			cancelIdentifier(identifier);
 		}
 
 		/**
