@@ -19,6 +19,10 @@
 
 package net.pterodactylus.fcp.highlevel;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URL;
@@ -27,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import net.pterodactylus.fcp.AddPeer;
 import net.pterodactylus.fcp.AllData;
@@ -41,6 +46,7 @@ import net.pterodactylus.fcp.FCPPluginReply;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
 import net.pterodactylus.fcp.FcpMessage;
+import net.pterodactylus.fcp.FcpUtils;
 import net.pterodactylus.fcp.FinishedCompression;
 import net.pterodactylus.fcp.GenerateSSK;
 import net.pterodactylus.fcp.GetFailed;
@@ -68,6 +74,8 @@ import net.pterodactylus.fcp.StartedCompression;
 import net.pterodactylus.fcp.SubscribedUSKUpdate;
 import net.pterodactylus.fcp.TestDDAComplete;
 import net.pterodactylus.fcp.TestDDAReply;
+import net.pterodactylus.fcp.TestDDARequest;
+import net.pterodactylus.fcp.TestDDAResponse;
 import net.pterodactylus.fcp.URIGenerated;
 import net.pterodactylus.fcp.UnknownNodeIdentifier;
 import net.pterodactylus.fcp.UnknownPeerNoteType;
@@ -80,6 +88,9 @@ import net.pterodactylus.fcp.UnknownPeerNoteType;
  * @version $Id$
  */
 public class HighLevelClient {
+
+	/** Logger. */
+	private static final Logger logger = Logger.getLogger(HighLevelClient.class.getName());
 
 	/** Object for internal synchronization. */
 	private final Object syncObject = new Object();
@@ -110,6 +121,9 @@ public class HighLevelClient {
 
 	/** Mapping from request identifier to peer callbacks. */
 	private Map<String, HighLevelCallback<PeerResult>> peerCallbacks = Collections.synchronizedMap(new HashMap<String, HighLevelCallback<PeerResult>>());
+
+	/** Mapping from directories to DDA callbacks. */
+	private Map<String, HighLevelCallback<DirectDiskAccessResult>> directDiskAccessCallbacks = Collections.synchronizedMap(new HashMap<String, HighLevelCallback<DirectDiskAccessResult>>());
 
 	/**
 	 * Creates a new high-level client that connects to a node on
@@ -289,6 +303,28 @@ public class HighLevelClient {
 		return peerCallback;
 	}
 
+	/**
+	 * Checks whether direct disk access for the given directory is possible.
+	 * You have to perform this check before you can upload or download anything
+	 * from or the disk directly!
+	 * 
+	 * @param directory
+	 *            The directory to check
+	 * @param wantRead
+	 *            Whether you want to read the given directory
+	 * @param wantWrite
+	 *            Whether you want to write to the given directory
+	 * @return A direct disk access callback
+	 * @throws IOException
+	 */
+	public HighLevelCallback<DirectDiskAccessResult> checkDirectDiskAccess(String directory, boolean wantRead, boolean wantWrite) throws IOException {
+		TestDDARequest testDDARequest = new TestDDARequest(directory, wantRead, wantWrite);
+		HighLevelCallback<DirectDiskAccessResult> directDiskAccessCallback = new HighLevelCallback<DirectDiskAccessResult>(new DirectDiskAccessResult());
+		directDiskAccessCallbacks.put(directory, directDiskAccessCallback);
+		fcpConnection.sendMessage(testDDARequest);
+		return directDiskAccessCallback;
+	}
+
 	//
 	// PRIVATE METHODS
 	//
@@ -311,6 +347,9 @@ public class HighLevelClient {
 	 * @version $Id$
 	 */
 	private class HighLevelClientFcpListener implements FcpListener {
+
+		/** Mapping from directory to written file (for cleanup). */
+		private final Map<DirectDiskAccessResult, String> writtenFiles = new HashMap<DirectDiskAccessResult, String>();
 
 		/**
 		 * Creates a new FCP listener for {@link HighLevelClient}.
@@ -358,6 +397,12 @@ public class HighLevelClient {
 					peerEntry.getValue().setDone();
 				}
 				peerCallbacks.clear();
+				/* direct disk access callbacks. */
+				for (Entry<String, HighLevelCallback<DirectDiskAccessResult>> directDiskAccessEntry: directDiskAccessCallbacks.entrySet()) {
+					directDiskAccessEntry.getValue().getIntermediaryResult().setFailed(true);
+					directDiskAccessEntry.getValue().setDone();
+				}
+				directDiskAccessCallbacks.clear();
 			} else {
 				HighLevelCallback<KeyGenerationResult> keyGenerationCallback = keyGenerationCallbacks.remove(identifier);
 				if (keyGenerationCallback != null) {
@@ -376,6 +421,78 @@ public class HighLevelClient {
 					peerCallback.getIntermediaryResult().setFailed(true);
 					peerCallback.setDone();
 					return;
+				}
+				HighLevelCallback<DirectDiskAccessResult> directDiskAccessCallback = directDiskAccessCallbacks.remove(identifier);
+				if (directDiskAccessCallback != null) {
+					directDiskAccessCallback.getIntermediaryResult().setFailed(true);
+					directDiskAccessCallback.setDone();
+					return;
+				}
+			}
+		}
+
+		/**
+		 * Reads the given file and returns the first line of the file.
+		 * 
+		 * @param readFilename
+		 *            The name of the file to read
+		 * @return The content of the file
+		 */
+		private String readContent(String readFilename) {
+			FileReader fileReader = null;
+			BufferedReader bufferedFileReader = null;
+			try {
+				fileReader = new FileReader(readFilename);
+				bufferedFileReader = new BufferedReader(fileReader);
+				String content = bufferedFileReader.readLine();
+				return content;
+			} catch (IOException ioe1) {
+				/* swallow. */
+			} finally {
+				FcpUtils.close(bufferedFileReader);
+				FcpUtils.close(fileReader);
+			}
+			return null;
+		}
+
+		/**
+		 * Writes the given content to the given file.
+		 * 
+		 * @param directDiskAccessResult
+		 *            The DDA result
+		 * @param writeFilename
+		 *            The name of the file to write to
+		 * @param writeContent
+		 *            The content to write to the file
+		 */
+		private void writeContent(DirectDiskAccessResult directDiskAccessResult, String writeFilename, String writeContent) {
+			if ((writeFilename == null) || (writeContent == null)) {
+				return;
+			}
+			writtenFiles.put(directDiskAccessResult, writeFilename);
+			FileWriter fileWriter = null;
+			try {
+				fileWriter = new FileWriter(writeFilename);
+				fileWriter.write(writeContent);
+			} catch (IOException ioe1) {
+				/* swallow. */
+			} finally {
+				FcpUtils.close(fileWriter);
+			}
+		}
+
+		/**
+		 * Cleans up any files that written for the given result.
+		 * 
+		 * @param directDiskAccessResult
+		 *            The direct disk access result
+		 */
+		@SuppressWarnings("synthetic-access")
+		private void cleanFiles(DirectDiskAccessResult directDiskAccessResult) {
+			String writeFilename = writtenFiles.remove(directDiskAccessResult);
+			if (writeFilename != null) {
+				if (!new File(writeFilename).delete()) {
+					logger.warning("could not delete " + writeFilename);
 				}
 			}
 		}
@@ -667,14 +784,48 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedTestDDAComplete(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.TestDDAComplete)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedTestDDAComplete(FcpConnection fcpConnection, TestDDAComplete testDDAComplete) {
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String directory = testDDAComplete.getDirectory();
+			if (directory == null) {
+				return;
+			}
+			HighLevelCallback<DirectDiskAccessResult> directDiskAccessCallback = directDiskAccessCallbacks.remove(directory);
+			DirectDiskAccessResult directDiskAccessResult = directDiskAccessCallback.getIntermediaryResult();
+			cleanFiles(directDiskAccessResult);
+			directDiskAccessResult.setReadAllowed(testDDAComplete.isReadDirectoryAllowed());
+			directDiskAccessResult.setWriteAllowed(testDDAComplete.isWriteDirectoryAllowed());
+			directDiskAccessCallback.setDone();
 		}
 
 		/**
 		 * @see net.pterodactylus.fcp.FcpListener#receivedTestDDAReply(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.TestDDAReply)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedTestDDAReply(FcpConnection fcpConnection, TestDDAReply testDDAReply) {
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String directory = testDDAReply.getDirectory();
+			if (directory == null) {
+				return;
+			}
+			DirectDiskAccessResult directDiskAccessResult = directDiskAccessCallbacks.get(directory).getIntermediaryResult();
+			String readFilename = testDDAReply.getReadFilename();
+			String readContent = readContent(readFilename);
+			String writeFilename = testDDAReply.getWriteFilename();
+			String writeContent = testDDAReply.getContentToWrite();
+			writeContent(directDiskAccessResult, writeFilename, writeContent);
+			TestDDAResponse testDDAResponse = new TestDDAResponse(directory, readContent);
+			try {
+				fcpConnection.sendMessage(testDDAResponse);
+			} catch (IOException e) {
+				/* swallow. I’m verry unhappy about this. */
+			}
 		}
 
 		/**
