@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * An FCP connection to a Freenet node.
@@ -39,6 +40,9 @@ import java.util.Map;
  * @version $Id$
  */
 public class FcpConnection {
+
+	/** Logger. */
+	private static final Logger logger = Logger.getLogger(FcpConnection.class.getName());
 
 	/** The default port for FCP v2. */
 	public static final int DEFAULT_PORT = 9481;
@@ -668,6 +672,7 @@ public class FcpConnection {
 		if (connectionHandler != null) {
 			throw new IllegalStateException("already connected, disconnect first");
 		}
+		logger.info("connecting to " + address + ":" + port + "…");
 		remoteSocket = new Socket(address, port);
 		remoteInputStream = remoteSocket.getInputStream();
 		remoteOutputStream = remoteSocket.getOutputStream();
@@ -682,6 +687,7 @@ public class FcpConnection {
 		if (connectionHandler == null) {
 			return;
 		}
+		logger.info("disconnecting…");
 		FcpUtils.close(remoteSocket);
 		connectionHandler.stop();
 		connectionHandler = null;
@@ -697,7 +703,7 @@ public class FcpConnection {
 	 *             if an I/O error occurs
 	 */
 	public synchronized void sendMessage(FcpMessage fcpMessage) throws IOException {
-		System.out.println("sending message: " + fcpMessage.getName());
+		logger.fine("sending message: " + fcpMessage.getName());
 		fcpMessage.write(remoteOutputStream);
 	}
 
@@ -713,6 +719,7 @@ public class FcpConnection {
 	 *            The received message
 	 */
 	void handleMessage(FcpMessage fcpMessage) {
+		logger.fine("received message: " + fcpMessage.getName());
 		String messageName = fcpMessage.getName();
 		countMessage(messageName);
 		if ("SimpleProgress".equals(messageName)) {
@@ -830,6 +837,7 @@ public class FcpConnection {
 			oldValue = incomingMessageStatistics.get(name);
 		}
 		incomingMessageStatistics.put(name, oldValue + 1);
+		logger.finest("count for " + name + ": " + (oldValue + 1));
 	}
 
 	/**
