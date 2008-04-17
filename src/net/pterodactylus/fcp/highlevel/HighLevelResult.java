@@ -27,8 +27,30 @@ package net.pterodactylus.fcp.highlevel;
  */
 public abstract class HighLevelResult {
 
+	/** The identifier of the request. */
+	private final String identifier;
+
 	/** Whether the operation failed. */
 	private boolean failed;
+
+	/**
+	 * Package-private constructor.
+	 * 
+	 * @param identifier
+	 *            The identifier of the request
+	 */
+	HighLevelResult(String identifier) {
+		this.identifier = identifier;
+	}
+
+	/**
+	 * Returns the identifier of the underlying request.
+	 * 
+	 * @return The identifier of the request
+	 */
+	public String getIdentifier() {
+		return identifier;
+	}
 
 	/**
 	 * Returns whether the operation failed.

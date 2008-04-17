@@ -37,6 +37,16 @@ public class PeerListResult extends HighLevelResult implements Iterable<Peer> {
 	private final List<Peer> peers = new ArrayList<Peer>();
 
 	/**
+	 * Package-private constructor.
+	 * 
+	 * @param identifier
+	 *            The identifier of the request
+	 */
+	PeerListResult(String identifier) {
+		super(identifier);
+	}
+
+	/**
 	 * Adds a peer to the list.
 	 * 
 	 * @param peer

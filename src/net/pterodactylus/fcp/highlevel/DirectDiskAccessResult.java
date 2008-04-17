@@ -35,8 +35,12 @@ public class DirectDiskAccessResult extends HighLevelResult {
 
 	/**
 	 * Package-private constructor.
+	 * 
+	 * @param identifier
+	 *            The identifier of the request
 	 */
-	DirectDiskAccessResult() {
+	DirectDiskAccessResult(String identifier) {
+		super(identifier);
 	}
 
 	/**

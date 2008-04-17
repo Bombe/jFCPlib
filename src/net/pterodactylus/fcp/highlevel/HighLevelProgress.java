@@ -25,7 +25,7 @@ package net.pterodactylus.fcp.highlevel;
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
  */
-public abstract class HighLevelContinuousResult extends HighLevelResult {
+public abstract class HighLevelProgress extends HighLevelResult {
 
 	/** The number of total blocks. */
 	private int totalBlocks;
@@ -44,6 +44,16 @@ public abstract class HighLevelContinuousResult extends HighLevelResult {
 
 	/** Whether the total number is finalized. */
 	private boolean totalFinalized;
+
+	/**
+	 * Package-private constructor.
+	 * 
+	 * @param identifier
+	 *            The identifier of the request
+	 */
+	public HighLevelProgress(String identifier) {
+		super(identifier);
+	}
 
 	/**
 	 * Returns the number of total blocks.

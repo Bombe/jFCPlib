@@ -1,5 +1,5 @@
 /*
- * fcplib - ConnectResult.java -
+ * jFCPlib-high-level-client - HighLevelContinuousCallbackListener.java -
  * Copyright © 2008 David Roden
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,42 +20,24 @@
 package net.pterodactylus.fcp.highlevel;
 
 /**
- * A result of the {@link HighLevelClient#connect()} operation.
+ * Interface for objects that want to be notified as soon as a lengthy operation
+ * made some progress.
  * 
+ * @param
+ * <P>
+ * The type of the high-level progress
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
+ * @version $Id: HighLevelContinuousCallbackListener.java 29 2008-04-15
+ *          23:15:49Z bombe $
  */
-public class ConnectResult extends HighLevelResult {
-
-	/** Whether the node is now connected. */
-	private boolean connected;
+public interface HighLevelProgressCallbackListener<P extends HighLevelProgress> extends HighLevelCallbackListener<P> {
 
 	/**
-	 * Package-private constructor.
-	 */
-	ConnectResult() {
-		super(null);
-	}
-
-	/**
-	 * Returns whether the node is now connected.
+	 * Notifies a listener that a progress message has been received.
 	 * 
-	 * @return <code>true</code> if the node is now connected,
-	 *         <code>false</code> otherwise
+	 * @param highLevelContinuousCallback
+	 *            The callback that made the progress
 	 */
-	public boolean isConnected() {
-		return connected;
-	}
-
-	/**
-	 * Sets whether the node is now connected.
-	 * 
-	 * @param connected
-	 *            <code>true</code> if the node is now connected,
-	 *            <code>false</code> otherwise
-	 */
-	void setConnected(boolean connected) {
-		this.connected = connected;
-	}
+	public void gotProgress(HighLevelProgressCallback<P> highLevelContinuousCallback);
 
 }

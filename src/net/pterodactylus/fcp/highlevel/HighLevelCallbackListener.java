@@ -26,7 +26,7 @@ import java.util.EventListener;
  * {@link HighLevelCallback} received a result.
  * 
  * @param <R>
- *            The type of the high-level operation result
+ *            The type of the high-level operation progress
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
  */

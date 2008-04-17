@@ -35,8 +35,12 @@ public class KeyGenerationResult extends HighLevelResult {
 
 	/**
 	 * Package-private constructor.
+	 * 
+	 * @param identifier
+	 *            The identifier of the request
 	 */
-	KeyGenerationResult() {
+	KeyGenerationResult(String identifier) {
+		super(identifier);
 	}
 
 	/**

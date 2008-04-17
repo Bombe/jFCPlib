@@ -35,13 +35,13 @@ import java.util.List;
 public class HighLevelCallback<R extends HighLevelResult> {
 
 	/** Object used for synchronization. */
-	private final Object syncObject = new Object();
+	protected final Object syncObject = new Object();
 
 	/** The list of callback listeners. */
 	private final List<HighLevelCallbackListener<R>> highLevelCallbackListeners = Collections.synchronizedList(new ArrayList<HighLevelCallbackListener<R>>());
 
 	/** Whether the result is complete. */
-	private boolean resultComplete = false;
+	protected boolean resultComplete = false;
 
 	/** The result of the operation. */
 	private R result = null;

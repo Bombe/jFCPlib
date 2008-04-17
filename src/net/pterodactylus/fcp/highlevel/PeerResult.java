@@ -36,6 +36,16 @@ public class PeerResult extends HighLevelResult {
 	private Peer peer;
 
 	/**
+	 * Package-private constructor.
+	 * 
+	 * @param identifier
+	 *            The identifier of the request
+	 */
+	PeerResult(String identifier) {
+		super(identifier);
+	}
+
+	/**
 	 * Returns the peer.
 	 * 
 	 * @return The peer

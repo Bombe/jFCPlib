@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 
 import net.pterodactylus.fcp.AddPeer;
 import net.pterodactylus.fcp.AllData;
+import net.pterodactylus.fcp.ClientGet;
 import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
 import net.pterodactylus.fcp.ConfigData;
@@ -68,6 +69,7 @@ import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.PutFailed;
 import net.pterodactylus.fcp.PutFetchable;
 import net.pterodactylus.fcp.PutSuccessful;
+import net.pterodactylus.fcp.ReturnType;
 import net.pterodactylus.fcp.SSKKeypair;
 import net.pterodactylus.fcp.SimpleProgress;
 import net.pterodactylus.fcp.StartedCompression;
@@ -124,6 +126,9 @@ public class HighLevelClient {
 
 	/** Mapping from directories to DDA callbacks. */
 	private Map<String, HighLevelCallback<DirectDiskAccessResult>> directDiskAccessCallbacks = Collections.synchronizedMap(new HashMap<String, HighLevelCallback<DirectDiskAccessResult>>());
+
+	/** Mapping from request identifiers to download callbacks. */
+	private Map<String, HighLevelProgressCallback<DownloadResult>> downloadCallbacks = Collections.synchronizedMap(new HashMap<String, HighLevelProgressCallback<DownloadResult>>());
 
 	/**
 	 * Creates a new high-level client that connects to a node on
@@ -227,7 +232,7 @@ public class HighLevelClient {
 	public HighLevelCallback<KeyGenerationResult> generateKey() throws IOException {
 		String identifier = generateIdentifier("generateSSK");
 		GenerateSSK generateSSK = new GenerateSSK(identifier);
-		HighLevelCallback<KeyGenerationResult> keyGenerationCallback = new HighLevelCallback<KeyGenerationResult>(new KeyGenerationResult());
+		HighLevelCallback<KeyGenerationResult> keyGenerationCallback = new HighLevelCallback<KeyGenerationResult>(new KeyGenerationResult(identifier));
 		keyGenerationCallbacks.put(identifier, keyGenerationCallback);
 		fcpConnection.sendMessage(generateSSK);
 		return keyGenerationCallback;
@@ -243,7 +248,7 @@ public class HighLevelClient {
 	public HighLevelCallback<PeerListResult> getPeers() throws IOException {
 		String identifier = generateIdentifier("listPeers");
 		ListPeers listPeers = new ListPeers(identifier, true, true);
-		HighLevelCallback<PeerListResult> peerListCallback = new HighLevelCallback<PeerListResult>(new PeerListResult());
+		HighLevelCallback<PeerListResult> peerListCallback = new HighLevelCallback<PeerListResult>(new PeerListResult(identifier));
 		peerListCallbacks.put(identifier, peerListCallback);
 		fcpConnection.sendMessage(listPeers);
 		return peerListCallback;
@@ -261,7 +266,7 @@ public class HighLevelClient {
 	public HighLevelCallback<PeerResult> addPeer(String nodeRefFile) throws IOException {
 		String identifier = generateIdentifier("addPeer");
 		AddPeer addPeer = new AddPeer(nodeRefFile);
-		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult());
+		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult(identifier));
 		peerCallbacks.put(identifier, peerCallback);
 		fcpConnection.sendMessage(addPeer);
 		return peerCallback;
@@ -279,7 +284,7 @@ public class HighLevelClient {
 	public HighLevelCallback<PeerResult> addPeer(URL nodeRefURL) throws IOException {
 		String identifier = generateIdentifier("addPeer");
 		AddPeer addPeer = new AddPeer(nodeRefURL);
-		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult());
+		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult(identifier));
 		peerCallbacks.put(identifier, peerCallback);
 		fcpConnection.sendMessage(addPeer);
 		return peerCallback;
@@ -297,7 +302,7 @@ public class HighLevelClient {
 	public HighLevelCallback<PeerResult> addPeer(NodeRef nodeRef) throws IOException {
 		String identifier = generateIdentifier("addPeer");
 		AddPeer addPeer = new AddPeer(nodeRef);
-		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult());
+		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult(identifier));
 		peerCallbacks.put(identifier, peerCallback);
 		fcpConnection.sendMessage(addPeer);
 		return peerCallback;
@@ -319,10 +324,38 @@ public class HighLevelClient {
 	 */
 	public HighLevelCallback<DirectDiskAccessResult> checkDirectDiskAccess(String directory, boolean wantRead, boolean wantWrite) throws IOException {
 		TestDDARequest testDDARequest = new TestDDARequest(directory, wantRead, wantWrite);
-		HighLevelCallback<DirectDiskAccessResult> directDiskAccessCallback = new HighLevelCallback<DirectDiskAccessResult>(new DirectDiskAccessResult());
+		HighLevelCallback<DirectDiskAccessResult> directDiskAccessCallback = new HighLevelCallback<DirectDiskAccessResult>(new DirectDiskAccessResult(directory));
 		directDiskAccessCallbacks.put(directory, directDiskAccessCallback);
 		fcpConnection.sendMessage(testDDARequest);
 		return directDiskAccessCallback;
+	}
+
+	/**
+	 * Starts a download. Files can either be download to disk or streamed from
+	 * the node. When downloading to disk you have to perform a direct disk
+	 * access check for the directory you want to put the downloaded file in!
+	 * 
+	 * @see #checkDirectDiskAccess(String, boolean, boolean)
+	 * @param uri
+	 *            The URI to get
+	 * @param filename
+	 *            The filename to save the data to, or <code>null</code> to
+	 *            retrieve the data as InputStream from the
+	 *            {@link DownloadResult}
+	 * @param global
+	 *            Whether to put the download on the global queue
+	 * @return A download result
+	 * @throws IOException
+	 *             if an I/O error occurs communicating with the node
+	 */
+	public HighLevelProgressCallback<DownloadResult> download(String uri, String filename, boolean global) throws IOException {
+		String identifier = generateIdentifier("download");
+		ClientGet clientGet = new ClientGet(uri, identifier, (filename == null) ? ReturnType.direct : ReturnType.disk);
+		clientGet.setGlobal(global);
+		HighLevelProgressCallback<DownloadResult> downloadCallback = new HighLevelProgressCallback<DownloadResult>(new DownloadResult(identifier));
+		downloadCallbacks.put(identifier, downloadCallback);
+		fcpConnection.sendMessage(clientGet);
+		return downloadCallback;
 	}
 
 	//
@@ -403,6 +436,12 @@ public class HighLevelClient {
 					directDiskAccessEntry.getValue().setDone();
 				}
 				directDiskAccessCallbacks.clear();
+				/* download callbacks. */
+				for (Entry<String, HighLevelProgressCallback<DownloadResult>> downloadEntry: downloadCallbacks.entrySet()) {
+					downloadEntry.getValue().getIntermediaryResult().setFailed(true);
+					downloadEntry.getValue().setDone();
+				}
+				downloadCallbacks.clear();
 			} else {
 				HighLevelCallback<KeyGenerationResult> keyGenerationCallback = keyGenerationCallbacks.remove(identifier);
 				if (keyGenerationCallback != null) {
@@ -426,6 +465,12 @@ public class HighLevelClient {
 				if (directDiskAccessCallback != null) {
 					directDiskAccessCallback.getIntermediaryResult().setFailed(true);
 					directDiskAccessCallback.setDone();
+					return;
+				}
+				HighLevelProgressCallback<DownloadResult> downloadCallback = downloadCallbacks.remove(identifier);
+				if (downloadCallback != null) {
+					downloadCallback.getIntermediaryResult().setFailed(true);
+					downloadCallback.setDone();
 					return;
 				}
 			}
@@ -582,7 +627,20 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedGetFailed(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.GetFailed)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedGetFailed(FcpConnection fcpConnection, GetFailed getFailed) {
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = getFailed.getIdentifier();
+			HighLevelProgressCallback<DownloadResult> downloadCallback = downloadCallbacks.remove(identifier);
+			if (downloadCallback != null) {
+				downloadCallback.getIntermediaryResult().setFailed(true);
+				downloadCallback.setDone();
+				return;
+			}
+			/* unknown identifier? */
+			logger.warning("unknown identifier for GetFailed: " + identifier);
 		}
 
 		/**
@@ -644,7 +702,9 @@ public class HighLevelClient {
 			if (peerResult != null) {
 				peerResult.getIntermediaryResult().setPeer(peer);
 				peerResult.setDone();
+				return;
 			}
+			logger.warning("got Peer message with unknown identifier: " + identifier);
 		}
 
 		/**
@@ -665,7 +725,16 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedPersistentGet(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.PersistentGet)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedPersistentGet(FcpConnection fcpConnection, PersistentGet persistentGet) {
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = persistentGet.getIdentifier();
+			if (downloadCallbacks.containsKey(identifier)) {
+				/* ignore, because a download does not care about this. */
+				return;
+			}
 		}
 
 		/**
@@ -763,7 +832,26 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedSimpleProgress(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.SimpleProgress)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedSimpleProgress(FcpConnection fcpConnection, SimpleProgress simpleProgress) {
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = simpleProgress.getIdentifier();
+			HighLevelProgressCallback<DownloadResult> downloadCallback = downloadCallbacks.get(identifier);
+			if (downloadCallback != null) {
+				DownloadResult downloadResult = downloadCallback.getIntermediaryResult();
+				downloadResult.setTotalBlocks(simpleProgress.getTotal());
+				downloadResult.setRequiredBlocks(simpleProgress.getRequired());
+				downloadResult.setSuccessfulBlocks(simpleProgress.getSucceeded());
+				downloadResult.setFailedBlocks(simpleProgress.getFailed());
+				downloadResult.setFatallyFailedBlocks(simpleProgress.getFatallyFailed());
+				downloadResult.setTotalFinalized(simpleProgress.isFinalizedTotal());
+				downloadCallback.progressUpdated();
+				return;
+			}
+			/* unknown identifier? */
+			logger.warning("unknown identifier for SimpleProgress: " + identifier);
 		}
 
 		/**

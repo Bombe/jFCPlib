@@ -1,5 +1,5 @@
 /*
- * jFCPlib-high-level-client - HighLevelContinuousCallbackListener.java -
+ * jFCPlib-high-level-client - DownloadResult.java -
  * Copyright © 2008 David Roden
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,22 +20,21 @@
 package net.pterodactylus.fcp.highlevel;
 
 /**
- * Interface for objects that want to be notified as soon as a lengthy operation
- * made some progress.
+ * The result of a download.
  * 
- * @param <R>
- *            The type of the progress result
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
  */
-public interface HighLevelContinuousCallbackListener<R extends HighLevelContinuousResult> extends HighLevelCallbackListener<R> {
+public class DownloadResult extends HighLevelProgress {
 
 	/**
-	 * Notifies a listener that a progress message has been received.
+	 * Package-private constructor.
 	 * 
-	 * @param highLevelContinuousCallback
-	 *            The callback that made the progress
+	 * @param identifier
+	 *            The identifier of the request
 	 */
-	public void gotProgress(HighLevelContinuousCallback<R> highLevelContinuousCallback);
+	public DownloadResult(String identifier) {
+		super(identifier);
+	}
 
 }
