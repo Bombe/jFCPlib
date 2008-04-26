@@ -85,7 +85,7 @@ import net.pterodactylus.fcp.UnknownPeerNoteType;
 /**
  * A high-level client that allows simple yet full-featured access to a Freenet
  * node.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
  */
@@ -133,7 +133,7 @@ public class HighLevelClient {
 	/**
 	 * Creates a new high-level client that connects to a node on
 	 * <code>localhost</code>.
-	 * 
+	 *
 	 * @param clientName
 	 *            The name of the client
 	 * @throws UnknownHostException
@@ -146,7 +146,7 @@ public class HighLevelClient {
 	/**
 	 * Creates a new high-level client that connects to a node on the given
 	 * host.
-	 * 
+	 *
 	 * @param clientName
 	 *            The name of the client
 	 * @param host
@@ -161,7 +161,7 @@ public class HighLevelClient {
 	/**
 	 * Creates a new high-level client that connects to a node on the given
 	 * host.
-	 * 
+	 *
 	 * @param clientName
 	 *            The name of the client
 	 * @param host
@@ -178,7 +178,7 @@ public class HighLevelClient {
 	/**
 	 * Creates a new high-level client that connects to a node at the given
 	 * address.
-	 * 
+	 *
 	 * @param clientName
 	 *            The name of the client
 	 * @param address
@@ -202,7 +202,7 @@ public class HighLevelClient {
 
 	/**
 	 * Connects the client.
-	 * 
+	 *
 	 * @return A callback with a connection result
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
@@ -220,11 +220,12 @@ public class HighLevelClient {
 	 * Disconnects the client from the node.
 	 */
 	public void disconnect() {
+		fcpConnection.disconnect();
 	}
 
 	/**
 	 * Generates a new SSK keypair.
-	 * 
+	 *
 	 * @return A callback with the keypair
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
@@ -240,7 +241,7 @@ public class HighLevelClient {
 
 	/**
 	 * Gets a list of all peers from the node.
-	 * 
+	 *
 	 * @return A callback with the peer list
 	 * @throws IOException
 	 *             if an I/O error occurs with the node
@@ -256,7 +257,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the peer whose noderef is stored in the given file.
-	 * 
+	 *
 	 * @param nodeRefFile
 	 *            The name of the file the peer’s noderef is stored in
 	 * @return A peer callback
@@ -274,7 +275,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the peer whose noderef is stored in the given file.
-	 * 
+	 *
 	 * @param nodeRefURL
 	 *            The URL where the peer’s noderef is stored
 	 * @return A peer callback
@@ -292,7 +293,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the peer whose noderef is stored in the given file.
-	 * 
+	 *
 	 * @param nodeRef
 	 *            The peer’s noderef
 	 * @return A peer callback
@@ -312,7 +313,7 @@ public class HighLevelClient {
 	 * Checks whether direct disk access for the given directory is possible.
 	 * You have to perform this check before you can upload or download anything
 	 * from or the disk directly!
-	 * 
+	 *
 	 * @param directory
 	 *            The directory to check
 	 * @param wantRead
@@ -334,7 +335,7 @@ public class HighLevelClient {
 	 * Starts a download. Files can either be download to disk or streamed from
 	 * the node. When downloading to disk you have to perform a direct disk
 	 * access check for the directory you want to put the downloaded file in!
-	 * 
+	 *
 	 * @see #checkDirectDiskAccess(String, boolean, boolean)
 	 * @param uri
 	 *            The URI to get
@@ -364,7 +365,7 @@ public class HighLevelClient {
 
 	/**
 	 * Generates an identifier for the given function.
-	 * 
+	 *
 	 * @param function
 	 *            The name of the function
 	 * @return An identifier
@@ -375,7 +376,7 @@ public class HighLevelClient {
 
 	/**
 	 * FCP listener for {@link HighLevelClient}.
-	 * 
+	 *
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
 	 * @version $Id$
 	 */
@@ -388,6 +389,7 @@ public class HighLevelClient {
 		 * Creates a new FCP listener for {@link HighLevelClient}.
 		 */
 		HighLevelClientFcpListener() {
+			/* do nothing. */
 		}
 
 		//
@@ -397,7 +399,7 @@ public class HighLevelClient {
 		/**
 		 * Searches all callback collections for a callback with the given
 		 * identifier and cancels it.
-		 * 
+		 *
 		 * @param identifier
 		 *            The identifier to search for, or <code>null</code> to
 		 *            cancel all pending requests
@@ -478,7 +480,7 @@ public class HighLevelClient {
 
 		/**
 		 * Reads the given file and returns the first line of the file.
-		 * 
+		 *
 		 * @param readFilename
 		 *            The name of the file to read
 		 * @return The content of the file
@@ -502,7 +504,7 @@ public class HighLevelClient {
 
 		/**
 		 * Writes the given content to the given file.
-		 * 
+		 *
 		 * @param directDiskAccessResult
 		 *            The DDA result
 		 * @param writeFilename
@@ -528,7 +530,7 @@ public class HighLevelClient {
 
 		/**
 		 * Cleans up any files that written for the given result.
-		 * 
+		 *
 		 * @param directDiskAccessResult
 		 *            The direct disk access result
 		 */
@@ -562,6 +564,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.AllData)
 		 */
 		public void receivedAllData(FcpConnection fcpConnection, AllData allData) {
+			/* TODO */
 		}
 
 		/**
@@ -569,6 +572,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.CloseConnectionDuplicateClientName)
 		 */
 		public void receivedCloseConnectionDuplicateClientName(FcpConnection fcpConnection, CloseConnectionDuplicateClientName closeConnectionDuplicateClientName) {
+			/* TODO */
 		}
 
 		/**
@@ -576,6 +580,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.ConfigData)
 		 */
 		public void receivedConfigData(FcpConnection fcpConnection, ConfigData configData) {
+			/* TODO */
 		}
 
 		/**
@@ -583,6 +588,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.DataFound)
 		 */
 		public void receivedDataFound(FcpConnection fcpConnection, DataFound dataFound) {
+			/* TODO */
 		}
 
 		/**
@@ -590,6 +596,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.EndListPeerNotes)
 		 */
 		public void receivedEndListPeerNotes(FcpConnection fcpConnection, EndListPeerNotes endListPeerNotes) {
+			/* TODO */
 		}
 
 		/**
@@ -614,6 +621,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.EndListPersistentRequests)
 		 */
 		public void receivedEndListPersistentRequests(FcpConnection fcpConnection, EndListPersistentRequests endListPersistentRequests) {
+			/* TODO */
 		}
 
 		/**
@@ -621,6 +629,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.FCPPluginReply)
 		 */
 		public void receivedFCPPluginReply(FcpConnection fcpConnection, FCPPluginReply fcpPluginReply) {
+			/* TODO */
 		}
 
 		/**
@@ -648,6 +657,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.IdentifierCollision)
 		 */
 		public void receivedIdentifierCollision(FcpConnection fcpConnection, IdentifierCollision identifierCollision) {
+			/* TODO */
 		}
 
 		/**
@@ -655,6 +665,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.FcpMessage)
 		 */
 		public void receivedMessage(FcpConnection fcpConnection, FcpMessage fcpMessage) {
+			/* TODO */
 		}
 
 		/**
@@ -662,6 +673,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.NodeData)
 		 */
 		public void receivedNodeData(FcpConnection fcpConnection, NodeData nodeData) {
+			/* TODO */
 		}
 
 		/**
@@ -712,6 +724,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PeerNote)
 		 */
 		public void receivedPeerNote(FcpConnection fcpConnection, PeerNote peerNote) {
+			/* TODO */
 		}
 
 		/**
@@ -719,6 +732,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PeerRemoved)
 		 */
 		public void receivedPeerRemoved(FcpConnection fcpConnection, PeerRemoved peerRemoved) {
+			/* TODO */
 		}
 
 		/**
@@ -742,6 +756,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PersistentPut)
 		 */
 		public void receivedPersistentPut(FcpConnection fcpConnection, PersistentPut persistentPut) {
+			/* TODO */
 		}
 
 		/**
@@ -749,6 +764,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PersistentPutDir)
 		 */
 		public void receivedPersistentPutDir(FcpConnection fcpConnection, PersistentPutDir persistentPutDir) {
+			/* TODO */
 		}
 
 		/**
@@ -756,6 +772,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PersistentRequestModified)
 		 */
 		public void receivedPersistentRequestModified(FcpConnection fcpConnection, PersistentRequestModified persistentRequestModified) {
+			/* TODO */
 		}
 
 		/**
@@ -763,6 +780,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PersistentRequestRemoved)
 		 */
 		public void receivedPersistentRequestRemoved(FcpConnection fcpConnection, PersistentRequestRemoved persistentRequestRemoved) {
+			/* TODO */
 		}
 
 		/**
@@ -770,6 +788,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PluginInfo)
 		 */
 		public void receivedPluginInfo(FcpConnection fcpConnection, PluginInfo pluginInfo) {
+			/* TODO */
 		}
 
 		/**
@@ -793,6 +812,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PutFailed)
 		 */
 		public void receivedPutFailed(FcpConnection fcpConnection, PutFailed putFailed) {
+			/* TODO */
 		}
 
 		/**
@@ -800,6 +820,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PutFetchable)
 		 */
 		public void receivedPutFetchable(FcpConnection fcpConnection, PutFetchable putFetchable) {
+			/* TODO */
 		}
 
 		/**
@@ -807,6 +828,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PutSuccessful)
 		 */
 		public void receivedPutSuccessful(FcpConnection fcpConnection, PutSuccessful putSuccessful) {
+			/* TODO */
 		}
 
 		/**
@@ -859,6 +881,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.StartedCompression)
 		 */
 		public void receivedStartedCompression(FcpConnection fcpConnection, StartedCompression startedCompression) {
+			/* TODO */
 		}
 
 		/**
@@ -866,6 +889,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.SubscribedUSKUpdate)
 		 */
 		public void receivedSubscribedUSKUpdate(FcpConnection fcpConnection, SubscribedUSKUpdate subscribedUSKUpdate) {
+			/* TODO */
 		}
 
 		/**
@@ -921,6 +945,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.URIGenerated)
 		 */
 		public void receivedURIGenerated(FcpConnection fcpConnection, URIGenerated uriGenerated) {
+			/* TODO */
 		}
 
 		/**
@@ -928,6 +953,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.UnknownNodeIdentifier)
 		 */
 		public void receivedUnknownNodeIdentifier(FcpConnection fcpConnection, UnknownNodeIdentifier unknownNodeIdentifier) {
+			/* TODO */
 		}
 
 		/**
@@ -935,6 +961,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.UnknownPeerNoteType)
 		 */
 		public void receivedUnknownPeerNoteType(FcpConnection fcpConnection, UnknownPeerNoteType unknownPeerNoteType) {
+			/* TODO */
 		}
 
 		/**
@@ -942,6 +969,7 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.FinishedCompression)
 		 */
 		public void receviedFinishedCompression(FcpConnection fcpConnection, FinishedCompression finishedCompression) {
+			/* TODO */
 		}
 
 	}
