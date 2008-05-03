@@ -27,8 +27,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
@@ -108,6 +110,9 @@ public class HighLevelClient {
 
 	/** The FCP connection to the node. */
 	private FcpConnection fcpConnection;
+
+	/** Listeners for high-level client events. */
+	private List<HighLevelClientListener> highLevelClientListeners = Collections.synchronizedList(new ArrayList<HighLevelClientListener>());
 
 	/** The listener for the connection. */
 	private HighLevelClientFcpListener highLevelClientFcpListener = new HighLevelClientFcpListener();
@@ -193,6 +198,48 @@ public class HighLevelClient {
 	}
 
 	//
+	// EVENT MANAGEMENT
+	//
+
+	/**
+	 * Adds the given high-level client listener to list of listeners.
+	 *
+	 * @param highLevelClientListener
+	 *            The listener to add
+	 */
+	public void addHighLevelClientListener(HighLevelClientListener highLevelClientListener) {
+		highLevelClientListeners.add(highLevelClientListener);
+	}
+
+	/**
+	 * Removes the given high-level client listener from the list of listeners.
+	 *
+	 * @param highLevelClientListener
+	 *            The listener to remove
+	 */
+	public void removeHighLevelClientListener(HighLevelClientListener highLevelClientListener) {
+		highLevelClientListeners.remove(highLevelClientListener);
+	}
+
+	/**
+	 * Notifies all listeners that a client has connected.
+	 */
+	private void fireClientConnected() {
+		for (HighLevelClientListener highLevelClientListener: highLevelClientListeners) {
+			highLevelClientListener.clientConnected(this);
+		}
+	}
+
+	/**
+	 * Notifies all listeners that a client has disconnected.
+	 */
+	private void fireClientDisconnected() {
+		for (HighLevelClientListener highLevelClientListener: highLevelClientListeners) {
+			highLevelClientListener.clientDisconnected(this);
+		}
+	}
+
+	//
 	// ACCESSORS
 	//
 
@@ -232,6 +279,7 @@ public class HighLevelClient {
 	 */
 	public void disconnect() {
 		fcpConnection.close();
+		fireClientDisconnected();
 	}
 
 	/**
@@ -701,6 +749,7 @@ public class HighLevelClient {
 				connectCallback.setDone();
 				connectCallback = null;
 			}
+			fireClientConnected();
 		}
 
 		/**
