@@ -196,6 +196,17 @@ public class HighLevelClient {
 	// ACCESSORS
 	//
 
+	/**
+	 * Returns the FCP connection that backs this high-level client. This method
+	 * should be used with care as fiddling around with the FCP connection can
+	 * easily break the high-level client if you don’t know what you’re doing!
+	 *
+	 * @return The FCP connection of this client
+	 */
+	public FcpConnection getFcpConnection() {
+		return fcpConnection;
+	}
+
 	//
 	// ACTIONS
 	//
