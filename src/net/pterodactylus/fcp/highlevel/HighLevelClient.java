@@ -231,7 +231,7 @@ public class HighLevelClient {
 	 * Disconnects the client from the node.
 	 */
 	public void disconnect() {
-		fcpConnection.disconnect();
+		fcpConnection.close();
 	}
 
 	/**
