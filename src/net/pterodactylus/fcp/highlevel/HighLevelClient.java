@@ -232,10 +232,14 @@ public class HighLevelClient {
 
 	/**
 	 * Notifies all listeners that a client has disconnected.
+	 *
+	 * @param throwable
+	 *            The exception that caused the disconnect, or <code>null</code>
+	 *            if there was no exception
 	 */
-	private void fireClientDisconnected() {
+	private void fireClientDisconnected(Throwable throwable) {
 		for (HighLevelClientListener highLevelClientListener: highLevelClientListeners) {
-			highLevelClientListener.clientDisconnected(this);
+			highLevelClientListener.clientDisconnected(this, throwable);
 		}
 	}
 
@@ -278,8 +282,7 @@ public class HighLevelClient {
 	 * Disconnects the client from the node.
 	 */
 	public void disconnect() {
-		fcpConnection.close();
-		fireClientDisconnected();
+		disconnect(null);
 	}
 
 	/**
@@ -431,6 +434,19 @@ public class HighLevelClient {
 	 */
 	private String generateIdentifier(String function) {
 		return "jFCPlib-" + function + "-" + System.currentTimeMillis();
+	}
+
+	/**
+	 * Disconnects the client from the node, handing the given Throwable to
+	 * {@link #fireClientDisconnected(Throwable)}.
+	 *
+	 * @param throwable
+	 *            The exception that caused the disconnect, or <code>null</code>
+	 *            if there was no exception
+	 */
+	private void disconnect(Throwable throwable) {
+		fcpConnection.close();
+		fireClientDisconnected(throwable);
 	}
 
 	/**
@@ -608,15 +624,16 @@ public class HighLevelClient {
 		//
 
 		/**
-		 * @see net.pterodactylus.fcp.FcpListener#connectionClosed(net.pterodactylus.fcp.FcpConnection)
+		 * @see net.pterodactylus.fcp.FcpListener#connectionClosed(net.pterodactylus.fcp.FcpConnection,
+		 *      Throwable)
 		 */
 		@SuppressWarnings("synthetic-access")
-		public void connectionClosed(FcpConnection fcpConnection) {
+		public void connectionClosed(FcpConnection fcpConnection, Throwable throwable) {
 			if (fcpConnection != HighLevelClient.this.fcpConnection) {
 				return;
 			}
 			cancelIdentifier(null);
-			disconnect();
+			disconnect(throwable);
 		}
 
 		/**

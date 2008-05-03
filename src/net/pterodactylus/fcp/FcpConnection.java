@@ -649,11 +649,14 @@ public class FcpConnection implements Closeable {
 	/**
 	 * Notifies all listeners that the connection to the node was closed.
 	 *
-	 * @see FcpListener#connectionClosed(FcpConnection)
+	 * @param throwable
+	 *            The exception that caused the disconnect, or <code>null</code>
+	 *            if there was no exception
+	 * @see FcpListener#connectionClosed(FcpConnection, Throwable)
 	 */
-	private void fireConnectionClosed() {
+	private void fireConnectionClosed(Throwable throwable) {
 		for (FcpListener fcpListener: fcpListeners) {
-			fcpListener.connectionClosed(this);
+			fcpListener.connectionClosed(this, throwable);
 		}
 	}
 
@@ -696,14 +699,7 @@ public class FcpConnection implements Closeable {
 	 * does nothing.
 	 */
 	public void close() {
-		if (connectionHandler == null) {
-			return;
-		}
-		logger.info("disconnecting…");
-		FcpUtils.close(remoteSocket);
-		connectionHandler.stop();
-		connectionHandler = null;
-		fireConnectionClosed();
+		handleDisconnect(null);
 	}
 
 	/**
@@ -823,13 +819,20 @@ public class FcpConnection implements Closeable {
 
 	/**
 	 * Handles a disconnect from the node.
+	 *
+	 * @param throwable
+	 *            The exception that caused the disconnect, or <code>null</code>
+	 *            if there was no exception
 	 */
-	synchronized void handleDisconnect() {
+	synchronized void handleDisconnect(Throwable throwable) {
 		FcpUtils.close(remoteInputStream);
 		FcpUtils.close(remoteOutputStream);
 		FcpUtils.close(remoteSocket);
-		connectionHandler = null;
-		fireConnectionClosed();
+		if (connectionHandler != null) {
+			connectionHandler.stop();
+			connectionHandler = null;
+		}
+		fireConnectionClosed(throwable);
 	}
 
 	//

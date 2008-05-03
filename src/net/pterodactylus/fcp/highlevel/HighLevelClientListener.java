@@ -44,7 +44,10 @@ public interface HighLevelClientListener extends EventListener {
 	 *
 	 * @param highLevelClient
 	 *            The client that was disconnected
+	 * @param throwable
+	 *            The exception that caused the disconnect, or <code>null</code>
+	 *            if no exception occured
 	 */
-	public void clientDisconnected(HighLevelClient highLevelClient);
+	public void clientDisconnected(HighLevelClient highLevelClient, Throwable throwable);
 
 }
