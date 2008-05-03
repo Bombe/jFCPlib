@@ -616,6 +616,7 @@ public class HighLevelClient {
 				return;
 			}
 			cancelIdentifier(null);
+			disconnect();
 		}
 
 		/**
