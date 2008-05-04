@@ -272,6 +272,7 @@ public class HighLevelClient {
 	public HighLevelCallback<ConnectResult> connect() throws IOException {
 		fcpConnection = new FcpConnection(address, port);
 		fcpConnection.addFcpListener(highLevelClientFcpListener);
+		fcpConnection.connect();
 		ClientHello clientHello = new ClientHello(clientName);
 		connectCallback = new HighLevelCallback<ConnectResult>(new ConnectResult());
 		fcpConnection.sendMessage(clientHello);
