@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.pterodactylus.fcp.AddPeer;
@@ -55,6 +56,7 @@ import net.pterodactylus.fcp.GenerateSSK;
 import net.pterodactylus.fcp.GetFailed;
 import net.pterodactylus.fcp.IdentifierCollision;
 import net.pterodactylus.fcp.ListPeers;
+import net.pterodactylus.fcp.ListPersistentRequests;
 import net.pterodactylus.fcp.NodeData;
 import net.pterodactylus.fcp.NodeHello;
 import net.pterodactylus.fcp.NodeRef;
@@ -87,7 +89,7 @@ import net.pterodactylus.fcp.UnknownPeerNoteType;
 /**
  * A high-level client that allows simple yet full-featured access to a Freenet
  * node.
- *
+ * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
  */
@@ -135,10 +137,13 @@ public class HighLevelClient {
 	/** Mapping from request identifiers to download callbacks. */
 	private Map<String, HighLevelProgressCallback<DownloadResult>> downloadCallbacks = Collections.synchronizedMap(new HashMap<String, HighLevelProgressCallback<DownloadResult>>());
 
+	/** The callback for {@link #getRequests()}. */
+	private HighLevelCallback<RequestListResult> requestListCallback;
+
 	/**
 	 * Creates a new high-level client that connects to a node on
 	 * <code>localhost</code>.
-	 *
+	 * 
 	 * @param clientName
 	 *            The name of the client
 	 * @throws UnknownHostException
@@ -151,7 +156,7 @@ public class HighLevelClient {
 	/**
 	 * Creates a new high-level client that connects to a node on the given
 	 * host.
-	 *
+	 * 
 	 * @param clientName
 	 *            The name of the client
 	 * @param host
@@ -166,7 +171,7 @@ public class HighLevelClient {
 	/**
 	 * Creates a new high-level client that connects to a node on the given
 	 * host.
-	 *
+	 * 
 	 * @param clientName
 	 *            The name of the client
 	 * @param host
@@ -183,7 +188,7 @@ public class HighLevelClient {
 	/**
 	 * Creates a new high-level client that connects to a node at the given
 	 * address.
-	 *
+	 * 
 	 * @param clientName
 	 *            The name of the client
 	 * @param address
@@ -203,7 +208,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the given high-level client listener to list of listeners.
-	 *
+	 * 
 	 * @param highLevelClientListener
 	 *            The listener to add
 	 */
@@ -213,7 +218,7 @@ public class HighLevelClient {
 
 	/**
 	 * Removes the given high-level client listener from the list of listeners.
-	 *
+	 * 
 	 * @param highLevelClientListener
 	 *            The listener to remove
 	 */
@@ -232,7 +237,7 @@ public class HighLevelClient {
 
 	/**
 	 * Notifies all listeners that a client has disconnected.
-	 *
+	 * 
 	 * @param throwable
 	 *            The exception that caused the disconnect, or <code>null</code>
 	 *            if there was no exception
@@ -251,7 +256,7 @@ public class HighLevelClient {
 	 * Returns the FCP connection that backs this high-level client. This method
 	 * should be used with care as fiddling around with the FCP connection can
 	 * easily break the high-level client if you don’t know what you’re doing!
-	 *
+	 * 
 	 * @return The FCP connection of this client
 	 */
 	public FcpConnection getFcpConnection() {
@@ -264,7 +269,7 @@ public class HighLevelClient {
 
 	/**
 	 * Connects the client.
-	 *
+	 * 
 	 * @return A callback with a connection result
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
@@ -288,7 +293,7 @@ public class HighLevelClient {
 
 	/**
 	 * Generates a new SSK keypair.
-	 *
+	 * 
 	 * @return A callback with the keypair
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
@@ -304,7 +309,7 @@ public class HighLevelClient {
 
 	/**
 	 * Gets a list of all peers from the node.
-	 *
+	 * 
 	 * @return A callback with the peer list
 	 * @throws IOException
 	 *             if an I/O error occurs with the node
@@ -320,7 +325,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the peer whose noderef is stored in the given file.
-	 *
+	 * 
 	 * @param nodeRefFile
 	 *            The name of the file the peer’s noderef is stored in
 	 * @return A peer callback
@@ -338,7 +343,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the peer whose noderef is stored in the given file.
-	 *
+	 * 
 	 * @param nodeRefURL
 	 *            The URL where the peer’s noderef is stored
 	 * @return A peer callback
@@ -356,7 +361,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the peer whose noderef is stored in the given file.
-	 *
+	 * 
 	 * @param nodeRef
 	 *            The peer’s noderef
 	 * @return A peer callback
@@ -376,7 +381,7 @@ public class HighLevelClient {
 	 * Checks whether direct disk access for the given directory is possible.
 	 * You have to perform this check before you can upload or download anything
 	 * from or the disk directly!
-	 *
+	 * 
 	 * @param directory
 	 *            The directory to check
 	 * @param wantRead
@@ -398,7 +403,7 @@ public class HighLevelClient {
 	 * Starts a download. Files can either be download to disk or streamed from
 	 * the node. When downloading to disk you have to perform a direct disk
 	 * access check for the directory you want to put the downloaded file in!
-	 *
+	 * 
 	 * @see #checkDirectDiskAccess(String, boolean, boolean)
 	 * @param uri
 	 *            The URI to get
@@ -422,13 +427,33 @@ public class HighLevelClient {
 		return downloadCallback;
 	}
 
+	/**
+	 * Requests a list of all running requests from the node.
+	 * 
+	 * @return The request list result
+	 * @throws IOException
+	 *             if an I/O errors communicating with the node
+	 */
+	public HighLevelCallback<RequestListResult> getRequests() throws IOException {
+		String identifier = generateIdentifier("list-persistent-requests");
+		ListPersistentRequests listPersistentRequests = new ListPersistentRequests();
+		synchronized (syncObject) {
+			if (requestListCallback != null) {
+				logger.log(Level.SEVERE, "getRequests() called with request still running!");
+			}
+			requestListCallback = new HighLevelCallback<RequestListResult>(new RequestListResult(identifier));
+		}
+		fcpConnection.sendMessage(listPersistentRequests);
+		return requestListCallback;
+	}
+
 	//
 	// PRIVATE METHODS
 	//
 
 	/**
 	 * Generates an identifier for the given function.
-	 *
+	 * 
 	 * @param function
 	 *            The name of the function
 	 * @return An identifier
@@ -440,7 +465,7 @@ public class HighLevelClient {
 	/**
 	 * Disconnects the client from the node, handing the given Throwable to
 	 * {@link #fireClientDisconnected(Throwable)}.
-	 *
+	 * 
 	 * @param throwable
 	 *            The exception that caused the disconnect, or <code>null</code>
 	 *            if there was no exception
@@ -452,7 +477,7 @@ public class HighLevelClient {
 
 	/**
 	 * FCP listener for {@link HighLevelClient}.
-	 *
+	 * 
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
 	 * @version $Id$
 	 */
@@ -475,7 +500,7 @@ public class HighLevelClient {
 		/**
 		 * Searches all callback collections for a callback with the given
 		 * identifier and cancels it.
-		 *
+		 * 
 		 * @param identifier
 		 *            The identifier to search for, or <code>null</code> to
 		 *            cancel all pending requests
@@ -487,6 +512,11 @@ public class HighLevelClient {
 					connectCallback.getIntermediaryResult().setFailed(true);
 					connectCallback.setDone();
 					connectCallback = null;
+				}
+				if (requestListCallback != null) {
+					requestListCallback.getIntermediaryResult().setFailed(true);
+					requestListCallback.setDone();
+					requestListCallback = null;
 				}
 			}
 			if (identifier == null) {
@@ -556,7 +586,7 @@ public class HighLevelClient {
 
 		/**
 		 * Reads the given file and returns the first line of the file.
-		 *
+		 * 
 		 * @param readFilename
 		 *            The name of the file to read
 		 * @return The content of the file
@@ -580,7 +610,7 @@ public class HighLevelClient {
 
 		/**
 		 * Writes the given content to the given file.
-		 *
+		 * 
 		 * @param directDiskAccessResult
 		 *            The DDA result
 		 * @param writeFilename
@@ -606,7 +636,7 @@ public class HighLevelClient {
 
 		/**
 		 * Cleans up any files that written for the given result.
-		 *
+		 * 
 		 * @param directDiskAccessResult
 		 *            The direct disk access result
 		 */
@@ -698,8 +728,19 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedEndListPersistentRequests(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.EndListPersistentRequests)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedEndListPersistentRequests(FcpConnection fcpConnection, EndListPersistentRequests endListPersistentRequests) {
-			/* TODO */
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			synchronized (syncObject) {
+				if (HighLevelClient.this.requestListCallback == null) {
+					logger.log(Level.WARNING, "got EndListPersistentRequests without running request!");
+					return;
+				}
+				requestListCallback.setDone();
+				requestListCallback = null;
+			}
 		}
 
 		/**
@@ -823,9 +864,16 @@ public class HighLevelClient {
 			if (fcpConnection != HighLevelClient.this.fcpConnection) {
 				return;
 			}
+			synchronized (syncObject) {
+				if (requestListCallback != null) {
+					RequestListResult requestListResult = requestListCallback.getIntermediaryResult();
+					requestListResult.addRequestResult(new GetRequestResult(persistentGet));
+					return;
+				}
+			}
 			String identifier = persistentGet.getIdentifier();
 			if (downloadCallbacks.containsKey(identifier)) {
-				/* ignore, because a download does not care about this. */
+				/* TODO */
 				return;
 			}
 		}
@@ -834,16 +882,36 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedPersistentPut(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.PersistentPut)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedPersistentPut(FcpConnection fcpConnection, PersistentPut persistentPut) {
-			/* TODO */
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			synchronized (syncObject) {
+				if (requestListCallback != null) {
+					RequestListResult requestListResult = requestListCallback.getIntermediaryResult();
+					requestListResult.addRequestResult(new PutRequestResult(persistentPut));
+					return;
+				}
+			}
 		}
 
 		/**
 		 * @see net.pterodactylus.fcp.FcpListener#receivedPersistentPutDir(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.PersistentPutDir)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedPersistentPutDir(FcpConnection fcpConnection, PersistentPutDir persistentPutDir) {
-			/* TODO */
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			synchronized (syncObject) {
+				if (requestListCallback != null) {
+					RequestListResult requestListResult = requestListCallback.getIntermediaryResult();
+					requestListResult.addRequestResult(new PutDirRequestResult(persistentPutDir));
+					return;
+				}
+			}
 		}
 
 		/**
