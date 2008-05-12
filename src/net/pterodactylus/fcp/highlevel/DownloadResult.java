@@ -33,7 +33,7 @@ public class DownloadResult extends HighLevelProgress {
 	 * @param identifier
 	 *            The identifier of the request
 	 */
-	public DownloadResult(String identifier) {
+	DownloadResult(String identifier) {
 		super(identifier);
 	}
 
