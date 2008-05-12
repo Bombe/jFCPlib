@@ -84,15 +84,17 @@ public class HighLevelCallback<R extends HighLevelResult> {
 	}
 
 	/**
-	 * Notifies all listeners that the result of the operation is now known.
+	 * Notifies all listeners that the result of the operation is now known. As
+	 * soon as a listener was notified it will be removed from the list of
+	 * listeners!
 	 * 
 	 * @see HighLevelCallbackListener#gotResult(HighLevelCallback)
 	 */
 	private synchronized void fireGotResult() {
 		for (HighLevelCallbackListener<R> highLevelCallbackListener: highLevelCallbackListeners) {
-			highLevelCallbackListeners.remove(highLevelCallbackListener);
 			highLevelCallbackListener.gotResult(this);
 		}
+		highLevelCallbackListeners.clear();
 	}
 
 	/**
