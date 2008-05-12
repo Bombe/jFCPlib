@@ -831,8 +831,8 @@ public class FcpConnection implements Closeable {
 		if (connectionHandler != null) {
 			connectionHandler.stop();
 			connectionHandler = null;
+			fireConnectionClosed(throwable);
 		}
-		fireConnectionClosed(throwable);
 	}
 
 	//
