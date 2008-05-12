@@ -25,7 +25,7 @@ package net.pterodactylus.fcp.highlevel;
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
  */
-public abstract class HighLevelProgress extends HighLevelResult {
+public class HighLevelProgress extends HighLevelResult {
 
 	/** The number of total blocks. */
 	private int totalBlocks;
@@ -53,6 +53,35 @@ public abstract class HighLevelProgress extends HighLevelResult {
 	 */
 	public HighLevelProgress(String identifier) {
 		super(identifier);
+	}
+
+	/**
+	 * Creates a new high-level progress with the given values.
+	 * 
+	 * @param identifier
+	 *            The identifier of the request
+	 * @param totalBlocks
+	 *            The total number of blocks
+	 * @param requiredBlocks
+	 *            The number of required blocks
+	 * @param successfulBlocks
+	 *            The number of successful blocks
+	 * @param failedBlocks
+	 *            The number of failed blocks
+	 * @param fatallyFailedBlocks
+	 *            The number of fatally failed blocks
+	 * @param totalFinalized
+	 *            <code>true</code> if the total number of blocks is
+	 *            finalized, <code>false</code> otherwise
+	 */
+	public HighLevelProgress(String identifier, int totalBlocks, int requiredBlocks, int successfulBlocks, int failedBlocks, int fatallyFailedBlocks, boolean totalFinalized) {
+		this(identifier);
+		this.totalBlocks = totalBlocks;
+		this.requiredBlocks = requiredBlocks;
+		this.successfulBlocks = successfulBlocks;
+		this.failedBlocks = failedBlocks;
+		this.fatallyFailedBlocks = fatallyFailedBlocks;
+		this.totalFinalized = totalFinalized;
 	}
 
 	/**

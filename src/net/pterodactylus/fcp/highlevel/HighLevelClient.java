@@ -120,6 +120,9 @@ public class HighLevelClient {
 	/** The listener for the connection. */
 	private HighLevelClientFcpListener highLevelClientFcpListener = new HighLevelClientFcpListener();
 
+	/** The listeners for progress events. */
+	private List<HighLevelProgressListener> highLevelProgressListeners = Collections.synchronizedList(new ArrayList<HighLevelProgressListener>());
+
 	/** The callback for {@link #connect()}. */
 	private HighLevelCallback<ConnectResult> connectCallback;
 
@@ -246,6 +249,41 @@ public class HighLevelClient {
 	private void fireClientDisconnected(Throwable throwable) {
 		for (HighLevelClientListener highLevelClientListener: highLevelClientListeners) {
 			highLevelClientListener.clientDisconnected(this, throwable);
+		}
+	}
+
+	/**
+	 * Adds a high-level progress listener.
+	 * 
+	 * @param highLevelProgressListener
+	 *            The high-level progress listener to add
+	 */
+	public void addHighLevelProgressListener(HighLevelProgressListener highLevelProgressListener) {
+		highLevelProgressListeners.add(highLevelProgressListener);
+	}
+
+	/**
+	 * Removes a high-level progress listener.
+	 * 
+	 * @param highLevelProgressListener
+	 *            The high-level progress listener to remove
+	 */
+	public void removeHighLevelProgressListener(HighLevelProgressListener highLevelProgressListener) {
+		highLevelProgressListeners.remove(highLevelProgressListener);
+	}
+
+	/**
+	 * Notifies all listeners that the request with the given identifier made
+	 * some progress.
+	 * 
+	 * @param identifier
+	 *            The identifier of the request
+	 * @param highLevelProgress
+	 *            The progress of the request
+	 */
+	private void fireProgressReceived(String identifier, HighLevelProgress highLevelProgress) {
+		for (HighLevelProgressListener highLevelProgressListener: highLevelProgressListeners) {
+			highLevelProgressListener.progressReceived(identifier, highLevelProgress);
 		}
 	}
 
@@ -1035,8 +1073,8 @@ public class HighLevelClient {
 				downloadCallback.progressUpdated();
 				return;
 			}
-			/* unknown identifier? */
-			logger.warning("unknown identifier for SimpleProgress: " + identifier);
+			HighLevelProgress highLevelProgress = new HighLevelProgress(identifier, simpleProgress.getTotal(), simpleProgress.getRequired(), simpleProgress.getSucceeded(), simpleProgress.getFailed(), simpleProgress.getFatallyFailed(), simpleProgress.isFinalizedTotal());
+			fireProgressReceived(identifier, highLevelProgress);
 		}
 
 		/**
