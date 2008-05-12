@@ -85,6 +85,7 @@ import net.pterodactylus.fcp.TestDDAResponse;
 import net.pterodactylus.fcp.URIGenerated;
 import net.pterodactylus.fcp.UnknownNodeIdentifier;
 import net.pterodactylus.fcp.UnknownPeerNoteType;
+import net.pterodactylus.fcp.WatchGlobal;
 
 /**
  * A high-level client that allows simple yet full-featured access to a Freenet
@@ -305,6 +306,21 @@ public class HighLevelClient {
 		keyGenerationCallbacks.put(identifier, keyGenerationCallback);
 		fcpConnection.sendMessage(generateSSK);
 		return keyGenerationCallback;
+	}
+
+	/**
+	 * Sets whether to watch the global queue.
+	 * 
+	 * @param enabled
+	 *            <code>true</code> to watch the global queue in addition to
+	 *            the client-local queue, <code>false</code> to only watch the
+	 *            client-local queue
+	 * @throws IOException
+	 *             if an I/O error occurs communicating with the node
+	 */
+	public void setWatchGlobal(boolean enabled) throws IOException {
+		WatchGlobal watchGlobal = new WatchGlobal(enabled);
+		fcpConnection.sendMessage(watchGlobal);
 	}
 
 	/**
