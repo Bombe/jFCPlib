@@ -105,12 +105,6 @@ public class HighLevelClient {
 	/** The name of the client. */
 	private final String clientName;
 
-	/** The address of the node. */
-	private InetAddress address;
-
-	/** The port number of the node. */
-	private int port;
-
 	/** The FCP connection to the node. */
 	private FcpConnection fcpConnection;
 
@@ -123,7 +117,7 @@ public class HighLevelClient {
 	/** The listeners for progress events. */
 	private List<HighLevelProgressListener> highLevelProgressListeners = Collections.synchronizedList(new ArrayList<HighLevelProgressListener>());
 
-	/** The callback for {@link #connect()}. */
+	/** The callback for {@link #connect(String)}. */
 	private HighLevelCallback<ConnectResult> connectCallback;
 
 	/** Mapping from request identifiers to callbacks. */
@@ -150,60 +144,9 @@ public class HighLevelClient {
 	 * 
 	 * @param clientName
 	 *            The name of the client
-	 * @throws UnknownHostException
-	 *             if the hostname of the node can not be resolved.
 	 */
-	public HighLevelClient(String clientName) throws UnknownHostException {
-		this(clientName, "localhost");
-	}
-
-	/**
-	 * Creates a new high-level client that connects to a node on the given
-	 * host.
-	 * 
-	 * @param clientName
-	 *            The name of the client
-	 * @param host
-	 *            The hostname of the node
-	 * @throws UnknownHostException
-	 *             if the hostname of the node can not be resolved.
-	 */
-	public HighLevelClient(String clientName, String host) throws UnknownHostException {
-		this(clientName, host, FcpConnection.DEFAULT_PORT);
-	}
-
-	/**
-	 * Creates a new high-level client that connects to a node on the given
-	 * host.
-	 * 
-	 * @param clientName
-	 *            The name of the client
-	 * @param host
-	 *            The hostname of the node
-	 * @param port
-	 *            The port number of the node
-	 * @throws UnknownHostException
-	 *             if the hostname of the node can not be resolved.
-	 */
-	public HighLevelClient(String clientName, String host, int port) throws UnknownHostException {
-		this(clientName, InetAddress.getByName(host), port);
-	}
-
-	/**
-	 * Creates a new high-level client that connects to a node at the given
-	 * address.
-	 * 
-	 * @param clientName
-	 *            The name of the client
-	 * @param address
-	 *            The address of the node
-	 * @param port
-	 *            The port number of the node
-	 */
-	public HighLevelClient(String clientName, InetAddress address, int port) {
+	public HighLevelClient(String clientName) {
 		this.clientName = clientName;
-		this.address = address;
-		this.port = port;
 	}
 
 	//
@@ -302,6 +245,16 @@ public class HighLevelClient {
 		return fcpConnection;
 	}
 
+	/**
+	 * Returns whether the node is connected.
+	 * 
+	 * @return <code>true</code> if the node is currently connected,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean isConnected() {
+		return fcpConnection != null;
+	}
+
 	//
 	// ACTIONS
 	//
@@ -309,11 +262,47 @@ public class HighLevelClient {
 	/**
 	 * Connects the client.
 	 * 
+	 * @param hostname
+	 *            The hostname of the node
+	 * @return A callback with a connection result
+	 * @throws UnknownHostException
+	 *             if the hostname can not be resolved
+	 * @throws IOException
+	 *             if an I/O error occurs communicating with the node
+	 */
+	public HighLevelCallback<ConnectResult> connect(String hostname) throws UnknownHostException, IOException {
+		return connect(hostname, 9481);
+	}
+
+	/**
+	 * Connects the client.
+	 * 
+	 * @param hostname
+	 *            The hostname of the node
+	 * @param port
+	 *            The port number of the node
+	 * @return A callback with a connection result
+	 * @throws UnknownHostException
+	 *             if the hostname can not be resolved
+	 * @throws IOException
+	 *             if an I/O error occurs communicating with the node
+	 */
+	public HighLevelCallback<ConnectResult> connect(String hostname, int port) throws UnknownHostException, IOException {
+		return connect(InetAddress.getByName(hostname), port);
+	}
+
+	/**
+	 * Connects the client.
+	 * 
+	 * @param address
+	 *            The address of the node
+	 * @param port
+	 *            The port number of the node
 	 * @return A callback with a connection result
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
 	 */
-	public HighLevelCallback<ConnectResult> connect() throws IOException {
+	public HighLevelCallback<ConnectResult> connect(InetAddress address, int port) throws IOException {
 		fcpConnection = new FcpConnection(address, port);
 		fcpConnection.addFcpListener(highLevelClientFcpListener);
 		fcpConnection.connect();
@@ -528,6 +517,7 @@ public class HighLevelClient {
 		if (fcpConnection != null) {
 			fcpConnection.close();
 		}
+		fcpConnection = null;
 		fireClientDisconnected(throwable);
 	}
 
@@ -1073,7 +1063,6 @@ public class HighLevelClient {
 				downloadResult.setFatallyFailedBlocks(simpleProgress.getFatallyFailed());
 				downloadResult.setTotalFinalized(simpleProgress.isFinalizedTotal());
 				downloadCallback.progressUpdated();
-				return;
 			}
 			HighLevelProgress highLevelProgress = new HighLevelProgress(identifier, simpleProgress.getTotal(), simpleProgress.getRequired(), simpleProgress.getSucceeded(), simpleProgress.getFailed(), simpleProgress.getFatallyFailed(), simpleProgress.isFinalizedTotal());
 			fireProgressReceived(identifier, highLevelProgress);
