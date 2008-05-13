@@ -525,7 +525,9 @@ public class HighLevelClient {
 	 *            if there was no exception
 	 */
 	private void disconnect(Throwable throwable) {
-		fcpConnection.close();
+		if (fcpConnection != null) {
+			fcpConnection.close();
+		}
 		fireClientDisconnected(throwable);
 	}
 
