@@ -20,7 +20,7 @@
 package net.pterodactylus.fcp.highlevel;
 
 /**
- * A result of the {@link HighLevelClient#connect()} operation.
+ * A result of the {@link HighLevelClient#connect(String)} operation.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
