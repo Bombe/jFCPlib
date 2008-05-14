@@ -106,7 +106,7 @@ public class HighLevelClient {
 	private final String clientName;
 
 	/** The FCP connection to the node. */
-	private FcpConnection fcpConnection;
+	private FcpConnection fcpConnection = null;
 
 	/** Listeners for high-level client events. */
 	private List<HighLevelClientListener> highLevelClientListeners = Collections.synchronizedList(new ArrayList<HighLevelClientListener>());
@@ -518,7 +518,6 @@ public class HighLevelClient {
 			fcpConnection.close();
 		}
 		fcpConnection = null;
-		fireClientDisconnected(throwable);
 	}
 
 	/**
@@ -711,6 +710,7 @@ public class HighLevelClient {
 			}
 			cancelIdentifier(null);
 			disconnect(throwable);
+			fireClientDisconnected(throwable);
 		}
 
 		/**
