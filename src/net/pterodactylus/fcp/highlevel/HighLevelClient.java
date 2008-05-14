@@ -226,7 +226,7 @@ public class HighLevelClient {
 	 */
 	private void fireProgressReceived(String identifier, HighLevelProgress highLevelProgress) {
 		for (HighLevelProgressListener highLevelProgressListener: highLevelProgressListeners) {
-			highLevelProgressListener.progressReceived(identifier, highLevelProgress);
+			highLevelProgressListener.progressReceived(this, identifier, highLevelProgress);
 		}
 	}
 

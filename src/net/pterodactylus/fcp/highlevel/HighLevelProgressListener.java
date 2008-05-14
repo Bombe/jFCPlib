@@ -33,11 +33,13 @@ public interface HighLevelProgressListener extends EventListener {
 	 * Notifies a listener that the request with the given identifier has made
 	 * some progress.
 	 * 
+	 * @param highLevelClient
+	 *            The high-level client that emitted this event
 	 * @param identifier
 	 *            The identifier of the request
 	 * @param highLevelProgress
 	 *            The progress of the request
 	 */
-	public void progressReceived(String identifier, HighLevelProgress highLevelProgress);
+	public void progressReceived(HighLevelClient highLevelClient, String identifier, HighLevelProgress highLevelProgress);
 
 }
