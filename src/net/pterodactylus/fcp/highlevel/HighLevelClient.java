@@ -177,7 +177,7 @@ public class HighLevelClient {
 	 * Notifies all listeners that a client has connected.
 	 */
 	private void fireClientConnected() {
-		for (HighLevelClientListener highLevelClientListener: highLevelClientListeners) {
+		for (HighLevelClientListener highLevelClientListener : highLevelClientListeners) {
 			highLevelClientListener.clientConnected(this);
 		}
 	}
@@ -190,7 +190,7 @@ public class HighLevelClient {
 	 *            if there was no exception
 	 */
 	private void fireClientDisconnected(Throwable throwable) {
-		for (HighLevelClientListener highLevelClientListener: highLevelClientListeners) {
+		for (HighLevelClientListener highLevelClientListener : highLevelClientListeners) {
 			highLevelClientListener.clientDisconnected(this, throwable);
 		}
 	}
@@ -225,7 +225,7 @@ public class HighLevelClient {
 	 *            The progress of the request
 	 */
 	private void fireProgressReceived(String identifier, HighLevelProgress highLevelProgress) {
-		for (HighLevelProgressListener highLevelProgressListener: highLevelProgressListeners) {
+		for (HighLevelProgressListener highLevelProgressListener : highLevelProgressListeners) {
 			highLevelProgressListener.progressReceived(this, identifier, highLevelProgress);
 		}
 	}
@@ -304,7 +304,9 @@ public class HighLevelClient {
 	 */
 	public HighLevelCallback<ConnectResult> connect(InetAddress address, int port) throws IOException {
 		try {
-			fcpConnection = new FcpConnection(address, port);
+			synchronized (this) {
+				fcpConnection = new FcpConnection(address, port);
+			}
 			fcpConnection.addFcpListener(highLevelClientFcpListener);
 			fcpConnection.connect();
 			ClientHello clientHello = new ClientHello(clientName);
@@ -330,8 +332,11 @@ public class HighLevelClient {
 	 * @return A callback with the keypair
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
+	 * @throws HighLevelException
+	 *             if the client is not connected
 	 */
-	public HighLevelCallback<KeyGenerationResult> generateKey() throws IOException {
+	public HighLevelCallback<KeyGenerationResult> generateKey() throws IOException, HighLevelException {
+		checkConnection();
 		String identifier = generateIdentifier("generateSSK");
 		GenerateSSK generateSSK = new GenerateSSK(identifier);
 		HighLevelCallback<KeyGenerationResult> keyGenerationCallback = new HighLevelCallback<KeyGenerationResult>(new KeyGenerationResult(identifier));
@@ -349,8 +354,11 @@ public class HighLevelClient {
 	 *            client-local queue
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
+	 * @throws HighLevelException
+	 *             if the client is not connected
 	 */
-	public void setWatchGlobal(boolean enabled) throws IOException {
+	public void setWatchGlobal(boolean enabled) throws IOException, HighLevelException {
+		checkConnection();
 		WatchGlobal watchGlobal = new WatchGlobal(enabled);
 		fcpConnection.sendMessage(watchGlobal);
 	}
@@ -361,8 +369,11 @@ public class HighLevelClient {
 	 * @return A callback with the peer list
 	 * @throws IOException
 	 *             if an I/O error occurs with the node
+	 * @throws HighLevelException
+	 *             if the client is not connected
 	 */
-	public HighLevelCallback<PeerListResult> getPeers() throws IOException {
+	public HighLevelCallback<PeerListResult> getPeers() throws IOException, HighLevelException {
+		checkConnection();
 		String identifier = generateIdentifier("listPeers");
 		ListPeers listPeers = new ListPeers(identifier, true, true);
 		HighLevelCallback<PeerListResult> peerListCallback = new HighLevelCallback<PeerListResult>(new PeerListResult(identifier));
@@ -379,8 +390,11 @@ public class HighLevelClient {
 	 * @return A peer callback
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
+	 * @throws HighLevelException
+	 *             if the client is not connected
 	 */
-	public HighLevelCallback<PeerResult> addPeer(String nodeRefFile) throws IOException {
+	public HighLevelCallback<PeerResult> addPeer(String nodeRefFile) throws IOException, HighLevelException {
+		checkConnection();
 		String identifier = generateIdentifier("addPeer");
 		AddPeer addPeer = new AddPeer(nodeRefFile);
 		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult(identifier));
@@ -397,8 +411,11 @@ public class HighLevelClient {
 	 * @return A peer callback
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
+	 * @throws HighLevelException
+	 *             if the client is not connected
 	 */
-	public HighLevelCallback<PeerResult> addPeer(URL nodeRefURL) throws IOException {
+	public HighLevelCallback<PeerResult> addPeer(URL nodeRefURL) throws IOException, HighLevelException {
+		checkConnection();
 		String identifier = generateIdentifier("addPeer");
 		AddPeer addPeer = new AddPeer(nodeRefURL);
 		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult(identifier));
@@ -415,8 +432,11 @@ public class HighLevelClient {
 	 * @return A peer callback
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
+	 * @throws HighLevelException
+	 *             if the client is not connected
 	 */
-	public HighLevelCallback<PeerResult> addPeer(NodeRef nodeRef) throws IOException {
+	public HighLevelCallback<PeerResult> addPeer(NodeRef nodeRef) throws IOException, HighLevelException {
+		checkConnection();
 		String identifier = generateIdentifier("addPeer");
 		AddPeer addPeer = new AddPeer(nodeRef);
 		HighLevelCallback<PeerResult> peerCallback = new HighLevelCallback<PeerResult>(new PeerResult(identifier));
@@ -438,8 +458,12 @@ public class HighLevelClient {
 	 *            Whether you want to write to the given directory
 	 * @return A direct disk access callback
 	 * @throws IOException
+	 *             if an I/O error occurs communicating with the node
+	 * @throws HighLevelException
+	 *             if the client is not connected
 	 */
-	public HighLevelCallback<DirectDiskAccessResult> checkDirectDiskAccess(String directory, boolean wantRead, boolean wantWrite) throws IOException {
+	public HighLevelCallback<DirectDiskAccessResult> checkDirectDiskAccess(String directory, boolean wantRead, boolean wantWrite) throws IOException, HighLevelException {
+		checkConnection();
 		TestDDARequest testDDARequest = new TestDDARequest(directory, wantRead, wantWrite);
 		HighLevelCallback<DirectDiskAccessResult> directDiskAccessCallback = new HighLevelCallback<DirectDiskAccessResult>(new DirectDiskAccessResult(directory));
 		directDiskAccessCallbacks.put(directory, directDiskAccessCallback);
@@ -464,8 +488,11 @@ public class HighLevelClient {
 	 * @return A download result
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
+	 * @throws HighLevelException
+	 *             if the client is not connected
 	 */
-	public HighLevelProgressCallback<DownloadResult> download(String uri, String filename, boolean global) throws IOException {
+	public HighLevelProgressCallback<DownloadResult> download(String uri, String filename, boolean global) throws IOException, HighLevelException {
+		checkConnection();
 		String identifier = generateIdentifier("download");
 		ClientGet clientGet = new ClientGet(uri, identifier, (filename == null) ? ReturnType.direct : ReturnType.disk);
 		clientGet.setGlobal(global);
@@ -481,8 +508,11 @@ public class HighLevelClient {
 	 * @return The request list result
 	 * @throws IOException
 	 *             if an I/O errors communicating with the node
+	 * @throws HighLevelException
+	 *             if the client is not connected
 	 */
-	public HighLevelCallback<RequestListResult> getRequests() throws IOException {
+	public HighLevelCallback<RequestListResult> getRequests() throws IOException, HighLevelException {
+		checkConnection();
 		String identifier = generateIdentifier("list-persistent-requests");
 		ListPersistentRequests listPersistentRequests = new ListPersistentRequests();
 		synchronized (syncObject) {
@@ -498,6 +528,21 @@ public class HighLevelClient {
 	//
 	// PRIVATE METHODS
 	//
+
+	/**
+	 * Checks whether the client is already connected and throws an exception if
+	 * it is not.
+	 * 
+	 * @throws HighLevelException
+	 *             if the client is not connected
+	 */
+	private void checkConnection() throws HighLevelException {
+		synchronized (this) {
+			if (fcpConnection == null) {
+				throw new HighLevelException("client is not connected");
+			}
+		}
+	}
 
 	/**
 	 * Generates an identifier for the given function.
@@ -571,31 +616,31 @@ public class HighLevelClient {
 			}
 			if (identifier == null) {
 				/* key generation callbacks */
-				for (Entry<String, HighLevelCallback<KeyGenerationResult>> keyGenerationEntry: keyGenerationCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<KeyGenerationResult>> keyGenerationEntry : keyGenerationCallbacks.entrySet()) {
 					keyGenerationEntry.getValue().getIntermediaryResult().setFailed(true);
 					keyGenerationEntry.getValue().setDone();
 				}
 				keyGenerationCallbacks.clear();
 				/* peer list callbacks. */
-				for (Entry<String, HighLevelCallback<PeerListResult>> peerListEntry: peerListCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<PeerListResult>> peerListEntry : peerListCallbacks.entrySet()) {
 					peerListEntry.getValue().getIntermediaryResult().setFailed(true);
 					peerListEntry.getValue().setDone();
 				}
 				peerListCallbacks.clear();
 				/* peer callbacks. */
-				for (Entry<String, HighLevelCallback<PeerResult>> peerEntry: peerCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<PeerResult>> peerEntry : peerCallbacks.entrySet()) {
 					peerEntry.getValue().getIntermediaryResult().setFailed(true);
 					peerEntry.getValue().setDone();
 				}
 				peerCallbacks.clear();
 				/* direct disk access callbacks. */
-				for (Entry<String, HighLevelCallback<DirectDiskAccessResult>> directDiskAccessEntry: directDiskAccessCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<DirectDiskAccessResult>> directDiskAccessEntry : directDiskAccessCallbacks.entrySet()) {
 					directDiskAccessEntry.getValue().getIntermediaryResult().setFailed(true);
 					directDiskAccessEntry.getValue().setDone();
 				}
 				directDiskAccessCallbacks.clear();
 				/* download callbacks. */
-				for (Entry<String, HighLevelProgressCallback<DownloadResult>> downloadEntry: downloadCallbacks.entrySet()) {
+				for (Entry<String, HighLevelProgressCallback<DownloadResult>> downloadEntry : downloadCallbacks.entrySet()) {
 					downloadEntry.getValue().getIntermediaryResult().setFailed(true);
 					downloadEntry.getValue().setDone();
 				}
