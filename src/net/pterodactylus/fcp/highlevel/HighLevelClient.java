@@ -303,13 +303,18 @@ public class HighLevelClient {
 	 *             if an I/O error occurs communicating with the node
 	 */
 	public HighLevelCallback<ConnectResult> connect(InetAddress address, int port) throws IOException {
-		fcpConnection = new FcpConnection(address, port);
-		fcpConnection.addFcpListener(highLevelClientFcpListener);
-		fcpConnection.connect();
-		ClientHello clientHello = new ClientHello(clientName);
-		connectCallback = new HighLevelCallback<ConnectResult>(new ConnectResult());
-		fcpConnection.sendMessage(clientHello);
-		return connectCallback;
+		try {
+			fcpConnection = new FcpConnection(address, port);
+			fcpConnection.addFcpListener(highLevelClientFcpListener);
+			fcpConnection.connect();
+			ClientHello clientHello = new ClientHello(clientName);
+			connectCallback = new HighLevelCallback<ConnectResult>(new ConnectResult());
+			fcpConnection.sendMessage(clientHello);
+			return connectCallback;
+		} catch (IOException ioe1) {
+			fcpConnection = null;
+			throw ioe1;
+		}
 	}
 
 	/**
