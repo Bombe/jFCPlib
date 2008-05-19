@@ -533,13 +533,13 @@ public class HighLevelClient {
 	 * Checks whether the client is already connected and throws an exception if
 	 * it is not.
 	 * 
-	 * @throws HighLevelException
+	 * @throws NotConnectedException
 	 *             if the client is not connected
 	 */
-	private void checkConnection() throws HighLevelException {
+	private void checkConnection() throws NotConnectedException {
 		synchronized (this) {
 			if (fcpConnection == null) {
-				throw new HighLevelException("client is not connected");
+				throw new NotConnectedException("client is not connected");
 			}
 		}
 	}
