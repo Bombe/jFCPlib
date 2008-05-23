@@ -177,7 +177,7 @@ public class HighLevelClient {
 	 * Notifies all listeners that a client has connected.
 	 */
 	private void fireClientConnected() {
-		for (HighLevelClientListener highLevelClientListener : highLevelClientListeners) {
+		for (HighLevelClientListener highLevelClientListener: highLevelClientListeners) {
 			highLevelClientListener.clientConnected(this);
 		}
 	}
@@ -190,7 +190,7 @@ public class HighLevelClient {
 	 *            if there was no exception
 	 */
 	private void fireClientDisconnected(Throwable throwable) {
-		for (HighLevelClientListener highLevelClientListener : highLevelClientListeners) {
+		for (HighLevelClientListener highLevelClientListener: highLevelClientListeners) {
 			highLevelClientListener.clientDisconnected(this, throwable);
 		}
 	}
@@ -225,7 +225,7 @@ public class HighLevelClient {
 	 *            The progress of the request
 	 */
 	private void fireProgressReceived(String identifier, HighLevelProgress highLevelProgress) {
-		for (HighLevelProgressListener highLevelProgressListener : highLevelProgressListeners) {
+		for (HighLevelProgressListener highLevelProgressListener: highLevelProgressListeners) {
 			highLevelProgressListener.progressReceived(this, identifier, highLevelProgress);
 		}
 	}
@@ -616,31 +616,31 @@ public class HighLevelClient {
 			}
 			if (identifier == null) {
 				/* key generation callbacks */
-				for (Entry<String, HighLevelCallback<KeyGenerationResult>> keyGenerationEntry : keyGenerationCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<KeyGenerationResult>> keyGenerationEntry: keyGenerationCallbacks.entrySet()) {
 					keyGenerationEntry.getValue().getIntermediaryResult().setFailed(true);
 					keyGenerationEntry.getValue().setDone();
 				}
 				keyGenerationCallbacks.clear();
 				/* peer list callbacks. */
-				for (Entry<String, HighLevelCallback<PeerListResult>> peerListEntry : peerListCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<PeerListResult>> peerListEntry: peerListCallbacks.entrySet()) {
 					peerListEntry.getValue().getIntermediaryResult().setFailed(true);
 					peerListEntry.getValue().setDone();
 				}
 				peerListCallbacks.clear();
 				/* peer callbacks. */
-				for (Entry<String, HighLevelCallback<PeerResult>> peerEntry : peerCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<PeerResult>> peerEntry: peerCallbacks.entrySet()) {
 					peerEntry.getValue().getIntermediaryResult().setFailed(true);
 					peerEntry.getValue().setDone();
 				}
 				peerCallbacks.clear();
 				/* direct disk access callbacks. */
-				for (Entry<String, HighLevelCallback<DirectDiskAccessResult>> directDiskAccessEntry : directDiskAccessCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<DirectDiskAccessResult>> directDiskAccessEntry: directDiskAccessCallbacks.entrySet()) {
 					directDiskAccessEntry.getValue().getIntermediaryResult().setFailed(true);
 					directDiskAccessEntry.getValue().setDone();
 				}
 				directDiskAccessCallbacks.clear();
 				/* download callbacks. */
-				for (Entry<String, HighLevelProgressCallback<DownloadResult>> downloadEntry : downloadCallbacks.entrySet()) {
+				for (Entry<String, HighLevelProgressCallback<DownloadResult>> downloadEntry: downloadCallbacks.entrySet()) {
 					downloadEntry.getValue().getIntermediaryResult().setFailed(true);
 					downloadEntry.getValue().setDone();
 				}
@@ -791,6 +791,7 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedDataFound(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.DataFound)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedDataFound(FcpConnection fcpConnection, DataFound dataFound) {
 			if (fcpConnection != HighLevelClient.this.fcpConnection) {
 				return;
@@ -805,7 +806,7 @@ public class HighLevelClient {
 				downloadCallback.setDone();
 			}
 			HighLevelProgress highLevelProgress = new HighLevelProgress(identifier, true);
-			fireProgressReceived(identifier , highLevelProgress);
+			fireProgressReceived(identifier, highLevelProgress);
 		}
 
 		/**
@@ -1069,6 +1070,7 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedPutFailed(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.PutFailed)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedPutFailed(FcpConnection fcpConnection, PutFailed putFailed) {
 			if (fcpConnection != HighLevelClient.this.fcpConnection) {
 				return;
@@ -1091,6 +1093,7 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedPutFetchable(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.PutFetchable)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedPutFetchable(FcpConnection fcpConnection, PutFetchable putFetchable) {
 			if (fcpConnection != HighLevelClient.this.fcpConnection) {
 				return;
@@ -1106,6 +1109,7 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedPutSuccessful(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.PutSuccessful)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedPutSuccessful(FcpConnection fcpConnection, PutSuccessful putSuccessful) {
 			if (fcpConnection != HighLevelClient.this.fcpConnection) {
 				return;
@@ -1236,6 +1240,7 @@ public class HighLevelClient {
 		 * @see net.pterodactylus.fcp.FcpListener#receivedURIGenerated(net.pterodactylus.fcp.FcpConnection,
 		 *      net.pterodactylus.fcp.URIGenerated)
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void receivedURIGenerated(FcpConnection fcpConnection, URIGenerated uriGenerated) {
 			if (fcpConnection != HighLevelClient.this.fcpConnection) {
 				return;
