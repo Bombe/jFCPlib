@@ -1237,7 +1237,13 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.URIGenerated)
 		 */
 		public void receivedURIGenerated(FcpConnection fcpConnection, URIGenerated uriGenerated) {
-			/* TODO */
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = uriGenerated.getIdentifier();
+			/* TODO - check inserts */
+			HighLevelProgress highLevelProgress = new HighLevelProgress(identifier, uriGenerated.getURI());
+			fireProgressReceived(identifier, highLevelProgress);
 		}
 
 		/**
