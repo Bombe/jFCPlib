@@ -135,7 +135,7 @@ public class HighLevelCallback<R extends HighLevelResult> {
 	 */
 	public R getResult(long waitTime) throws InterruptedException {
 		synchronized (syncObject) {
-			if (!resultComplete) {
+			while (!resultComplete) {
 				syncObject.wait(waitTime);
 			}
 			return result;
@@ -163,7 +163,7 @@ public class HighLevelCallback<R extends HighLevelResult> {
 				return;
 			}
 			resultComplete = true;
-			syncObject.notify();
+			syncObject.notifyAll();
 		}
 		fireGotResult();
 	}

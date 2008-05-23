@@ -21,11 +21,30 @@ package net.pterodactylus.fcp.highlevel;
 
 /**
  * Result for operations that send progress messages until they have completed.
+ * The fields of the progress message has to be checked in given order because
+ * if you receive this progress asynchronously via a
+ * {@link HighLevelProgressListener} the progress will not have any state, you
+ * will simply get the latest results, with other fields unset. First you should
+ * check whether {@link #isFinished()} returns <code>true</code>. If it does,
+ * the request is finished and {@link #isFailed()} will tell you whether the
+ * request has failed or succeeded. Other fields are not set. If the request is
+ * not yet finished, {@link #isFetchable()} will tell you whether the request
+ * has progressed to a state that allows other clients to fetch the inserted
+ * data. This is of course only valid for Put and PutDir requests. If none of
+ * those methods return <code>true</code>, you can use the block count
+ * methods to get detailed progress statistics. When progress you received is a
+ * {@link DownloadResult} you do not need to check
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  * @version $Id$
  */
 public class HighLevelProgress extends HighLevelResult {
+
+	/** Whether the request is finished. */
+	private boolean finished;
+
+	/** Whether a Put request should be fetchable now. */
+	private boolean fetchable;
 
 	/** The number of total blocks. */
 	private int totalBlocks;
@@ -56,6 +75,21 @@ public class HighLevelProgress extends HighLevelResult {
 	}
 
 	/**
+	 * Creates a new high-level progress for a request that is finished.
+	 * 
+	 * @param identifier
+	 *            The identifier of the request
+	 * @param successful
+	 *            <code>true</code> if the request finished successfully,
+	 *            <code>false</code> otherwise
+	 */
+	public HighLevelProgress(String identifier, boolean successful) {
+		this(identifier);
+		finished = true;
+		setFailed(!successful);
+	}
+
+	/**
 	 * Creates a new high-level progress with the given values.
 	 * 
 	 * @param identifier
@@ -82,6 +116,51 @@ public class HighLevelProgress extends HighLevelResult {
 		this.failedBlocks = failedBlocks;
 		this.fatallyFailedBlocks = fatallyFailedBlocks;
 		this.totalFinalized = totalFinalized;
+	}
+
+	/**
+	 * Returns whether this progress means that a request has finished. Use
+	 * {@link #isFailed()} to check if the request failed.
+	 * 
+	 * @see #isFailed()
+	 * @return <code>true</code> if the request has finished
+	 */
+	public boolean isFinished() {
+		return finished;
+	}
+
+	/**
+	 * Sets whether the request described by this progress has finished.
+	 * 
+	 * @param finished
+	 *            <code>true</code> if the request has finished,
+	 *            <code>false</code> otherwise
+	 */
+	void setFinished(boolean finished) {
+		this.finished = finished;
+	}
+
+	/**
+	 * Returns whether the request should be fetchable now, in case it was a Put
+	 * request.
+	 * 
+	 * @return <code>true</code> if the request should be fetchable now,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean isFetchable() {
+		return fetchable;
+	}
+
+	/**
+	 * Sets whether the request should be fetchable now, in case it was a Put
+	 * request.
+	 * 
+	 * @param fetchable
+	 *            <code>true</code> if the request should be fetchable now,
+	 *            <code>false</code> otherwise
+	 */
+	void setFetchable(boolean fetchable) {
+		this.fetchable = fetchable;
 	}
 
 	/**

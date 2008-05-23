@@ -792,7 +792,20 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.DataFound)
 		 */
 		public void receivedDataFound(FcpConnection fcpConnection, DataFound dataFound) {
-			/* TODO */
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = dataFound.getIdentifier();
+			HighLevelProgressCallback<DownloadResult> downloadCallback = downloadCallbacks.get(identifier);
+			if (downloadCallback != null) {
+				DownloadResult downloadResult = downloadCallback.getIntermediaryResult();
+				downloadResult.setFinished(true);
+				downloadResult.setFailed(false);
+				downloadCallback.progressUpdated();
+				downloadCallback.setDone();
+			}
+			HighLevelProgress highLevelProgress = new HighLevelProgress(identifier, true);
+			fireProgressReceived(identifier , highLevelProgress);
 		}
 
 		/**
@@ -859,7 +872,9 @@ public class HighLevelClient {
 			String identifier = getFailed.getIdentifier();
 			HighLevelProgressCallback<DownloadResult> downloadCallback = downloadCallbacks.remove(identifier);
 			if (downloadCallback != null) {
-				downloadCallback.getIntermediaryResult().setFailed(true);
+				DownloadResult downloadResult = downloadCallback.getIntermediaryResult();
+				downloadResult.setFailed(true);
+				downloadResult.setFinished(true);
 				downloadCallback.setDone();
 				return;
 			}
@@ -1055,7 +1070,21 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PutFailed)
 		 */
 		public void receivedPutFailed(FcpConnection fcpConnection, PutFailed putFailed) {
-			/* TODO */
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = putFailed.getIdentifier();
+			HighLevelProgressCallback<DownloadResult> downloadCallback = downloadCallbacks.get(identifier);
+			if (downloadCallback != null) {
+				DownloadResult downloadResult = downloadCallback.getIntermediaryResult();
+				downloadResult.setFailed(true);
+				downloadResult.setFinished(true);
+				downloadCallback.progressUpdated();
+				downloadCallback.setDone();
+			}
+			/* TODO - check inserts */
+			HighLevelProgress highLevelProgress = new HighLevelProgress(identifier, true);
+			fireProgressReceived(identifier, highLevelProgress);
 		}
 
 		/**
@@ -1063,7 +1092,14 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PutFetchable)
 		 */
 		public void receivedPutFetchable(FcpConnection fcpConnection, PutFetchable putFetchable) {
-			/* TODO */
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = putFetchable.getIdentifier();
+			/* TODO - check inserts */
+			HighLevelProgress highLevelProgress = new HighLevelProgress(identifier);
+			highLevelProgress.setFetchable(true);
+			fireProgressReceived(identifier, highLevelProgress);
 		}
 
 		/**
@@ -1071,7 +1107,20 @@ public class HighLevelClient {
 		 *      net.pterodactylus.fcp.PutSuccessful)
 		 */
 		public void receivedPutSuccessful(FcpConnection fcpConnection, PutSuccessful putSuccessful) {
-			/* TODO */
+			if (fcpConnection != HighLevelClient.this.fcpConnection) {
+				return;
+			}
+			String identifier = putSuccessful.getIdentifier();
+			HighLevelProgressCallback<DownloadResult> downloadCallback = downloadCallbacks.get(identifier);
+			if (downloadCallback != null) {
+				DownloadResult downloadResult = downloadCallback.getIntermediaryResult();
+				downloadResult.setFinished(true);
+				downloadResult.setFailed(false);
+				downloadCallback.progressUpdated();
+			}
+			/* TODO - check inserts */
+			HighLevelProgress highLevelProgress = new HighLevelProgress(identifier, true);
+			fireProgressReceived(identifier, highLevelProgress);
 		}
 
 		/**
@@ -1114,6 +1163,7 @@ public class HighLevelClient {
 				downloadResult.setTotalFinalized(simpleProgress.isFinalizedTotal());
 				downloadCallback.progressUpdated();
 			}
+			/* TODO - check inserts */
 			HighLevelProgress highLevelProgress = new HighLevelProgress(identifier, simpleProgress.getTotal(), simpleProgress.getRequired(), simpleProgress.getSucceeded(), simpleProgress.getFailed(), simpleProgress.getFatallyFailed(), simpleProgress.isFinalizedTotal());
 			fireProgressReceived(identifier, highLevelProgress);
 		}
