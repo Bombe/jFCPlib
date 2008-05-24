@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * {@link ClientPut} and {@link ClientGet} requests.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public enum UploadFrom {
 

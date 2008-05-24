@@ -25,7 +25,6 @@ package net.pterodactylus.fcp;
  * fetchable.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class PutFetchable extends BaseMessage {
 

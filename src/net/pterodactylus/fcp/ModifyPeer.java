@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * The “ModifyPeer” request lets you modify certain properties of a peer.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ModifyPeer extends FcpMessage {
 

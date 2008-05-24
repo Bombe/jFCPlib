@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * entered for a node. Note that notes are only supported for darknet nodes.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ListPeerNotes extends FcpMessage {
 

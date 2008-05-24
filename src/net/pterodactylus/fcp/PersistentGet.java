@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * persistent download, either in the client-local queue or in the global queue.
  * 
  * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
- * @version $Id$
  */
 public class PersistentGet extends BaseMessage {
 

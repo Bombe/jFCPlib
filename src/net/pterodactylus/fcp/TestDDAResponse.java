@@ -25,7 +25,6 @@ package net.pterodactylus.fcp;
  * read the content of the file given by {@link TestDDAReply#getReadFilename()}.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class TestDDAResponse extends FcpMessage {
 

@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * the request data has been finished.
  * 
  * @author David Roden &lt;droden@gmail.com&gt;
- * @version $Id$
  */
 public class FinishedCompression extends BaseMessage {
 

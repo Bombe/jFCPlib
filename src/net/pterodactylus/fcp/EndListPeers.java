@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * This message marks the end of a list of “Peer” replies.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class EndListPeers extends BaseMessage {
 

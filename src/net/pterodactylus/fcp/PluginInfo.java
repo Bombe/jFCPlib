@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * The “PluginInfo” message is a reply to the {@link GetPluginInfo} request.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class PluginInfo extends BaseMessage {
 

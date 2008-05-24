@@ -25,7 +25,6 @@ package net.pterodactylus.fcp;
  * on your {@link WatchGlobal} status.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ListPersistentRequests extends FcpMessage {
 

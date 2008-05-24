@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * {@link ClientPut} request.
  * 
  * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
- * @version $Id$
  */
 public class PersistentPut extends BaseMessage {
 

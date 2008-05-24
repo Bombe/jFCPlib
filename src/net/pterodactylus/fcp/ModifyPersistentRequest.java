@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * persistent request while it is running.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ModifyPersistentRequest extends FcpMessage {
 

@@ -29,7 +29,6 @@ import net.pterodactylus.fcp.Verbosity;
  * A put request result will be contained in a {@link RequestListResult}.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class PutRequestResult extends RequestResult {
 

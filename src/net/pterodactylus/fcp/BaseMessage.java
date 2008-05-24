@@ -25,7 +25,6 @@ import java.util.Map;
  * A basic message abstraction that wraps a received FCP message.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class BaseMessage {
 

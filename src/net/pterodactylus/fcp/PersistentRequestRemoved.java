@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * removed from either the global or the client-local queue.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class PersistentRequestRemoved extends BaseMessage {
 

@@ -24,16 +24,15 @@ import java.util.EventListener;
 /**
  * Interface for objects that want to be notified on certain high-level client
  * events.
- *
+ * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public interface HighLevelClientListener extends EventListener {
 
 	/**
 	 * Notifies a listener that the given high-level client was connected to the
 	 * node.
-	 *
+	 * 
 	 * @param highLevelClient
 	 *            The client that was connected
 	 */
@@ -41,7 +40,7 @@ public interface HighLevelClientListener extends EventListener {
 
 	/**
 	 * Notifies a listener that the given client was disconnected from the node.
-	 *
+	 * 
 	 * @param highLevelClient
 	 *            The client that was disconnected
 	 * @param throwable

@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * of a USK changes.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class SubscribeUSK extends FcpMessage {
 

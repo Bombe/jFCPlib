@@ -1,13 +1,13 @@
 /**
  * 
  */
+
 package net.pterodactylus.fcp.highlevel;
 
 /**
  * Base exception for high-level client exceptions.
  * 
  * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
- * @version $Id$
  */
 public class HighLevelException extends Exception {
 

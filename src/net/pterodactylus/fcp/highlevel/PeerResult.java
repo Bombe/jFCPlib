@@ -28,7 +28,6 @@ import net.pterodactylus.fcp.Peer;
  * {@link HighLevelClient#addPeer(net.pterodactylus.fcp.NodeRef)}.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class PeerResult extends HighLevelResult {
 

@@ -31,7 +31,6 @@ import java.io.InputStream;
  * consumed, the payload is discarded!
  * 
  * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
- * @version $Id$
  */
 public class AllData extends BaseMessage {
 

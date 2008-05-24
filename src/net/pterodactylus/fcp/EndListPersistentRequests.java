@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  * {@link PersistentGet} and {@link PersistentPut} requests.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
+
  */
 public class EndListPersistentRequests extends BaseMessage {
 

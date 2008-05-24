@@ -28,7 +28,6 @@ import java.util.Map;
  * 
  * @see ClientPutComplexDir#addFileEntry(FileEntry)
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public abstract class FileEntry {
 
@@ -114,7 +113,6 @@ public abstract class FileEntry {
 	 * {@link ClientPutComplexDir} message.
 	 * 
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
-	 * @version $Id$
 	 */
 	static class DirectFileEntry extends FileEntry {
 
@@ -191,7 +189,6 @@ public abstract class FileEntry {
 	 * A file entry for a file that should be uploaded from the disk.
 	 * 
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
-	 * @version $Id$
 	 */
 	static class DiskFileEntry extends FileEntry {
 
@@ -262,7 +259,6 @@ public abstract class FileEntry {
 	 * A file entry for a file that redirects to another URI.
 	 * 
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
-	 * @version $Id$
 	 */
 	static class RedirectFileEntry extends FileEntry {
 

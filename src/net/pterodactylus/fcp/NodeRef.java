@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * establish a trusted and secure connection to the node.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class NodeRef {
 

@@ -26,7 +26,6 @@ import java.io.InputStream;
  * {@link FCPPluginMessage} message.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class FCPPluginReply extends BaseMessage {
 

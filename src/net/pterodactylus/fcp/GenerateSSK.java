@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * key pair.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class GenerateSSK extends FcpMessage {
 

@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * darknet peer.
  * 
  * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
- * @version $Id$
  */
 public class PeerNote extends BaseMessage {
 

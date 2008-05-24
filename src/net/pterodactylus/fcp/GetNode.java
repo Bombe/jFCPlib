@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * optionally including private and volatile data.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class GetNode extends FcpMessage {
 

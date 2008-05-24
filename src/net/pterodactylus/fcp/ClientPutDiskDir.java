@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * the disk to a single key.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ClientPutDiskDir extends FcpMessage {
 

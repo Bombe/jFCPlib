@@ -28,7 +28,6 @@ import java.util.List;
  * The request list results lists all currently running requests on a node.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class RequestListResult extends HighLevelResult implements Iterable<RequestResult> {
 

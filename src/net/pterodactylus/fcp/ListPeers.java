@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * The “ListPeer” requests asks the node for a list of all peers it has.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ListPeers extends FcpMessage {
 

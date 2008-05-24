@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * 
  * @see GetConfig
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ConfigData extends BaseMessage {
 

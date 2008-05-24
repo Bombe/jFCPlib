@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * node, which will response with a {@link PluginInfo} message.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class GetPluginInfo extends FcpMessage {
 

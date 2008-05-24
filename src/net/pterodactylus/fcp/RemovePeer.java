@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * The “RemovePeer” command removes a peer.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class RemovePeer extends FcpMessage {
 

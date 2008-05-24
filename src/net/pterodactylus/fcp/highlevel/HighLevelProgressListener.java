@@ -25,7 +25,6 @@ import java.util.EventListener;
  * Interface for objects that want to observe the progression of requests.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public interface HighLevelProgressListener extends EventListener {
 

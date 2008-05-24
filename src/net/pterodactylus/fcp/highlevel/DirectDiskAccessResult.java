@@ -23,7 +23,6 @@ package net.pterodactylus.fcp.highlevel;
  * The result of a direct disk access check.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class DirectDiskAccessResult extends HighLevelResult {
 

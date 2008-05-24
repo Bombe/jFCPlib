@@ -27,7 +27,6 @@ import java.security.interfaces.DSAParams;
  * 
  * @see DSAParams
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class DSAGroup {
 

@@ -92,7 +92,6 @@ import net.pterodactylus.fcp.WatchGlobal;
  * node.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class HighLevelClient {
 
@@ -574,7 +573,6 @@ public class HighLevelClient {
 	 * FCP listener for {@link HighLevelClient}.
 	 * 
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
-	 * @version $Id$
 	 */
 	private class HighLevelClientFcpListener implements FcpListener {
 

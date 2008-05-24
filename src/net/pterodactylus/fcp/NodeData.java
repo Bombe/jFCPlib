@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * The “NodeData” contains the noderef of the node, along with additional data.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class NodeData extends BaseMessage {
 

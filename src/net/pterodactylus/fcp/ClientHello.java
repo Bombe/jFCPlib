@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * after calling {@link FcpConnection#connect()}.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ClientHello extends FcpMessage {
 

@@ -25,7 +25,6 @@ package net.pterodactylus.fcp;
  * completed {@link ClientGet} with a return type of {@link ReturnType#direct}.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class GetRequestStatus extends FcpMessage {
 

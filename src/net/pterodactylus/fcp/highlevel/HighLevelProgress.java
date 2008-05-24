@@ -38,7 +38,6 @@ package net.pterodactylus.fcp.highlevel;
  * you do not need to check
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class HighLevelProgress extends HighLevelResult {
 

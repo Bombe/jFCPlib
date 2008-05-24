@@ -27,7 +27,6 @@ package net.pterodactylus.fcp;
  * will give you a filename to write {@link #getContentToWrite()} to.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class TestDDAReply extends BaseMessage {
 

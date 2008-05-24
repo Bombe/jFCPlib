@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * The different return types for {@link ClientGet} requests.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public enum ReturnType {
 

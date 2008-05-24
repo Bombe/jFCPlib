@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * addition to the client-local queue.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class WatchGlobal extends FcpMessage {
 

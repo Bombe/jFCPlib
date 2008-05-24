@@ -25,9 +25,8 @@ import junit.framework.TestCase;
 
 /**
  * Tests various commands and the FCP connection.
- *
+ * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class FcpTest extends TestCase {
 
@@ -62,7 +61,7 @@ public class FcpTest extends TestCase {
 
 	/**
 	 * Generates an SSK key pair.
-	 *
+	 * 
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @throws InterruptedException

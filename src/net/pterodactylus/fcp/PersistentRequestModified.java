@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * {@link ModifyPersistentRequest}.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class PersistentRequestModified extends BaseMessage {
 

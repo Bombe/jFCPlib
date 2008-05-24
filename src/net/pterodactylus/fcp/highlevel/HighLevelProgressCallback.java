@@ -29,7 +29,6 @@ import java.util.List;
  * <P>
  * The type of the high-level progress
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class HighLevelProgressCallback<P extends HighLevelProgress> extends HighLevelCallback<P> {
 

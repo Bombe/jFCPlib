@@ -23,7 +23,6 @@ package net.pterodactylus.fcp.highlevel;
  * Base class for results of {@link HighLevelClient} operations.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public abstract class HighLevelResult {
 

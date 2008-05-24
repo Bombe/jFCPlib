@@ -23,7 +23,6 @@ package net.pterodactylus.fcp.highlevel;
  * Result of a {@link HighLevelClient#generateKey()} operation.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class KeyGenerationResult extends HighLevelResult {
 

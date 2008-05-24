@@ -30,7 +30,6 @@ import java.util.List;
  * @param <R>
  *            The type of the high-level operation result
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class HighLevelCallback<R extends HighLevelResult> {
 

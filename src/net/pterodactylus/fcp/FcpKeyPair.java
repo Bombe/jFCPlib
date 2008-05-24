@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * Container for an SSK keypair.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class FcpKeyPair {
 

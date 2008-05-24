@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package net.pterodactylus.fcp.highlevel;
 
 /**
@@ -8,7 +9,6 @@ package net.pterodactylus.fcp.highlevel;
  * connection.
  * 
  * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
- * @version $Id$
  */
 public class NotConnectedException extends HighLevelException {
 

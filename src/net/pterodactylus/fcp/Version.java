@@ -25,7 +25,6 @@ import java.util.StringTokenizer;
  * Container for the “lastGoodVersion” field.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class Version {
 

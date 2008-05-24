@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * {@link ClientGet} or {@link ClientPut} operation.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class SimpleProgress extends BaseMessage {
 

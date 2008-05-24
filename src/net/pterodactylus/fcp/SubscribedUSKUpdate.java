@@ -27,7 +27,6 @@ package net.pterodactylus.fcp;
  * inbetween as welL!
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class SubscribedUSKUpdate extends BaseMessage {
 

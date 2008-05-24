@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * identifier given in a command like {@link ListPeer} is unknown.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class UnknownNodeIdentifier extends BaseMessage {
 

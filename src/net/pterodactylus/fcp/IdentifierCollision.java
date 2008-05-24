@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * chosen for a request is already existing.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class IdentifierCollision extends BaseMessage {
 

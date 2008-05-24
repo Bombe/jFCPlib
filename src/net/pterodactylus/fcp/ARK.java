@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * Container for ARKs (address resolution keys).
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ARK {
 

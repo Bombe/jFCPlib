@@ -24,7 +24,6 @@ package net.pterodactylus.fcp.highlevel;
  * {@link HighLevelClient#getRequests()}.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class RequestResult extends HighLevelResult {
 

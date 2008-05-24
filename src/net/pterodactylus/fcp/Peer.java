@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * The “Peer” reply by the node contains information about a peer.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class Peer extends BaseMessage {
 

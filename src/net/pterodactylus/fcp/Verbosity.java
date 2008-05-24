@@ -27,7 +27,6 @@ package net.pterodactylus.fcp;
  * new verbosity using {@link #add(Verbosity)}.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class Verbosity {
 

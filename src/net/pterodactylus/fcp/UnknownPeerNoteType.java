@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * note used in a previous {@link ModifyPeerNote} is unknown.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class UnknownPeerNoteType extends BaseMessage {
 

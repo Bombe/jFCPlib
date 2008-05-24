@@ -25,7 +25,6 @@ package net.pterodactylus.fcp;
  * {@link PutFailed} message), if necessary.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class RemovePersistentRequest extends FcpMessage {
 

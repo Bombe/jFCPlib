@@ -28,7 +28,6 @@ import java.util.EventListener;
  * @param <R>
  *            The type of the high-level operation progress
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public interface HighLevelCallbackListener<R extends HighLevelResult> extends EventListener {
 

@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * messages.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class EndListPeerNotes extends BaseMessage {
 

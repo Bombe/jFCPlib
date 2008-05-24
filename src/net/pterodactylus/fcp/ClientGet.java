@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * A “ClientGet” request is used for download files from the Freenet node.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ClientGet extends FcpMessage {
 

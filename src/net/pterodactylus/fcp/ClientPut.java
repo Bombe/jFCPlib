@@ -25,7 +25,6 @@ package net.pterodactylus.fcp;
  * disk ({@link UploadFrom#disk}) or by creating a redirect to another URI ({@link UploadFrom#redirect}).
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class ClientPut extends FcpMessage {
 

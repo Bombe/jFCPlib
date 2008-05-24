@@ -29,7 +29,6 @@ import net.pterodactylus.fcp.Peer;
  * The result of a {@link HighLevelClient#getPeers()} operation.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class PeerListResult extends HighLevelResult implements Iterable<Peer> {
 

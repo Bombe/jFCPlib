@@ -25,7 +25,6 @@ package net.pterodactylus.fcp;
  * request.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class URIGenerated extends BaseMessage {
 

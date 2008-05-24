@@ -24,7 +24,6 @@ package net.pterodactylus.fcp;
  * your read and write access to a certain directory.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class TestDDAComplete extends BaseMessage {
 

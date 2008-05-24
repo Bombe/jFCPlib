@@ -23,7 +23,6 @@ package net.pterodactylus.fcp;
  * A “PeerRemoved” message is sent by the node when a peer has been removed.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class PeerRemoved extends BaseMessage {
 

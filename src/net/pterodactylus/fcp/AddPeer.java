@@ -25,7 +25,6 @@ import java.net.URL;
  * The “AddPeer” request adds a peer to the node.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class AddPeer extends FcpMessage {
 

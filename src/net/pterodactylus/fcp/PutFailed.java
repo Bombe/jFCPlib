@@ -30,7 +30,6 @@ import java.util.Map.Entry;
  * request will be sent.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id$
  */
 public class PutFailed extends BaseMessage {
 
