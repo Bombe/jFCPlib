@@ -71,7 +71,7 @@ public class PersistentPutDir extends BaseMessage {
 	 * @return The priority of the request
 	 */
 	public Priority getPriority() {
-		return Priority.valueOf(getField("PriorityClass"));
+		return Priority.values()[FcpUtils.safeParseInt(getField("PriorityClass"), Priority.unknown.ordinal())];
 	}
 
 	/**

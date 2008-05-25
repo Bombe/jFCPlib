@@ -112,11 +112,7 @@ public class PersistentPut extends BaseMessage {
 	 *         priority could not be parsed
 	 */
 	public Priority getPriority() {
-		try {
-			return Priority.values()[Integer.valueOf(getField("PriorityClass"))];
-		} catch (NumberFormatException nfe1) {
-			return Priority.unknown;
-		}
+		return Priority.values()[FcpUtils.safeParseInt(getField("PriorityClass"), Priority.unknown.ordinal())];
 	}
 
 	/**

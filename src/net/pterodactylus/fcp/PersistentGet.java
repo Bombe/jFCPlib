@@ -19,6 +19,7 @@
 
 package net.pterodactylus.fcp;
 
+
 /**
  * The “PersistentGet” message is sent to the client to inform it about a
  * persistent download, either in the client-local queue or in the global queue.
@@ -112,7 +113,7 @@ public class PersistentGet extends BaseMessage {
 	 * @return The priority of the request
 	 */
 	public Priority getPriority() {
-		return Priority.values()[FcpUtils.safeParseInt(getField("PriorityClass"), 7)];
+		return Priority.values()[FcpUtils.safeParseInt(getField("PriorityClass"), Priority.unknown.ordinal())];
 	}
 
 	/**
