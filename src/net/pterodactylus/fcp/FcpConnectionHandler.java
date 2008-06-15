@@ -83,7 +83,7 @@ class FcpConnectionHandler implements Runnable {
 					fcpMessage = new FcpMessage(line);
 					continue;
 				}
-				if ("EndMessage".equals(line)) {
+				if ("EndMessage".equals(line) || "Data".equals(line)) {
 					fcpConnection.handleMessage(fcpMessage);
 					fcpMessage = null;
 				}
