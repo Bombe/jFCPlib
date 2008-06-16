@@ -90,7 +90,9 @@ public class AllData extends BaseMessage {
 	}
 
 	/**
-	 * Returns the payload input stream.
+	 * Returns the payload input stream. You <strong>have</strong> consume the
+	 * input stream before returning from the
+	 * {@link FcpListener#receivedAllData(FcpConnection, AllData)} method!
 	 * 
 	 * @return The payload
 	 */
