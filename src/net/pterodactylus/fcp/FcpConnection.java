@@ -167,7 +167,7 @@ public class FcpConnection implements Closeable {
 	 *            The “NodeHello” message
 	 */
 	private void fireReceivedNodeHello(NodeHello nodeHello) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedNodeHello(this, nodeHello);
 		}
 	}
@@ -182,7 +182,7 @@ public class FcpConnection implements Closeable {
 	 *            The “CloseConnectionDuplicateClientName” message
 	 */
 	private void fireReceivedCloseConnectionDuplicateClientName(CloseConnectionDuplicateClientName closeConnectionDuplicateClientName) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedCloseConnectionDuplicateClientName(this, closeConnectionDuplicateClientName);
 		}
 	}
@@ -195,7 +195,7 @@ public class FcpConnection implements Closeable {
 	 *            The “SSKKeypair” message
 	 */
 	private void fireReceivedSSKKeypair(SSKKeypair sskKeypair) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedSSKKeypair(this, sskKeypair);
 		}
 	}
@@ -208,7 +208,7 @@ public class FcpConnection implements Closeable {
 	 *            The “Peer” message
 	 */
 	private void fireReceivedPeer(Peer peer) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPeer(this, peer);
 		}
 	}
@@ -221,7 +221,7 @@ public class FcpConnection implements Closeable {
 	 *            The “EndListPeers” message
 	 */
 	private void fireReceivedEndListPeers(EndListPeers endListPeers) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedEndListPeers(this, endListPeers);
 		}
 	}
@@ -233,7 +233,7 @@ public class FcpConnection implements Closeable {
 	 * @param peerNote
 	 */
 	private void fireReceivedPeerNote(PeerNote peerNote) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPeerNote(this, peerNote);
 		}
 	}
@@ -247,7 +247,7 @@ public class FcpConnection implements Closeable {
 	 *            The “EndListPeerNotes” message
 	 */
 	private void fireReceivedEndListPeerNotes(EndListPeerNotes endListPeerNotes) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedEndListPeerNotes(this, endListPeerNotes);
 		}
 	}
@@ -260,7 +260,7 @@ public class FcpConnection implements Closeable {
 	 *            The “PeerRemoved” message
 	 */
 	private void fireReceivedPeerRemoved(PeerRemoved peerRemoved) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPeerRemoved(this, peerRemoved);
 		}
 	}
@@ -273,7 +273,7 @@ public class FcpConnection implements Closeable {
 	 *            The “NodeData” message
 	 */
 	private void fireReceivedNodeData(NodeData nodeData) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedNodeData(this, nodeData);
 		}
 	}
@@ -286,7 +286,7 @@ public class FcpConnection implements Closeable {
 	 *            The “TestDDAReply” message
 	 */
 	private void fireReceivedTestDDAReply(TestDDAReply testDDAReply) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedTestDDAReply(this, testDDAReply);
 		}
 	}
@@ -299,7 +299,7 @@ public class FcpConnection implements Closeable {
 	 *            The “TestDDAComplete” message
 	 */
 	private void fireReceivedTestDDAComplete(TestDDAComplete testDDAComplete) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedTestDDAComplete(this, testDDAComplete);
 		}
 	}
@@ -312,7 +312,7 @@ public class FcpConnection implements Closeable {
 	 *            The “PersistentGet” message
 	 */
 	private void fireReceivedPersistentGet(PersistentGet persistentGet) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPersistentGet(this, persistentGet);
 		}
 	}
@@ -325,7 +325,7 @@ public class FcpConnection implements Closeable {
 	 *            The “PersistentPut” message
 	 */
 	private void fireReceivedPersistentPut(PersistentPut persistentPut) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPersistentPut(this, persistentPut);
 		}
 	}
@@ -340,7 +340,7 @@ public class FcpConnection implements Closeable {
 	 *            The “EndListPersistentRequests” message
 	 */
 	private void fireReceivedEndListPersistentRequests(EndListPersistentRequests endListPersistentRequests) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedEndListPersistentRequests(this, endListPersistentRequests);
 		}
 	}
@@ -353,7 +353,7 @@ public class FcpConnection implements Closeable {
 	 *            The “URIGenerated” message
 	 */
 	private void fireReceivedURIGenerated(URIGenerated uriGenerated) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedURIGenerated(this, uriGenerated);
 		}
 	}
@@ -366,7 +366,7 @@ public class FcpConnection implements Closeable {
 	 *            The “DataFound” message
 	 */
 	private void fireReceivedDataFound(DataFound dataFound) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedDataFound(this, dataFound);
 		}
 	}
@@ -379,7 +379,7 @@ public class FcpConnection implements Closeable {
 	 *            The “AllData” message
 	 */
 	private void fireReceivedAllData(AllData allData) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedAllData(this, allData);
 		}
 	}
@@ -392,7 +392,7 @@ public class FcpConnection implements Closeable {
 	 *            The “SimpleProgress” message
 	 */
 	private void fireReceivedSimpleProgress(SimpleProgress simpleProgress) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedSimpleProgress(this, simpleProgress);
 		}
 	}
@@ -406,7 +406,7 @@ public class FcpConnection implements Closeable {
 	 *            The “StartedCompression” message
 	 */
 	private void fireReceivedStartedCompression(StartedCompression startedCompression) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedStartedCompression(this, startedCompression);
 		}
 	}
@@ -420,7 +420,7 @@ public class FcpConnection implements Closeable {
 	 *            The “FinishedCompression” message
 	 */
 	private void fireReceivedFinishedCompression(FinishedCompression finishedCompression) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receviedFinishedCompression(this, finishedCompression);
 		}
 	}
@@ -435,7 +435,7 @@ public class FcpConnection implements Closeable {
 	 *            The “UnknownPeerNoteType” message
 	 */
 	private void fireReceivedUnknownPeerNoteType(UnknownPeerNoteType unknownPeerNoteType) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedUnknownPeerNoteType(this, unknownPeerNoteType);
 		}
 	}
@@ -450,7 +450,7 @@ public class FcpConnection implements Closeable {
 	 *            The “UnknownNodeIdentifier” message
 	 */
 	private void fireReceivedUnknownNodeIdentifier(UnknownNodeIdentifier unknownNodeIdentifier) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedUnknownNodeIdentifier(this, unknownNodeIdentifier);
 		}
 	}
@@ -463,7 +463,7 @@ public class FcpConnection implements Closeable {
 	 *            The “ConfigData” message
 	 */
 	private void fireReceivedConfigData(ConfigData configData) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedConfigData(this, configData);
 		}
 	}
@@ -476,7 +476,7 @@ public class FcpConnection implements Closeable {
 	 *            The “GetFailed” message
 	 */
 	private void fireReceivedGetFailed(GetFailed getFailed) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedGetFailed(this, getFailed);
 		}
 	}
@@ -489,7 +489,7 @@ public class FcpConnection implements Closeable {
 	 *            The “PutFailed” message
 	 */
 	private void fireReceivedPutFailed(PutFailed putFailed) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPutFailed(this, putFailed);
 		}
 	}
@@ -504,7 +504,7 @@ public class FcpConnection implements Closeable {
 	 *            The “IdentifierCollision” message
 	 */
 	private void fireReceivedIdentifierCollision(IdentifierCollision identifierCollision) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedIdentifierCollision(this, identifierCollision);
 		}
 	}
@@ -518,7 +518,7 @@ public class FcpConnection implements Closeable {
 	 *            The “PersistentPutDir” message
 	 */
 	private void fireReceivedPersistentPutDir(PersistentPutDir persistentPutDir) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPersistentPutDir(this, persistentPutDir);
 		}
 	}
@@ -533,7 +533,7 @@ public class FcpConnection implements Closeable {
 	 *            The “PersistentRequestRemoved” message
 	 */
 	private void fireReceivedPersistentRequestRemoved(PersistentRequestRemoved persistentRequestRemoved) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPersistentRequestRemoved(this, persistentRequestRemoved);
 		}
 	}
@@ -547,7 +547,7 @@ public class FcpConnection implements Closeable {
 	 *            The “SubscribedUSKUpdate” message
 	 */
 	private void fireReceivedSubscribedUSKUpdate(SubscribedUSKUpdate subscribedUSKUpdate) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedSubscribedUSKUpdate(this, subscribedUSKUpdate);
 		}
 	}
@@ -560,7 +560,7 @@ public class FcpConnection implements Closeable {
 	 *            The “PluginInfo” message
 	 */
 	private void fireReceivedPluginInfo(PluginInfo pluginInfo) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPluginInfo(this, pluginInfo);
 		}
 	}
@@ -573,7 +573,7 @@ public class FcpConnection implements Closeable {
 	 *            The “FCPPluginReply” message
 	 */
 	private void fireReceivedFCPPluginReply(FCPPluginReply fcpPluginReply) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedFCPPluginReply(this, fcpPluginReply);
 		}
 	}
@@ -588,7 +588,7 @@ public class FcpConnection implements Closeable {
 	 *            The “PersistentRequestModified” message
 	 */
 	private void fireReceivedPersistentRequestModified(PersistentRequestModified persistentRequestModified) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPersistentRequestModified(this, persistentRequestModified);
 		}
 	}
@@ -601,7 +601,7 @@ public class FcpConnection implements Closeable {
 	 *            The “PutSuccessful” message
 	 */
 	private void fireReceivedPutSuccessful(PutSuccessful putSuccessful) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPutSuccessful(this, putSuccessful);
 		}
 	}
@@ -614,7 +614,7 @@ public class FcpConnection implements Closeable {
 	 *            The “PutFetchable” message
 	 */
 	private void fireReceivedPutFetchable(PutFetchable putFetchable) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedPutFetchable(this, putFetchable);
 		}
 	}
@@ -627,7 +627,7 @@ public class FcpConnection implements Closeable {
 	 *            The “ProtocolError” message
 	 */
 	private void fireReceivedProtocolError(ProtocolError protocolError) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedProtocolError(this, protocolError);
 		}
 	}
@@ -640,7 +640,7 @@ public class FcpConnection implements Closeable {
 	 *            The message that was received
 	 */
 	private void fireMessageReceived(FcpMessage fcpMessage) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.receivedMessage(this, fcpMessage);
 		}
 	}
@@ -654,7 +654,7 @@ public class FcpConnection implements Closeable {
 	 * @see FcpListener#connectionClosed(FcpConnection, Throwable)
 	 */
 	private void fireConnectionClosed(Throwable throwable) {
-		for (FcpListener fcpListener: fcpListeners) {
+		for (FcpListener fcpListener : fcpListeners) {
 			fcpListener.connectionClosed(this, throwable);
 		}
 	}
