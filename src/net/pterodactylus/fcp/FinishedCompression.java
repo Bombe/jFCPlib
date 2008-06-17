@@ -23,7 +23,7 @@ package net.pterodactylus.fcp;
  * A “FinishedCompression” message signals the client that the compression of
  * the request data has been finished.
  * 
- * @author David Roden &lt;droden@gmail.com&gt;
+ * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class FinishedCompression extends BaseMessage {
 

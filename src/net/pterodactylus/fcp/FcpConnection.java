@@ -872,7 +872,7 @@ public class FcpConnection implements Closeable {
 	 * A wrapper around an {@link InputStream} that only supplies a limit number
 	 * of bytes from the underlying input stream.
 	 * 
-	 * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
+	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
 	 */
 	private static class LimitedInputStream extends FilterInputStream {
 

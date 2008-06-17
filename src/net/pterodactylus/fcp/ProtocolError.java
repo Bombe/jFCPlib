@@ -22,7 +22,7 @@ package net.pterodactylus.fcp;
 /**
  * The “ProtocolError” message signals that something has gone really wrong.
  * 
- * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
+ * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class ProtocolError extends BaseMessage {
 

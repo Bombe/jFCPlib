@@ -23,7 +23,7 @@ package net.pterodactylus.fcp;
  * The “PeerNote” message contains a private note that has been entered for a
  * darknet peer.
  * 
- * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
+ * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class PeerNote extends BaseMessage {
 

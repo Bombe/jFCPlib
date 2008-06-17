@@ -8,7 +8,7 @@ package net.pterodactylus.fcp.highlevel;
  * Exception that is thrown when an operation is tried on a not connected
  * connection.
  * 
- * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
+ * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class NotConnectedException extends HighLevelException {
 

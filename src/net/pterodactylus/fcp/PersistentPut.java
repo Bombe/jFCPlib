@@ -23,7 +23,7 @@ package net.pterodactylus.fcp;
  * A “PersistentPut” message notifies a client about a persistent
  * {@link ClientPut} request.
  * 
- * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
+ * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class PersistentPut extends BaseMessage {
 

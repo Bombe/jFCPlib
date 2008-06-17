@@ -30,7 +30,7 @@ import java.io.InputStream;
  * passes through all registered {@link FcpListener}s without the payload being
  * consumed, the payload is discarded!
  * 
- * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
+ * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class AllData extends BaseMessage {
 
