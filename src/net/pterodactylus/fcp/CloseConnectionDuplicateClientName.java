@@ -23,8 +23,6 @@ package net.pterodactylus.fcp;
  * A “CloseConnectionDuplicateClientName” message.
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
- * @version $Id: CloseConnectionDuplicateClientName.java 712 2008-04-11
- *          09:50:44Z bombe $
  */
 public class CloseConnectionDuplicateClientName extends BaseMessage {
 
