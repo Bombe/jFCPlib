@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Helper class with utility methods for the FCP protocol.
  * 
- * @author <a href="mailto:dr@ina-germany.de">David Roden</a>
+ * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class FcpUtils {
 
