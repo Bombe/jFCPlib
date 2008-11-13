@@ -685,6 +685,9 @@ public class HighLevelClient {
 		 * @return The content of the file
 		 */
 		private String readContent(String readFilename) {
+			if (readFilename == null) {
+				return null;
+			}
 			FileReader fileReader = null;
 			BufferedReader bufferedFileReader = null;
 			try {
