@@ -90,7 +90,7 @@ import net.pterodactylus.fcp.WatchGlobal;
 /**
  * A high-level client that allows simple yet full-featured access to a Freenet
  * node.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class HighLevelClient {
@@ -140,7 +140,7 @@ public class HighLevelClient {
 	/**
 	 * Creates a new high-level client that connects to a node on
 	 * <code>localhost</code>.
-	 * 
+	 *
 	 * @param clientName
 	 *            The name of the client
 	 */
@@ -154,7 +154,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the given high-level client listener to list of listeners.
-	 * 
+	 *
 	 * @param highLevelClientListener
 	 *            The listener to add
 	 */
@@ -164,7 +164,7 @@ public class HighLevelClient {
 
 	/**
 	 * Removes the given high-level client listener from the list of listeners.
-	 * 
+	 *
 	 * @param highLevelClientListener
 	 *            The listener to remove
 	 */
@@ -176,27 +176,27 @@ public class HighLevelClient {
 	 * Notifies all listeners that a client has connected.
 	 */
 	private void fireClientConnected() {
-		for (HighLevelClientListener highLevelClientListener: highLevelClientListeners) {
+		for (HighLevelClientListener highLevelClientListener : highLevelClientListeners) {
 			highLevelClientListener.clientConnected(this);
 		}
 	}
 
 	/**
 	 * Notifies all listeners that a client has disconnected.
-	 * 
+	 *
 	 * @param throwable
 	 *            The exception that caused the disconnect, or <code>null</code>
 	 *            if there was no exception
 	 */
 	private void fireClientDisconnected(Throwable throwable) {
-		for (HighLevelClientListener highLevelClientListener: highLevelClientListeners) {
+		for (HighLevelClientListener highLevelClientListener : highLevelClientListeners) {
 			highLevelClientListener.clientDisconnected(this, throwable);
 		}
 	}
 
 	/**
 	 * Adds a high-level progress listener.
-	 * 
+	 *
 	 * @param highLevelProgressListener
 	 *            The high-level progress listener to add
 	 */
@@ -206,7 +206,7 @@ public class HighLevelClient {
 
 	/**
 	 * Removes a high-level progress listener.
-	 * 
+	 *
 	 * @param highLevelProgressListener
 	 *            The high-level progress listener to remove
 	 */
@@ -217,14 +217,14 @@ public class HighLevelClient {
 	/**
 	 * Notifies all listeners that the request with the given identifier made
 	 * some progress.
-	 * 
+	 *
 	 * @param identifier
 	 *            The identifier of the request
 	 * @param highLevelProgress
 	 *            The progress of the request
 	 */
 	private void fireProgressReceived(String identifier, HighLevelProgress highLevelProgress) {
-		for (HighLevelProgressListener highLevelProgressListener: highLevelProgressListeners) {
+		for (HighLevelProgressListener highLevelProgressListener : highLevelProgressListeners) {
 			highLevelProgressListener.progressReceived(this, identifier, highLevelProgress);
 		}
 	}
@@ -237,7 +237,7 @@ public class HighLevelClient {
 	 * Returns the FCP connection that backs this high-level client. This method
 	 * should be used with care as fiddling around with the FCP connection can
 	 * easily break the high-level client if you don’t know what you’re doing!
-	 * 
+	 *
 	 * @return The FCP connection of this client
 	 */
 	public FcpConnection getFcpConnection() {
@@ -246,7 +246,7 @@ public class HighLevelClient {
 
 	/**
 	 * Returns whether the node is connected.
-	 * 
+	 *
 	 * @return <code>true</code> if the node is currently connected,
 	 *         <code>false</code> otherwise
 	 */
@@ -260,7 +260,7 @@ public class HighLevelClient {
 
 	/**
 	 * Connects the client.
-	 * 
+	 *
 	 * @param hostname
 	 *            The hostname of the node
 	 * @return A callback with a connection result
@@ -275,7 +275,7 @@ public class HighLevelClient {
 
 	/**
 	 * Connects the client.
-	 * 
+	 *
 	 * @param hostname
 	 *            The hostname of the node
 	 * @param port
@@ -292,7 +292,7 @@ public class HighLevelClient {
 
 	/**
 	 * Connects the client.
-	 * 
+	 *
 	 * @param address
 	 *            The address of the node
 	 * @param port
@@ -327,7 +327,7 @@ public class HighLevelClient {
 
 	/**
 	 * Generates a new SSK keypair.
-	 * 
+	 *
 	 * @return A callback with the keypair
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
@@ -346,10 +346,10 @@ public class HighLevelClient {
 
 	/**
 	 * Sets whether to watch the global queue.
-	 * 
+	 *
 	 * @param enabled
-	 *            <code>true</code> to watch the global queue in addition to
-	 *            the client-local queue, <code>false</code> to only watch the
+	 *            <code>true</code> to watch the global queue in addition to the
+	 *            client-local queue, <code>false</code> to only watch the
 	 *            client-local queue
 	 * @throws IOException
 	 *             if an I/O error occurs communicating with the node
@@ -364,7 +364,7 @@ public class HighLevelClient {
 
 	/**
 	 * Gets a list of all peers from the node.
-	 * 
+	 *
 	 * @return A callback with the peer list
 	 * @throws IOException
 	 *             if an I/O error occurs with the node
@@ -383,7 +383,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the peer whose noderef is stored in the given file.
-	 * 
+	 *
 	 * @param nodeRefFile
 	 *            The name of the file the peer’s noderef is stored in
 	 * @return A peer callback
@@ -404,7 +404,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the peer whose noderef is stored in the given file.
-	 * 
+	 *
 	 * @param nodeRefURL
 	 *            The URL where the peer’s noderef is stored
 	 * @return A peer callback
@@ -425,7 +425,7 @@ public class HighLevelClient {
 
 	/**
 	 * Adds the peer whose noderef is stored in the given file.
-	 * 
+	 *
 	 * @param nodeRef
 	 *            The peer’s noderef
 	 * @return A peer callback
@@ -448,7 +448,7 @@ public class HighLevelClient {
 	 * Checks whether direct disk access for the given directory is possible.
 	 * You have to perform this check before you can upload or download anything
 	 * from or the disk directly!
-	 * 
+	 *
 	 * @param directory
 	 *            The directory to check
 	 * @param wantRead
@@ -474,7 +474,7 @@ public class HighLevelClient {
 	 * Starts a download. Files can either be download to disk or streamed from
 	 * the node. When downloading to disk you have to perform a direct disk
 	 * access check for the directory you want to put the downloaded file in!
-	 * 
+	 *
 	 * @see #checkDirectDiskAccess(String, boolean, boolean)
 	 * @param uri
 	 *            The URI to get
@@ -503,7 +503,7 @@ public class HighLevelClient {
 
 	/**
 	 * Requests a list of all running requests from the node.
-	 * 
+	 *
 	 * @return The request list result
 	 * @throws IOException
 	 *             if an I/O errors communicating with the node
@@ -531,7 +531,7 @@ public class HighLevelClient {
 	/**
 	 * Checks whether the client is already connected and throws an exception if
 	 * it is not.
-	 * 
+	 *
 	 * @throws NotConnectedException
 	 *             if the client is not connected
 	 */
@@ -545,7 +545,7 @@ public class HighLevelClient {
 
 	/**
 	 * Generates an identifier for the given function.
-	 * 
+	 *
 	 * @param function
 	 *            The name of the function
 	 * @return An identifier
@@ -557,7 +557,7 @@ public class HighLevelClient {
 	/**
 	 * Disconnects the client from the node, handing the given Throwable to
 	 * {@link #fireClientDisconnected(Throwable)}.
-	 * 
+	 *
 	 * @param throwable
 	 *            The exception that caused the disconnect, or <code>null</code>
 	 *            if there was no exception
@@ -571,7 +571,7 @@ public class HighLevelClient {
 
 	/**
 	 * FCP listener for {@link HighLevelClient}.
-	 * 
+	 *
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
 	 */
 	private class HighLevelClientFcpListener implements FcpListener {
@@ -593,7 +593,7 @@ public class HighLevelClient {
 		/**
 		 * Searches all callback collections for a callback with the given
 		 * identifier and cancels it.
-		 * 
+		 *
 		 * @param identifier
 		 *            The identifier to search for, or <code>null</code> to
 		 *            cancel all pending requests
@@ -614,31 +614,31 @@ public class HighLevelClient {
 			}
 			if (identifier == null) {
 				/* key generation callbacks */
-				for (Entry<String, HighLevelCallback<KeyGenerationResult>> keyGenerationEntry: keyGenerationCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<KeyGenerationResult>> keyGenerationEntry : keyGenerationCallbacks.entrySet()) {
 					keyGenerationEntry.getValue().getIntermediaryResult().setFailed(true);
 					keyGenerationEntry.getValue().setDone();
 				}
 				keyGenerationCallbacks.clear();
 				/* peer list callbacks. */
-				for (Entry<String, HighLevelCallback<PeerListResult>> peerListEntry: peerListCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<PeerListResult>> peerListEntry : peerListCallbacks.entrySet()) {
 					peerListEntry.getValue().getIntermediaryResult().setFailed(true);
 					peerListEntry.getValue().setDone();
 				}
 				peerListCallbacks.clear();
 				/* peer callbacks. */
-				for (Entry<String, HighLevelCallback<PeerResult>> peerEntry: peerCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<PeerResult>> peerEntry : peerCallbacks.entrySet()) {
 					peerEntry.getValue().getIntermediaryResult().setFailed(true);
 					peerEntry.getValue().setDone();
 				}
 				peerCallbacks.clear();
 				/* direct disk access callbacks. */
-				for (Entry<String, HighLevelCallback<DirectDiskAccessResult>> directDiskAccessEntry: directDiskAccessCallbacks.entrySet()) {
+				for (Entry<String, HighLevelCallback<DirectDiskAccessResult>> directDiskAccessEntry : directDiskAccessCallbacks.entrySet()) {
 					directDiskAccessEntry.getValue().getIntermediaryResult().setFailed(true);
 					directDiskAccessEntry.getValue().setDone();
 				}
 				directDiskAccessCallbacks.clear();
 				/* download callbacks. */
-				for (Entry<String, HighLevelProgressCallback<DownloadResult>> downloadEntry: downloadCallbacks.entrySet()) {
+				for (Entry<String, HighLevelProgressCallback<DownloadResult>> downloadEntry : downloadCallbacks.entrySet()) {
 					downloadEntry.getValue().getIntermediaryResult().setFailed(true);
 					downloadEntry.getValue().setDone();
 				}
@@ -679,7 +679,7 @@ public class HighLevelClient {
 
 		/**
 		 * Reads the given file and returns the first line of the file.
-		 * 
+		 *
 		 * @param readFilename
 		 *            The name of the file to read
 		 * @return The content of the file
@@ -703,7 +703,7 @@ public class HighLevelClient {
 
 		/**
 		 * Writes the given content to the given file.
-		 * 
+		 *
 		 * @param directDiskAccessResult
 		 *            The DDA result
 		 * @param writeFilename
@@ -729,7 +729,7 @@ public class HighLevelClient {
 
 		/**
 		 * Cleans up any files that written for the given result.
-		 * 
+		 *
 		 * @param directDiskAccessResult
 		 *            The direct disk access result
 		 */
