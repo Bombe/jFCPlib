@@ -22,14 +22,18 @@ package net.pterodactylus.fcp.highlevel;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
+import net.pterodactylus.fcp.EndListPeers;
 import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
 import net.pterodactylus.fcp.NodeHello;
+import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.ProtocolError;
 
 /**
@@ -170,6 +174,55 @@ public class FcpClient {
 			fcpConnection.close();
 			syncObject.notifyAll();
 		}
+	}
+
+	//
+	// PEER MANAGEMENT
+	//
+
+	/**
+	 * Returns all peers that the node has.
+	 *
+	 * @return A set containing the node’s peers
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public Set<Peer> getPeers() throws IOException, FcpException {
+		final Set<Peer> peers = new HashSet<Peer>();
+		ExtendedFcpAdapter fcpAdapter = new ExtendedFcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
+				peers.add(peer);
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedEndListPeers(FcpConnection fcpConnection, EndListPeers endListPeers) {
+				completionLatch.countDown();
+			}
+		};
+		fcpConnection.addFcpListener(fcpAdapter);
+		try {
+			while (true) {
+				try {
+					fcpAdapter.complete();
+					break;
+				} catch (InterruptedException e) {
+					/* ignore, we’ll loop. */
+				}
+			}
+		} finally {
+			fcpConnection.removeFcpListener(fcpAdapter);
+		}
+		return peers;
 	}
 
 	/**
