@@ -142,18 +142,21 @@ public class FcpClient {
 			}
 		};
 		fcpConnection.addFcpListener(fcpListener);
-		fcpConnection.connect();
-		ClientHello clientHello = new ClientHello(name);
-		fcpConnection.sendMessage(clientHello);
-		while (true) {
-			try {
-				fcpListener.complete();
-				break;
-			} catch (InterruptedException e) {
-				/* ignore, we’ll loop. */
+		try {
+			fcpConnection.connect();
+			ClientHello clientHello = new ClientHello(name);
+			fcpConnection.sendMessage(clientHello);
+			while (true) {
+				try {
+					fcpListener.complete();
+					break;
+				} catch (InterruptedException e) {
+					/* ignore, we’ll loop. */
+				}
 			}
+		} finally {
+			fcpConnection.removeFcpListener(fcpListener);
 		}
-		fcpConnection.removeFcpListener(fcpListener);
 		if (fcpListener.getFcpException() != null) {
 			throw fcpListener.getFcpException();
 		}
