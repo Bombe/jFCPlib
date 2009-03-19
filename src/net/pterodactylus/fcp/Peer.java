@@ -26,14 +26,14 @@ import java.util.Map.Entry;
 
 /**
  * The “Peer” reply by the node contains information about a peer.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class Peer extends BaseMessage {
 
 	/**
 	 * Creates a new “Peer” reply from the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -43,7 +43,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns a collection of fields as a node reference.
-	 * 
+	 *
 	 * @return The node reference contained within this message
 	 */
 	public NodeRef getNodeRef() {
@@ -64,7 +64,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {
@@ -74,7 +74,7 @@ public class Peer extends BaseMessage {
 	/**
 	 * Returns the “physical.udp” line from the message. It contains all IP
 	 * addresses and port numbers of the peer.
-	 * 
+	 *
 	 * @return The IP addresses and port numbers of the peer
 	 */
 	public String getPhysicalUDP() {
@@ -83,7 +83,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns whether the listed peer is an opennet peer.
-	 * 
+	 *
 	 * @return <code>true</code> if the peer is an opennet peer,
 	 *         <code>false</code> if the peer is a darknet peer
 	 */
@@ -93,7 +93,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns the “y” part of the peer’s public DSA key.
-	 * 
+	 *
 	 * @return The public DSA key
 	 */
 	public String getDSAPublicKey() {
@@ -102,7 +102,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns the DSA group of the peer.
-	 * 
+	 *
 	 * @return The DSA group of the peer
 	 */
 	public DSAGroup getDSAGroup() {
@@ -112,7 +112,7 @@ public class Peer extends BaseMessage {
 	/**
 	 * Returns the last good version of the peer, i.e. the oldest version the
 	 * peer will connect to.
-	 * 
+	 *
 	 * @return The last good version of the peer
 	 */
 	public Version getLastGoodVersion() {
@@ -121,7 +121,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns the ARK of the peer.
-	 * 
+	 *
 	 * @return The ARK of the peer
 	 */
 	public ARK getARK() {
@@ -130,7 +130,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns the identity of the peer.
-	 * 
+	 *
 	 * @return The identity of the peer
 	 */
 	public String getIdentity() {
@@ -140,7 +140,7 @@ public class Peer extends BaseMessage {
 	/**
 	 * Returns the name of the peer. If the peer is not a darknet peer it will
 	 * have no name.
-	 * 
+	 *
 	 * @return The name of the peer, or <code>null</code> if the peer is an
 	 *         opennet peer
 	 */
@@ -150,7 +150,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns the location of the peer.
-	 * 
+	 *
 	 * @return The location of the peer
 	 * @throws NumberFormatException
 	 *             if the field can not be parsed
@@ -161,7 +161,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns whether the peer is a testnet node.
-	 * 
+	 *
 	 * @return <code>true</code> if the peer is a testnet node,
 	 *         <code>false</code> otherwise
 	 */
@@ -171,7 +171,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns the version of the peer.
-	 * 
+	 *
 	 * @return The version of the peer
 	 */
 	public Version getVersion() {
@@ -180,7 +180,7 @@ public class Peer extends BaseMessage {
 
 	/**
 	 * Returns the negotiation types the peer supports.
-	 * 
+	 *
 	 * @return The supported negotiation types
 	 */
 	public int[] getNegotiationTypes() {
@@ -206,11 +206,11 @@ public class Peer extends BaseMessage {
 	 * Returns one of the volatile fields from the message. The given field name
 	 * is prepended with “volatile.” so if you want to get the value of the
 	 * field with the name “volatile.status” you only need to specify “status”.
-	 * 
+	 *
 	 * @param field
 	 *            The name of the field
-	 * @return The value of the field, or <code>null</code> if there is no
-	 *         such field
+	 * @return The value of the field, or <code>null</code> if there is no such
+	 *         field
 	 */
 	public String getVolatile(String field) {
 		return getField("volatile." + field);
@@ -236,11 +236,11 @@ public class Peer extends BaseMessage {
 	 * is prepended with “metadata.” so if you want to get the value of the
 	 * field with the name “metadata.timeLastRoutable” you only need to specify
 	 * “timeLastRoutable”.
-	 * 
+	 *
 	 * @param field
 	 *            The name of the field
-	 * @return The value of the field, or <code>null</code> if there is no
-	 *         such field
+	 * @return The value of the field, or <code>null</code> if there is no such
+	 *         field
 	 */
 	public String getMetadata(String field) {
 		return getField("metadata." + field);
