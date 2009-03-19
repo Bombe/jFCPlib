@@ -33,12 +33,14 @@ import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
 import net.pterodactylus.fcp.EndListPeerNotes;
 import net.pterodactylus.fcp.EndListPeers;
+import net.pterodactylus.fcp.EndListPersistentRequests;
 import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
 import net.pterodactylus.fcp.GenerateSSK;
 import net.pterodactylus.fcp.ListPeerNotes;
 import net.pterodactylus.fcp.ListPeers;
+import net.pterodactylus.fcp.ListPersistentRequests;
 import net.pterodactylus.fcp.ModifyPeer;
 import net.pterodactylus.fcp.ModifyPeerNote;
 import net.pterodactylus.fcp.NodeHello;
@@ -46,9 +48,11 @@ import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.PeerNote;
 import net.pterodactylus.fcp.PeerRemoved;
+import net.pterodactylus.fcp.PersistentGet;
 import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.RemovePeer;
 import net.pterodactylus.fcp.SSKKeypair;
+import net.pterodactylus.fcp.WatchGlobal;
 import net.pterodactylus.util.thread.ObjectWrapper;
 
 /**
@@ -532,6 +536,56 @@ public class FcpClient {
 			}
 		}.execute();
 		return sskKeypairWrapper.get();
+	}
+
+	//
+	// REQUEST MANAGEMENT
+	//
+
+	/**
+	 * Returns all currently visible persistent get requests.
+	 *
+	 * @param global
+	 *            <code>true</code> to return get requests from the global
+	 *            queue, <code>false</code> to only show requests from the
+	 *            client-local queue
+	 * @return All get requests
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public Set<PersistentGet> getGetRequests(final boolean global) throws IOException, FcpException {
+		final Set<PersistentGet> getRequests = Collections.synchronizedSet(new HashSet<PersistentGet>());
+		new ExtendedFcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				fcpConnection.sendMessage(new WatchGlobal(global));
+				fcpConnection.sendMessage(new ListPersistentRequests());
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedPersistentGet(FcpConnection fcpConnection, PersistentGet persistentGet) {
+				getRequests.add(persistentGet);
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedEndListPersistentRequests(FcpConnection fcpConnection, EndListPersistentRequests endListPersistentRequests) {
+				completionLatch.countDown();
+			}
+		}.execute();
+		return getRequests;
 	}
 
 	//
