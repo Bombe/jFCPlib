@@ -146,29 +146,22 @@ public class FcpClient {
 			 * {@inheritDoc}
 			 */
 			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				fcpConnection.connect();
+				ClientHello clientHello = new ClientHello(name);
+				fcpConnection.sendMessage(clientHello);
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
 			public void receivedNodeHello(FcpConnection fcpConnection, NodeHello nodeHello) {
 				completionLatch.countDown();
 			}
 		};
-		fcpConnection.addFcpListener(fcpListener);
-		try {
-			fcpConnection.connect();
-			ClientHello clientHello = new ClientHello(name);
-			fcpConnection.sendMessage(clientHello);
-			while (true) {
-				try {
-					fcpListener.complete();
-					break;
-				} catch (InterruptedException e) {
-					/* ignore, we’ll loop. */
-				}
-			}
-		} finally {
-			fcpConnection.removeFcpListener(fcpListener);
-		}
-		if (fcpListener.getFcpException() != null) {
-			throw fcpListener.getFcpException();
-		}
+		fcpListener.execute();
 	}
 
 	/**
@@ -202,6 +195,15 @@ public class FcpClient {
 			 * {@inheritDoc}
 			 */
 			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				fcpConnection.sendMessage(new ListPeers("list-peers"));
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
 			public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
 				peers.add(peer);
 			}
@@ -214,23 +216,7 @@ public class FcpClient {
 				completionLatch.countDown();
 			}
 		};
-		fcpConnection.addFcpListener(fcpListener);
-		fcpConnection.sendMessage(new ListPeers("list-peers"));
-		try {
-			while (true) {
-				try {
-					fcpListener.complete();
-					break;
-				} catch (InterruptedException e) {
-					/* ignore, we’ll loop. */
-				}
-			}
-		} finally {
-			fcpConnection.removeFcpListener(fcpListener);
-		}
-		if (fcpListener.getFcpException() != null) {
-			throw fcpListener.getFcpException();
-		}
+		fcpListener.execute();
 		return peers;
 	}
 
@@ -305,8 +291,17 @@ public class FcpClient {
 	 * @throws FcpException
 	 *             if an FCP error occurs
 	 */
-	private void addPeer(AddPeer addPeer) throws IOException, FcpException {
+	private void addPeer(final AddPeer addPeer) throws IOException, FcpException {
 		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				fcpConnection.sendMessage(addPeer);
+			}
 
 			/**
 			 * {@inheritDoc}
@@ -316,23 +311,7 @@ public class FcpClient {
 				completionLatch.countDown();
 			}
 		};
-		fcpConnection.addFcpListener(fcpListener);
-		try {
-			fcpConnection.sendMessage(addPeer);
-			while (true) {
-				try {
-					fcpListener.complete();
-					break;
-				} catch (InterruptedException ie1) {
-					/* ignore, we’ll loop. */
-				}
-			}
-		} finally {
-			fcpConnection.removeFcpListener(fcpListener);
-		}
-		if (fcpListener.getFcpException() != null) {
-			throw fcpListener.getFcpException();
-		}
+		fcpListener.execute();
 	}
 
 	/**
@@ -356,8 +335,17 @@ public class FcpClient {
 	 * @throws FcpException
 	 *             if an FCP error occurs
 	 */
-	public void modifyPeer(Peer peer, Boolean allowLocalAddresses, Boolean disabled, Boolean listenOnly) throws IOException, FcpException {
+	public void modifyPeer(final Peer peer, final Boolean allowLocalAddresses, final Boolean disabled, final Boolean listenOnly) throws IOException, FcpException {
 		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				fcpConnection.sendMessage(new ModifyPeer(peer.getIdentity(), allowLocalAddresses, disabled, listenOnly));
+			}
 
 			/**
 			 * {@inheritDoc}
@@ -367,15 +355,7 @@ public class FcpClient {
 				completionLatch.countDown();
 			}
 		};
-		fcpConnection.addFcpListener(fcpListener);
-		try {
-			fcpConnection.sendMessage(new ModifyPeer(peer.getIdentity(), allowLocalAddresses, disabled, listenOnly));
-		} finally {
-			fcpConnection.removeFcpListener(fcpListener);
-		}
-		if (fcpListener.getFcpException() != null) {
-			throw fcpListener.getFcpException();
-		}
+		fcpListener.execute();
 	}
 
 	/**
@@ -384,7 +364,7 @@ public class FcpClient {
 	 *
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
 	 */
-	private static class ExtendedFcpAdapter extends FcpAdapter {
+	private abstract class ExtendedFcpAdapter extends FcpAdapter {
 
 		/** The count down latch used to wait for completion. */
 		protected final CountDownLatch completionLatch = new CountDownLatch(1);
@@ -400,24 +380,42 @@ public class FcpClient {
 		}
 
 		/**
-		 * Returns the FCP exception that occured. If no FCP exception occured,
-		 * <code>null</code> is returned.
+		 * Executes the FCP commands in {@link #run()}, wrapping the execution
+		 * and catching exceptions.
 		 *
-		 * @return The FCP exception that occured, or <code>null</code>
+		 * @throws IOException
+		 *             if an I/O error occurs
+		 * @throws FcpException
+		 *             if an FCP error occurs
 		 */
-		public FcpException getFcpException() {
-			return fcpException;
+		@SuppressWarnings("synthetic-access")
+		public void execute() throws IOException, FcpException {
+			fcpConnection.addFcpListener(this);
+			try {
+				run();
+				while (true) {
+					try {
+						completionLatch.await();
+						break;
+					} catch (InterruptedException ie1) {
+						/* ignore, we’ll loop. */
+					}
+				}
+			} finally {
+				fcpConnection.removeFcpListener(this);
+			}
+			if (fcpException != null) {
+				throw fcpException;
+			}
 		}
 
 		/**
-		 * Waits for the completion of the command.
+		 * The FCP commands that actually get executed.
 		 *
-		 * @throws InterruptedException
-		 *             if {@link CountDownLatch#await()} is interrupted
+		 * @throws IOException
+		 *             if an I/O error occurs
 		 */
-		public void complete() throws InterruptedException {
-			completionLatch.await();
-		}
+		public abstract void run() throws IOException;
 
 		/**
 		 * {@inheritDoc}
