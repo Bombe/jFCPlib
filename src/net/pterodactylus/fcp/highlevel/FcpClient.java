@@ -39,7 +39,9 @@ import net.pterodactylus.fcp.ModifyPeer;
 import net.pterodactylus.fcp.NodeHello;
 import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
+import net.pterodactylus.fcp.PeerRemoved;
 import net.pterodactylus.fcp.ProtocolError;
+import net.pterodactylus.fcp.RemovePeer;
 
 /**
  * High-level FCP client that hides the details of the underlying FCP
@@ -352,6 +354,39 @@ public class FcpClient {
 			 */
 			@Override
 			public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
+				completionLatch.countDown();
+			}
+		};
+		fcpListener.execute();
+	}
+
+	/**
+	 * Removes the given peer.
+	 *
+	 * @param peer
+	 *            The peer to remove
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void removePeer(final Peer peer) throws IOException, FcpException {
+		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				fcpConnection.sendMessage(new RemovePeer(peer.getIdentity()));
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedPeerRemoved(FcpConnection fcpConnection, PeerRemoved peerRemoved) {
 				completionLatch.countDown();
 			}
 		};
