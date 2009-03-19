@@ -34,14 +34,17 @@ import net.pterodactylus.fcp.EndListPeers;
 import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
+import net.pterodactylus.fcp.ListPeerNotes;
 import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.ModifyPeer;
 import net.pterodactylus.fcp.NodeHello;
 import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
+import net.pterodactylus.fcp.PeerNote;
 import net.pterodactylus.fcp.PeerRemoved;
 import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.RemovePeer;
+import net.pterodactylus.util.thread.ObjectWrapper;
 
 /**
  * High-level FCP client that hides the details of the underlying FCP
@@ -395,6 +398,45 @@ public class FcpClient {
 			}
 		};
 		fcpListener.execute();
+	}
+
+	//
+	// PEER NOTES MANAGEMENT
+	//
+
+	/**
+	 * Returns the peer note of the given peer.
+	 *
+	 * @param peer
+	 *            The peer to get the note for
+	 * @return The peer’s note
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public PeerNote getPeerNote(final Peer peer) throws IOException, FcpException {
+		final ObjectWrapper<PeerNote> objectWrapper = new ObjectWrapper<PeerNote>();
+		new ExtendedFcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				fcpConnection.sendMessage(new ListPeerNotes(peer.getIdentity()));
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedPeerNote(FcpConnection fcpConnection, PeerNote peerNote) {
+				objectWrapper.set(peerNote);
+			}
+		}.execute();
+		return objectWrapper.get();
 	}
 
 	/**
