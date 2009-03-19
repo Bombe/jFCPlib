@@ -192,7 +192,7 @@ public class FcpClient {
 	 */
 	public Set<Peer> getPeers() throws IOException, FcpException {
 		final Set<Peer> peers = new HashSet<Peer>();
-		ExtendedFcpAdapter fcpAdapter = new ExtendedFcpAdapter() {
+		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
 
 			/**
 			 * {@inheritDoc}
@@ -210,19 +210,19 @@ public class FcpClient {
 				completionLatch.countDown();
 			}
 		};
-		fcpConnection.addFcpListener(fcpAdapter);
+		fcpConnection.addFcpListener(fcpListener);
 		fcpConnection.sendMessage(new ListPeers("list-peers"));
 		try {
 			while (true) {
 				try {
-					fcpAdapter.complete();
+					fcpListener.complete();
 					break;
 				} catch (InterruptedException e) {
 					/* ignore, we’ll loop. */
 				}
 			}
 		} finally {
-			fcpConnection.removeFcpListener(fcpAdapter);
+			fcpConnection.removeFcpListener(fcpListener);
 		}
 		if (fcpListener.getFcpException() != null) {
 			throw fcpListener.getFcpException();
