@@ -36,6 +36,7 @@ import net.pterodactylus.fcp.EndListPeers;
 import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
+import net.pterodactylus.fcp.GenerateSSK;
 import net.pterodactylus.fcp.ListPeerNotes;
 import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.ModifyPeer;
@@ -47,6 +48,7 @@ import net.pterodactylus.fcp.PeerNote;
 import net.pterodactylus.fcp.PeerRemoved;
 import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.RemovePeer;
+import net.pterodactylus.fcp.SSKKeypair;
 import net.pterodactylus.util.thread.ObjectWrapper;
 
 /**
@@ -491,6 +493,44 @@ public class FcpClient {
 				}
 			}
 		}.execute();
+	}
+
+	//
+	// KEY GENERATION
+	//
+
+	/**
+	 * Generates a new SSK key pair.
+	 *
+	 * @return The generated key pair
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public SSKKeypair generateKeyPair() throws IOException, FcpException {
+		final ObjectWrapper<SSKKeypair> sskKeypairWrapper = new ObjectWrapper<SSKKeypair>();
+		new ExtendedFcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				fcpConnection.sendMessage(new GenerateSSK());
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedSSKKeypair(FcpConnection fcpConnection, SSKKeypair sskKeypair) {
+				sskKeypairWrapper.set(sskKeypair);
+				completionLatch.countDown();
+			}
+		}.execute();
+		return sskKeypairWrapper.get();
 	}
 
 	/**
