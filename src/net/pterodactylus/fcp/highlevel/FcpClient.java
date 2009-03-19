@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -197,8 +198,11 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	public Set<Peer> getPeers(final boolean withMetadata, final boolean withVolatile) throws IOException, FcpException {
-		final Set<Peer> peers = new HashSet<Peer>();
+		final Set<Peer> peers = Collections.synchronizedSet(new HashSet<Peer>());
 		new ExtendedFcpAdapter() {
+
+			/** The ID of the “ListPeers” request. */
+			private String identifier = "list-peers-" + System.currentTimeMillis();
 
 			/**
 			 * {@inheritDoc}
@@ -206,7 +210,7 @@ public class FcpClient {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(new ListPeers("list-peers", withMetadata, withVolatile));
+				fcpConnection.sendMessage(new ListPeers(identifier, withMetadata, withVolatile));
 			}
 
 			/**
@@ -214,7 +218,9 @@ public class FcpClient {
 			 */
 			@Override
 			public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
-				peers.add(peer);
+				if (peer.getIdentifier().equals(identifier)) {
+					peers.add(peer);
+				}
 			}
 
 			/**
@@ -222,7 +228,9 @@ public class FcpClient {
 			 */
 			@Override
 			public void receivedEndListPeers(FcpConnection fcpConnection, EndListPeers endListPeers) {
-				completionLatch.countDown();
+				if (endListPeers.getIdentifier().equals(identifier)) {
+					completionLatch.countDown();
+				}
 			}
 		}.execute();
 		return peers;
