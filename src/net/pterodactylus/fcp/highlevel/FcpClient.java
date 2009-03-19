@@ -224,6 +224,9 @@ public class FcpClient {
 		} finally {
 			fcpConnection.removeFcpListener(fcpAdapter);
 		}
+		if (fcpListener.getFcpException() != null) {
+			throw fcpListener.getFcpException();
+		}
 		return peers;
 	}
 
