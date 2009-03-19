@@ -21,11 +21,13 @@ package net.pterodactylus.fcp.highlevel;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
+import net.pterodactylus.fcp.AddPeer;
 import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
 import net.pterodactylus.fcp.EndListPeers;
@@ -34,6 +36,7 @@ import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
 import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.NodeHello;
+import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.ProtocolError;
 
@@ -228,6 +231,107 @@ public class FcpClient {
 			throw fcpListener.getFcpException();
 		}
 		return peers;
+	}
+
+	/**
+	 * Adds the given peer to the node.
+	 *
+	 * @param peer
+	 *            The peer to add
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void addPeer(Peer peer) throws IOException, FcpException {
+		addPeer(peer.getNodeRef());
+	}
+
+	/**
+	 * Adds the peer defined by the noderef to the node.
+	 *
+	 * @param nodeRef
+	 *            The noderef that defines the new peer
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void addPeer(NodeRef nodeRef) throws IOException, FcpException {
+		addPeer(new AddPeer(nodeRef));
+	}
+
+	/**
+	 * Adds a peer, reading the noderef from the given URL.
+	 *
+	 * @param url
+	 *            The URL to read the noderef from
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void addPeer(URL url) throws IOException, FcpException {
+		addPeer(new AddPeer(url));
+	}
+
+	/**
+	 * Adds a peer, reading the noderef of the peer from the given file.
+	 * <strong>Note:</strong> the file to read the noderef from has to reside on
+	 * the same machine as the node!
+	 *
+	 * @param file
+	 *            The name of the file containing the peer’s noderef
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void addPeer(String file) throws IOException, FcpException {
+		addPeer(new AddPeer(file));
+	}
+
+	/**
+	 * Sends the given {@link AddPeer} message to the node. This method should
+	 * not be called directly. Use one of {@link #addPeer(Peer)},
+	 * {@link #addPeer(NodeRef)}, {@link #addPeer(URL)}, or
+	 * {@link #addPeer(String)} instead.
+	 *
+	 * @param addPeer
+	 *            The “AddPeer” message
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	private void addPeer(AddPeer addPeer) throws IOException, FcpException {
+		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
+				completionLatch.countDown();
+			}
+		};
+		fcpConnection.addFcpListener(fcpListener);
+		try {
+			fcpConnection.sendMessage(addPeer);
+			while (true) {
+				try {
+					fcpListener.complete();
+					break;
+				} catch (InterruptedException ie1) {
+					/* ignore, we’ll loop. */
+				}
+			}
+		} finally {
+			fcpConnection.removeFcpListener(fcpListener);
+		}
+		if (fcpListener.getFcpException() != null) {
+			throw fcpListener.getFcpException();
+		}
 	}
 
 	/**
