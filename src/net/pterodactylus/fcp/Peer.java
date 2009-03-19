@@ -19,6 +19,11 @@
 
 package net.pterodactylus.fcp;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * The “Peer” reply by the node contains information about a peer.
  * 
@@ -183,6 +188,21 @@ public class Peer extends BaseMessage {
 	}
 
 	/**
+	 * Returns all volatile fields from the message.
+	 *
+	 * @return All volatile files
+	 */
+	public Map<String, String> getVolatileFields() {
+		Map<String, String> volatileFields = new HashMap<String, String>();
+		for (Entry<String, String> field : getFields().entrySet()) {
+			if (field.getKey().startsWith("volatile.")) {
+				volatileFields.put(field.getKey(), field.getValue());
+			}
+		}
+		return Collections.unmodifiableMap(volatileFields);
+	}
+
+	/**
 	 * Returns one of the volatile fields from the message. The given field name
 	 * is prepended with “volatile.” so if you want to get the value of the
 	 * field with the name “volatile.status” you only need to specify “status”.
@@ -194,6 +214,21 @@ public class Peer extends BaseMessage {
 	 */
 	public String getVolatile(String field) {
 		return getField("volatile." + field);
+	}
+
+	/**
+	 * Returns all metadata fields from the message.
+	 *
+	 * @return All volatile files
+	 */
+	public Map<String, String> getMetadataFields() {
+		Map<String, String> metadataFields = new HashMap<String, String>();
+		for (Entry<String, String> field : getFields().entrySet()) {
+			if (field.getKey().startsWith("metadata.")) {
+				metadataFields.put(field.getKey(), field.getValue());
+			}
+		}
+		return Collections.unmodifiableMap(metadataFields);
 	}
 
 	/**
