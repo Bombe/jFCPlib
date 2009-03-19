@@ -183,13 +183,17 @@ public class FcpClient {
 	/**
 	 * Returns all peers that the node has.
 	 *
+	 * @param withMetadata
+	 *            <code>true</code> to include peer metadata
+	 * @param withVolatile
+	 *            <code>true</code> to include volatile peer data
 	 * @return A set containing the node’s peers
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @throws FcpException
 	 *             if an FCP error occurs
 	 */
-	public Set<Peer> getPeers() throws IOException, FcpException {
+	public Set<Peer> getPeers(final boolean withMetadata, final boolean withVolatile) throws IOException, FcpException {
 		final Set<Peer> peers = new HashSet<Peer>();
 		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
 
@@ -199,7 +203,7 @@ public class FcpClient {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(new ListPeers("list-peers"));
+				fcpConnection.sendMessage(new ListPeers("list-peers", withMetadata, withVolatile));
 			}
 
 			/**
