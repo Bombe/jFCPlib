@@ -41,6 +41,15 @@ public class PeerNote extends BaseMessage {
 	}
 
 	/**
+	 * Returns the identifier of the node this note belongs to.
+	 *
+	 * @return The note’s node’s identifier
+	 */
+	public String getNodeIdentifier() {
+		return getField("NodeIdentifier");
+	}
+
+	/**
 	 * Returns the base64-encoded note text.
 	 * 
 	 * @return The note text
