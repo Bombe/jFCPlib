@@ -145,7 +145,7 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	public void connect() throws IOException, FcpException {
-		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
+		new ExtendedFcpAdapter() {
 
 			/**
 			 * {@inheritDoc}
@@ -165,8 +165,7 @@ public class FcpClient {
 			public void receivedNodeHello(FcpConnection fcpConnection, NodeHello nodeHello) {
 				completionLatch.countDown();
 			}
-		};
-		fcpListener.execute();
+		}.execute();
 	}
 
 	/**
@@ -198,7 +197,7 @@ public class FcpClient {
 	 */
 	public Set<Peer> getPeers(final boolean withMetadata, final boolean withVolatile) throws IOException, FcpException {
 		final Set<Peer> peers = new HashSet<Peer>();
-		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
+		new ExtendedFcpAdapter() {
 
 			/**
 			 * {@inheritDoc}
@@ -224,8 +223,7 @@ public class FcpClient {
 			public void receivedEndListPeers(FcpConnection fcpConnection, EndListPeers endListPeers) {
 				completionLatch.countDown();
 			}
-		};
-		fcpListener.execute();
+		}.execute();
 		return peers;
 	}
 
@@ -301,7 +299,7 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	private void addPeer(final AddPeer addPeer) throws IOException, FcpException {
-		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
+		new ExtendedFcpAdapter() {
 
 			/**
 			 * {@inheritDoc}
@@ -319,8 +317,7 @@ public class FcpClient {
 			public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
 				completionLatch.countDown();
 			}
-		};
-		fcpListener.execute();
+		}.execute();
 	}
 
 	/**
@@ -345,7 +342,7 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	public void modifyPeer(final Peer peer, final Boolean allowLocalAddresses, final Boolean disabled, final Boolean listenOnly) throws IOException, FcpException {
-		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
+		new ExtendedFcpAdapter() {
 
 			/**
 			 * {@inheritDoc}
@@ -363,8 +360,7 @@ public class FcpClient {
 			public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
 				completionLatch.countDown();
 			}
-		};
-		fcpListener.execute();
+		}.execute();
 	}
 
 	/**
@@ -378,7 +374,7 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	public void removePeer(final Peer peer) throws IOException, FcpException {
-		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
+		new ExtendedFcpAdapter() {
 
 			/**
 			 * {@inheritDoc}
@@ -396,8 +392,7 @@ public class FcpClient {
 			public void receivedPeerRemoved(FcpConnection fcpConnection, PeerRemoved peerRemoved) {
 				completionLatch.countDown();
 			}
-		};
-		fcpListener.execute();
+		}.execute();
 	}
 
 	//
