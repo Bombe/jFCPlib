@@ -39,6 +39,7 @@ import net.pterodactylus.fcp.FcpListener;
 import net.pterodactylus.fcp.ListPeerNotes;
 import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.ModifyPeer;
+import net.pterodactylus.fcp.ModifyPeerNote;
 import net.pterodactylus.fcp.NodeHello;
 import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
@@ -451,6 +452,45 @@ public class FcpClient {
 			}
 		}.execute();
 		return objectWrapper.get();
+	}
+
+	/**
+	 * Replaces the peer note for the given peer.
+	 *
+	 * @param peer
+	 *            The peer
+	 * @param noteText
+	 *            The new base64-encoded note text
+	 * @param noteType
+	 *            The type of the note (currently only <code>1</code> is
+	 *            allowed)
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void modifyPeerNote(final Peer peer, final String noteText, final int noteType) throws IOException, FcpException {
+		new ExtendedFcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				fcpConnection.sendMessage(new ModifyPeerNote(peer.getIdentity(), noteText, noteType));
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedPeer(FcpConnection fcpConnection, Peer receivedPeer) {
+				if (receivedPeer.getIdentity().equals(peer.getIdentity())) {
+					completionLatch.countDown();
+				}
+			}
+		}.execute();
 	}
 
 	/**
