@@ -30,6 +30,7 @@ import java.util.concurrent.CountDownLatch;
 import net.pterodactylus.fcp.AddPeer;
 import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
+import net.pterodactylus.fcp.EndListPeerNotes;
 import net.pterodactylus.fcp.EndListPeers;
 import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
@@ -428,7 +429,17 @@ public class FcpClient {
 			 */
 			@Override
 			public void receivedPeerNote(FcpConnection fcpConnection, PeerNote peerNote) {
-				objectWrapper.set(peerNote);
+				if (peerNote.getNodeIdentifier().equals(peer.getIdentity())) {
+					objectWrapper.set(peerNote);
+				}
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedEndListPeerNotes(FcpConnection fcpConnection, EndListPeerNotes endListPeerNotes) {
+				completionLatch.countDown();
 			}
 		}.execute();
 		return objectWrapper.get();
