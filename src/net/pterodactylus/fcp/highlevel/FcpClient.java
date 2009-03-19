@@ -35,6 +35,7 @@ import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
 import net.pterodactylus.fcp.ListPeers;
+import net.pterodactylus.fcp.ModifyPeer;
 import net.pterodactylus.fcp.NodeHello;
 import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
@@ -326,6 +327,49 @@ public class FcpClient {
 					/* ignore, we’ll loop. */
 				}
 			}
+		} finally {
+			fcpConnection.removeFcpListener(fcpListener);
+		}
+		if (fcpListener.getFcpException() != null) {
+			throw fcpListener.getFcpException();
+		}
+	}
+
+	/**
+	 * Modifies the given peer.
+	 *
+	 * @param peer
+	 *            The peer to modify
+	 * @param allowLocalAddresses
+	 *            <code>true</code> to allow local address, <code>false</code>
+	 *            to not allow local address, <code>null</code> to not change
+	 *            the setting
+	 * @param disabled
+	 *            <code>true</code> to disable the peer, <code>false</code> to
+	 *            enable the peer, <code>null</code> to not change the setting
+	 * @param listenOnly
+	 *            <code>true</code> to enable “listen only” for the peer,
+	 *            <code>false</code> to disable it, <code>null</code> to not
+	 *            change it
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void modifyPeer(Peer peer, Boolean allowLocalAddresses, Boolean disabled, Boolean listenOnly) throws IOException, FcpException {
+		ExtendedFcpAdapter fcpListener = new ExtendedFcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
+				completionLatch.countDown();
+			}
+		};
+		fcpConnection.addFcpListener(fcpListener);
+		try {
+			fcpConnection.sendMessage(new ModifyPeer(peer.getIdentity(), allowLocalAddresses, disabled, listenOnly));
 		} finally {
 			fcpConnection.removeFcpListener(fcpListener);
 		}
