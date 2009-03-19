@@ -32,6 +32,7 @@ import net.pterodactylus.fcp.EndListPeers;
 import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
+import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.NodeHello;
 import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.ProtocolError;
@@ -210,6 +211,7 @@ public class FcpClient {
 			}
 		};
 		fcpConnection.addFcpListener(fcpAdapter);
+		fcpConnection.sendMessage(new ListPeers("list-peers"));
 		try {
 			while (true) {
 				try {
