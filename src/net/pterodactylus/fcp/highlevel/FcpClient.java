@@ -205,7 +205,8 @@ public class FcpClient {
 		new ExtendedFcpAdapter() {
 
 			/** The ID of the “ListPeers” request. */
-			private String identifier = "list-peers-" + System.currentTimeMillis();
+			@SuppressWarnings("synthetic-access")
+			private String identifier = createIdentifier("list-peers");
 
 			/**
 			 * {@inheritDoc}
@@ -531,6 +532,21 @@ public class FcpClient {
 			}
 		}.execute();
 		return sskKeypairWrapper.get();
+	}
+
+	//
+	// PRIVATE METHODS
+	//
+
+	/**
+	 * Creates a unique request identifier.
+	 *
+	 * @param basename
+	 *            The basename of the request
+	 * @return The created request identifier
+	 */
+	private String createIdentifier(String basename) {
+		return basename + "-" + System.currentTimeMillis() + "-" + (int) (Math.random() * Integer.MAX_VALUE);
 	}
 
 	/**
