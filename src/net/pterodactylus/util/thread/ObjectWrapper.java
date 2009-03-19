@@ -24,7 +24,7 @@ package net.pterodactylus.util.thread;
  * a container for return values from anonymous classes.
  *
  * <pre>
- * ObjectWrapper&lt;Object&gt; objectWrapper = new ObjectWrapper&lt;Object&gt;();
+ * final ObjectWrapper&lt;Object&gt; objectWrapper = new ObjectWrapper&lt;Object&gt;();
  * new Runnable() {
  *     public void run() {
  *         ...
