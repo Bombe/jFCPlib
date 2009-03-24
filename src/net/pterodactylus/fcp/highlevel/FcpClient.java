@@ -23,14 +23,18 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import net.pterodactylus.fcp.AddPeer;
 import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
+import net.pterodactylus.fcp.DataFound;
 import net.pterodactylus.fcp.EndListPeerNotes;
 import net.pterodactylus.fcp.EndListPeers;
 import net.pterodactylus.fcp.EndListPersistentRequests;
@@ -38,6 +42,7 @@ import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
 import net.pterodactylus.fcp.GenerateSSK;
+import net.pterodactylus.fcp.GetFailed;
 import net.pterodactylus.fcp.ListPeerNotes;
 import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.ListPersistentRequests;
@@ -49,9 +54,11 @@ import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.PeerNote;
 import net.pterodactylus.fcp.PeerRemoved;
 import net.pterodactylus.fcp.PersistentGet;
+import net.pterodactylus.fcp.PersistentPut;
 import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.RemovePeer;
 import net.pterodactylus.fcp.SSKKeypair;
+import net.pterodactylus.fcp.SimpleProgress;
 import net.pterodactylus.fcp.WatchGlobal;
 import net.pterodactylus.util.thread.ObjectWrapper;
 
@@ -557,8 +564,12 @@ public class FcpClient {
 	 * @throws FcpException
 	 *             if an FCP error occurs
 	 */
-	public Set<PersistentGet> getGetRequests(final boolean global) throws IOException, FcpException {
-		final Set<PersistentGet> getRequests = Collections.synchronizedSet(new HashSet<PersistentGet>());
+	public Collection<Request> getGetRequests(final boolean global) throws IOException, FcpException {
+		return getRequests(global);
+	}
+
+	public Collection<Request> getRequests(final boolean global) throws IOException, FcpException {
+		final Map<String, Request> requests = Collections.synchronizedMap(new HashMap<String, Request>());
 		new ExtendedFcpAdapter() {
 
 			/**
@@ -576,8 +587,78 @@ public class FcpClient {
 			@Override
 			public void receivedPersistentGet(FcpConnection fcpConnection, PersistentGet persistentGet) {
 				if (!persistentGet.isGlobal() || global) {
-					getRequests.add(persistentGet);
+					GetRequest getRequest = new GetRequest(persistentGet);
+					requests.put(persistentGet.getIdentifier(), getRequest);
 				}
+			}
+
+			/**
+			 * {@inheritDoc}
+			 *
+			 * @see net.pterodactylus.fcp.FcpAdapter#receivedDataFound(net.pterodactylus.fcp.FcpConnection,
+			 *      net.pterodactylus.fcp.DataFound)
+			 */
+			@Override
+			public void receivedDataFound(FcpConnection fcpConnection, DataFound dataFound) {
+				Request getRequest = requests.get(dataFound.getIdentifier());
+				if (getRequest == null) {
+					return;
+				}
+				getRequest.setComplete(true);
+				getRequest.setLength(dataFound.getDataLength());
+				getRequest.setContentType(dataFound.getMetadataContentType());
+			}
+
+			/**
+			 * {@inheritDoc}
+			 *
+			 * @see net.pterodactylus.fcp.FcpAdapter#receivedGetFailed(net.pterodactylus.fcp.FcpConnection,
+			 *      net.pterodactylus.fcp.GetFailed)
+			 */
+			@Override
+			public void receivedGetFailed(FcpConnection fcpConnection, GetFailed getFailed) {
+				Request getRequest = requests.get(getFailed.getIdentifier());
+				if (getRequest == null) {
+					return;
+				}
+				getRequest.setComplete(true);
+				getRequest.setFailed(true);
+				getRequest.setFatal(getFailed.isFatal());
+				getRequest.setErrorCode(getFailed.getCode());
+			}
+
+			/**
+			 * {@inheritDoc}
+			 *
+			 * @see net.pterodactylus.fcp.FcpAdapter#receivedPersistentPut(net.pterodactylus.fcp.FcpConnection,
+			 *      net.pterodactylus.fcp.PersistentPut)
+			 */
+			@Override
+			public void receivedPersistentPut(FcpConnection fcpConnection, PersistentPut persistentPut) {
+				if (!persistentPut.isGlobal() || global) {
+					PutRequest putRequest = new PutRequest(persistentPut);
+					requests.put(persistentPut.getIdentifier(), putRequest);
+				}
+			}
+
+			/**
+			 * {@inheritDoc}
+			 *
+			 * @see net.pterodactylus.fcp.FcpAdapter#receivedSimpleProgress(net.pterodactylus.fcp.FcpConnection,
+			 *      net.pterodactylus.fcp.SimpleProgress)
+			 */
+			@Override
+			public void receivedSimpleProgress(FcpConnection fcpConnection, SimpleProgress simpleProgress) {
+				Request request = requests.get(simpleProgress.getIdentifier());
+				if (request == null) {
+					return;
+				}
+				request.setTotalBlocks(simpleProgress.getTotal());
+				request.setRequiredBlocks(simpleProgress.getRequired());
+				request.setFailedBlocks(simpleProgress.getFailed());
+				request.setFatallyFailedBlocks(simpleProgress.getFatallyFailed());
+				request.setSucceededBlocks(simpleProgress.getSucceeded());
+				request.setFinalizedTotal(simpleProgress.isFinalizedTotal());
 			}
 
 			/**
@@ -588,7 +669,7 @@ public class FcpClient {
 				completionLatch.countDown();
 			}
 		}.execute();
-		return getRequests;
+		return requests.values();
 	}
 
 	//
