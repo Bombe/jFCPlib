@@ -92,6 +92,16 @@ public class Peer extends BaseMessage {
 	}
 
 	/**
+	 * Returns whether this peer is a seed.
+	 *
+	 * @return <code>true</code> if the peer is a seed, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean isSeed() {
+		return Boolean.valueOf(getField("seed"));
+	}
+
+	/**
 	 * Returns the “y” part of the peer’s public DSA key.
 	 *
 	 * @return The public DSA key
