@@ -254,6 +254,78 @@ public class FcpClient {
 	}
 
 	/**
+	 * Returns all darknet peers.
+	 *
+	 * @param withMetadata
+	 *            <code>true</code> to include peer metadata
+	 * @param withVolatile
+	 *            <code>true</code> to include volatile peer data
+	 * @return A set containing the node’s darknet peers
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public Collection<Peer> getDarknetPeers(boolean withMetadata, boolean withVolatile) throws IOException, FcpException {
+		Collection<Peer> allPeers = getPeers(withMetadata, withVolatile);
+		Collection<Peer> darknetPeers = new HashSet<Peer>();
+		for (Peer peer : allPeers) {
+			if (!peer.isOpennet() && !peer.isSeed()) {
+				darknetPeers.add(peer);
+			}
+		}
+		return darknetPeers;
+	}
+
+	/**
+	 * Returns all opennet peers.
+	 *
+	 * @param withMetadata
+	 *            <code>true</code> to include peer metadata
+	 * @param withVolatile
+	 *            <code>true</code> to include volatile peer data
+	 * @return A set containing the node’s opennet peers
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public Collection<Peer> getOpennetPeers(boolean withMetadata, boolean withVolatile) throws IOException, FcpException {
+		Collection<Peer> allPeers = getPeers(withMetadata, withVolatile);
+		Collection<Peer> opennetPeers = new HashSet<Peer>();
+		for (Peer peer : allPeers) {
+			if (peer.isOpennet() && !peer.isSeed()) {
+				opennetPeers.add(peer);
+			}
+		}
+		return opennetPeers;
+	}
+
+	/**
+	 * Returns all seed peers.
+	 *
+	 * @param withMetadata
+	 *            <code>true</code> to include peer metadata
+	 * @param withVolatile
+	 *            <code>true</code> to include volatile peer data
+	 * @return A set containing the node’s seed peers
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public Collection<Peer> getSeedPeers(boolean withMetadata, boolean withVolatile) throws IOException, FcpException {
+		Collection<Peer> allPeers = getPeers(withMetadata, withVolatile);
+		Collection<Peer> seedPeers = new HashSet<Peer>();
+		for (Peer peer : allPeers) {
+			if (peer.isSeed()) {
+				seedPeers.add(peer);
+			}
+		}
+		return seedPeers;
+	}
+
+	/**
 	 * Adds the given peer to the node.
 	 *
 	 * @param peer
