@@ -28,14 +28,14 @@ import java.util.Map.Entry;
  * The “GetFailed” message signals the client that a {@link ClientGet} request
  * has failed. This also means that no further progress messages for that
  * request will be sent.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class GetFailed extends BaseMessage {
 
 	/**
 	 * Creates a new “GetFailed” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -55,7 +55,7 @@ public class GetFailed extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {
@@ -64,7 +64,7 @@ public class GetFailed extends BaseMessage {
 
 	/**
 	 * Returns whether the request is on the global queue.
-	 * 
+	 *
 	 * @return <code>true</code> if the request is on the global queue,
 	 *         <code>false</code> if it is on the client-local queue
 	 */
@@ -74,7 +74,7 @@ public class GetFailed extends BaseMessage {
 
 	/**
 	 * Returns the description of the error code.
-	 * 
+	 *
 	 * @return The description of the error code
 	 */
 	public String getCodeDescription() {
@@ -83,7 +83,7 @@ public class GetFailed extends BaseMessage {
 
 	/**
 	 * Returns the extra description of the error.
-	 * 
+	 *
 	 * @return The extra description of the error
 	 */
 	public String getExtraDescription() {
@@ -92,7 +92,7 @@ public class GetFailed extends BaseMessage {
 
 	/**
 	 * Returns the short description of the error.
-	 * 
+	 *
 	 * @return The short description of the error
 	 */
 	public String getShortCodeDescription() {
@@ -111,7 +111,7 @@ public class GetFailed extends BaseMessage {
 
 	/**
 	 * Returns the expected content type of the request.
-	 * 
+	 *
 	 * @return The expected content type
 	 */
 	public String getExpectedMetadataContentType() {
@@ -123,7 +123,7 @@ public class GetFailed extends BaseMessage {
 	 * and {@link #getExpectedMetadataContentType()}) have already been
 	 * finalized and can be trusted. If the values have not been finalized that
 	 * can change over time.
-	 * 
+	 *
 	 * @return <code>true</code> if the expected values have already been
 	 *         finalized, <code>false</code> otherwise
 	 */
@@ -135,7 +135,7 @@ public class GetFailed extends BaseMessage {
 	 * Returns the URI the request is redirected to (in case of a request for a
 	 * USK). This is returned so that client applications know that the URI of
 	 * the key has updated.
-	 * 
+	 *
 	 * @return The URI the request was redirected to
 	 */
 	public String getRedirectURI() {
@@ -157,7 +157,7 @@ public class GetFailed extends BaseMessage {
 	 * Returns a list of complex error codes with the message. Use
 	 * {@link #getComplexErrorDescription(int)} and
 	 * {@link #getComplexErrorCount(int)} to get details.
-	 * 
+	 *
 	 * @return A list of complex error codes
 	 */
 	public int[] getComplexErrorCodes() {
@@ -186,7 +186,7 @@ public class GetFailed extends BaseMessage {
 	/**
 	 * Returns the description of the complex error. You should only hand it
 	 * error codes you got from {@link #getComplexErrorCodes()}!
-	 * 
+	 *
 	 * @param errorCode
 	 *            The error code
 	 * @return The description of the complex error
@@ -198,7 +198,7 @@ public class GetFailed extends BaseMessage {
 	/**
 	 * Returns the count of the complex error. You should only hand it error
 	 * codes you got from {@link #getComplexErrorCodes()}!
-	 * 
+	 *
 	 * @param errorCode
 	 *            The error code
 	 * @return The count of the complex error, or <code>-1</code> if the count
