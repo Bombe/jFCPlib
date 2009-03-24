@@ -52,7 +52,6 @@ import net.pterodactylus.fcp.PersistentGet;
 import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.RemovePeer;
 import net.pterodactylus.fcp.SSKKeypair;
-import net.pterodactylus.fcp.WatchGlobal;
 import net.pterodactylus.util.thread.ObjectWrapper;
 
 /**
@@ -565,7 +564,6 @@ public class FcpClient {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(new WatchGlobal(global));
 				fcpConnection.sendMessage(new ListPersistentRequests());
 			}
 
@@ -574,7 +572,9 @@ public class FcpClient {
 			 */
 			@Override
 			public void receivedPersistentGet(FcpConnection fcpConnection, PersistentGet persistentGet) {
-				getRequests.add(persistentGet);
+				if (!persistentGet.isGlobal() || global) {
+					getRequests.add(persistentGet);
+				}
 			}
 
 			/**
