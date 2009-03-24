@@ -143,6 +143,17 @@ public class GetFailed extends BaseMessage {
 	}
 
 	/**
+	 * Returns whether the request failed fatally. If a request fails fatally it
+	 * can never complete, even with inifinite retries.
+	 *
+	 * @return <code>true</code> if the request failed fatally,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean isFatal() {
+		return Boolean.valueOf(getField("Fatal"));
+	}
+
+	/**
 	 * Returns a list of complex error codes with the message. Use
 	 * {@link #getComplexErrorDescription(int)} and
 	 * {@link #getComplexErrorCount(int)} to get details.
