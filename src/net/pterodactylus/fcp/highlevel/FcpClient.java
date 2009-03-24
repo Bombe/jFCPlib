@@ -213,7 +213,7 @@ public class FcpClient {
 	 * @throws FcpException
 	 *             if an FCP error occurs
 	 */
-	public Set<Peer> getPeers(final boolean withMetadata, final boolean withVolatile) throws IOException, FcpException {
+	public Collection<Peer> getPeers(final boolean withMetadata, final boolean withVolatile) throws IOException, FcpException {
 		final Set<Peer> peers = Collections.synchronizedSet(new HashSet<Peer>());
 		new ExtendedFcpAdapter() {
 
