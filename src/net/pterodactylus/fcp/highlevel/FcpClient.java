@@ -52,6 +52,7 @@ import net.pterodactylus.fcp.PersistentGet;
 import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.RemovePeer;
 import net.pterodactylus.fcp.SSKKeypair;
+import net.pterodactylus.fcp.WatchGlobal;
 import net.pterodactylus.util.thread.ObjectWrapper;
 
 /**
@@ -164,6 +165,8 @@ public class FcpClient {
 				fcpConnection.connect();
 				ClientHello clientHello = new ClientHello(name);
 				fcpConnection.sendMessage(clientHello);
+				WatchGlobal watchGlobal = new WatchGlobal(true);
+				fcpConnection.sendMessage(watchGlobal);
 			}
 
 			/**
