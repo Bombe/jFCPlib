@@ -640,6 +640,19 @@ public class FcpClient {
 		return getRequests(global);
 	}
 
+	/**
+	 * Returns all currently visible persistent requests.
+	 *
+	 * @param global
+	 *            <code>true</code> to return requests from the global queue,
+	 *            <code>false</code> to only show requests from the client-local
+	 *            queue
+	 * @return All requests
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
 	public Collection<Request> getRequests(final boolean global) throws IOException, FcpException {
 		final Map<String, Request> requests = Collections.synchronizedMap(new HashMap<String, Request>());
 		new ExtendedFcpAdapter() {
