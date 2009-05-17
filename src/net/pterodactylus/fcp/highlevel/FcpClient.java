@@ -651,6 +651,31 @@ public class FcpClient {
 	}
 
 	/**
+	 * Returns all currently visible persistent put requests.
+	 *
+	 * @param global
+	 *            <code>true</code> to return put requests from the global
+	 *            queue, <code>false</code> to only show requests from the
+	 *            client-local queue
+	 * @return All put requests
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public Collection<Request> getPutRequests(final boolean global) throws IOException, FcpException {
+		return Filters.filteredCollection(getRequests(global), new Filter<Request>() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			public boolean filterObject(Request request) {
+				return request instanceof PutRequest;
+			}
+		});
+	}
+
+	/**
 	 * Returns all currently visible persistent requests.
 	 *
 	 * @param global
