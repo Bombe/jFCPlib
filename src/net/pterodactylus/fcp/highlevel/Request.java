@@ -28,7 +28,7 @@ import net.pterodactylus.fcp.PersistentPut;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class Request {
+public abstract class Request {
 
 	/** The identifier of the request. */
 	private final String identifier;
