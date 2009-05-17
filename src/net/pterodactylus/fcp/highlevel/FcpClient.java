@@ -60,6 +60,8 @@ import net.pterodactylus.fcp.RemovePeer;
 import net.pterodactylus.fcp.SSKKeypair;
 import net.pterodactylus.fcp.SimpleProgress;
 import net.pterodactylus.fcp.WatchGlobal;
+import net.pterodactylus.util.filter.Filter;
+import net.pterodactylus.util.filter.Filters;
 import net.pterodactylus.util.thread.ObjectWrapper;
 
 /**
@@ -637,7 +639,15 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	public Collection<Request> getGetRequests(final boolean global) throws IOException, FcpException {
-		return getRequests(global);
+		return Filters.filteredCollection(getRequests(global), new Filter<Request>() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			public boolean filterObject(Request request) {
+				return request instanceof GetRequest;
+			}
+		});
 	}
 
 	/**
