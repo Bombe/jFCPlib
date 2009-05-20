@@ -81,6 +81,9 @@ public class FcpClient {
 	/** The underlying FCP connection. */
 	private final FcpConnection fcpConnection;
 
+	/** Whether the client is currently connected. */
+	private volatile boolean connected;
+
 	/**
 	 * Creates an FCP client with the given name.
 	 *
@@ -163,6 +166,8 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	public void connect() throws IOException, FcpException {
+		checkConnected(false);
+		connected = true;
 		new ExtendedFcpAdapter() {
 
 			/**
@@ -808,6 +813,28 @@ public class FcpClient {
 	}
 
 	/**
+	 * Checks whether the connection is in the required state.
+	 *
+	 * @param connected
+	 *            The required connection state
+	 * @throws FcpException
+	 *             if the connection is not in the required state
+	 */
+	private void checkConnected(boolean connected) throws FcpException {
+		if (this.connected != connected) {
+			throw new FcpException("Client is " + (connected ? "not" : "already") + " connected.");
+		}
+	}
+
+	/**
+	 * Tells the client that it is now disconnected. This method is called by
+	 * {@link ExtendedFcpAdapter} only.
+	 */
+	private void setDisconnected() {
+		connected = false;
+	}
+
+	/**
 	 * Implementation of an {@link FcpListener} that can store an
 	 * {@link FcpException} and wait for the arrival of a certain command.
 	 *
@@ -839,6 +866,7 @@ public class FcpClient {
 		 */
 		@SuppressWarnings("synthetic-access")
 		public void execute() throws IOException, FcpException {
+			checkConnected(true);
 			fcpConnection.addFcpListener(this);
 			try {
 				run();
@@ -850,10 +878,14 @@ public class FcpClient {
 						/* ignore, we’ll loop. */
 					}
 				}
+			} catch (IOException ioe1) {
+				setDisconnected();
+				throw ioe1;
 			} finally {
 				fcpConnection.removeFcpListener(this);
 			}
 			if (fcpException != null) {
+				setDisconnected();
 				throw fcpException;
 			}
 		}
