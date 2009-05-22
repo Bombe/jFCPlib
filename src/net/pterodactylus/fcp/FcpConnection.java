@@ -359,7 +359,7 @@ public class FcpConnection implements Closeable {
 	 *            The length of the stream
 	 * @return The limited input stream
 	 */
-	private LimitedInputStream getInputStream(long dataLength) {
+	private synchronized LimitedInputStream getInputStream(long dataLength) {
 		if (dataLength <= 0) {
 			return new LimitedInputStream(null, 0);
 		}
@@ -482,7 +482,7 @@ public class FcpConnection implements Closeable {
 		 * @throws IOException
 		 *             if an I/O error occurs
 		 */
-		public void consume() throws IOException {
+		public synchronized void consume() throws IOException {
 			while (remaining > 0) {
 				skip(remaining);
 			}
