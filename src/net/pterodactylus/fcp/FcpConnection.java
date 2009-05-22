@@ -337,8 +337,8 @@ public class FcpConnection implements Closeable {
 	//
 
 	/**
-	 * Incremets the counter in {@link #incomingMessageStatistics} by <cod>1</code>
-	 * for the given message name.
+	 * Incremets the counter in {@link #incomingMessageStatistics} by
+	 * <cod>1</code> for the given message name.
 	 *
 	 * @param name
 	 *            The name of the message to count
