@@ -203,6 +203,16 @@ public class FcpClient {
 		}
 	}
 
+	/**
+	 * Returns whether this client is currently connected.
+	 *
+	 * @return {@code true} if the client is currently connected, {@code false}
+	 *         otherwise
+	 */
+	public boolean isConnected() {
+		return connected;
+	}
+
 	//
 	// PEER MANAGEMENT
 	//
