@@ -171,6 +171,15 @@ public class WebOfTrustPlugin {
 		/** The identity’s request URI. */
 		private final String requestUri;
 
+		/** The identity’s trust value. */
+		private final Byte trust;
+
+		/** The identity’s score value. */
+		private final Integer score;
+
+		/** The identity’s rank. */
+		private final Integer rank;
+
 		/**
 		 * Creates a new identity.
 		 *
@@ -180,11 +189,20 @@ public class WebOfTrustPlugin {
 		 *            The nickname of the identity
 		 * @param requestUri
 		 *            The request URI of the identity
+		 * @param trust
+		 *            The trust value of the identity
+		 * @param score
+		 *            The score value of the identity
+		 * @param rank
+		 *            The rank of the identity
 		 */
-		public Identity(String identifier, String nickname, String requestUri) {
+		public Identity(String identifier, String nickname, String requestUri, Byte trust, Integer score, Integer rank) {
 			this.identifier = identifier;
 			this.nickname = nickname;
 			this.requestUri = requestUri;
+			this.trust = trust;
+			this.score = score;
+			this.rank = rank;
 		}
 
 		/**
@@ -212,6 +230,36 @@ public class WebOfTrustPlugin {
 		 */
 		public String getRequestUri() {
 			return requestUri;
+		}
+
+		/**
+		 * Returns the trust value of this identity.
+		 *
+		 * @return This identity’s trust value, or {@code null} if this
+		 *         identity’s trust value is not known
+		 */
+		public Byte getTrust() {
+			return trust;
+		}
+
+		/**
+		 * Returns the score value of this identity.
+		 *
+		 * @return This identity’s score value, or {@code null} if this
+		 *         identity’s score value is not known
+		 */
+		public Integer getScore() {
+			return score;
+		}
+
+		/**
+		 * Returns the rank of this identity.
+		 *
+		 * @return This identity’s rank, or {@code null} if this identity’s rank
+		 *         is not known
+		 */
+		public Integer getRank() {
+			return rank;
 		}
 
 	}
