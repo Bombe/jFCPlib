@@ -133,6 +133,48 @@ public class WebOfTrustPlugin {
 		return ownIdentities;
 	}
 
+	/**
+	 * Returns the identity with the given identifier and the trust values
+	 * depending on the given own identity.
+	 *
+	 * @param ownIdentity
+	 *            The own identity that is used to calculate trust values
+	 * @param identifier
+	 *            The identifier of the identity to get
+	 * @return The request identity
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public Identity getIdentity(OwnIdentity ownIdentity, String identifier) throws IOException, FcpException {
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "GetIdentity", "TreeOwner", ownIdentity.getIdentifier(), "Identity", identifier));
+		if (!replies.get("Message").equals("Identity")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “Identity” message!");
+		}
+		String nickname = replies.get("Nickname");
+		String requestUri = replies.get("RequestURI");
+		Byte trust = null;
+		try {
+			trust = Byte.valueOf(replies.get("Trust"));
+		} catch (NumberFormatException nfe1) {
+			/* ignore. */
+		}
+		Integer score = null;
+		try {
+			score = Integer.valueOf(replies.get("Score"));
+		} catch (NumberFormatException nfe1) {
+			/* ignore. */
+		}
+		Integer rank = null;
+		try {
+			rank = Integer.valueOf(replies.get("Rank"));
+		} catch (NumberFormatException nfe1) {
+			/* ignore. */
+		}
+		return new Identity(identifier, nickname, requestUri, trust, score, rank);
+	}
+
 	//
 	// PRIVATE METHODS
 	//
