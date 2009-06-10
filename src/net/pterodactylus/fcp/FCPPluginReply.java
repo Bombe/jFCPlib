@@ -20,6 +20,9 @@
 package net.pterodactylus.fcp;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * The “FCPPluginReply” is sent by a plugin as a response to a
@@ -82,6 +85,24 @@ public class FCPPluginReply extends BaseMessage {
 	 */
 	public String getReply(String key) {
 		return getField("Replies." + key);
+	}
+
+	/**
+	 * Returns all replies from the plugin. The plugin sends replies as normal
+	 * message fields prefixed by “Replies.”. The keys of the returned map do
+	 * not contain this prefix!
+	 *
+	 * @return All replies from the plugin
+	 */
+	public Map<String, String> getReplies() {
+		Map<String, String> fields = getFields();
+		Map<String, String> replies = new HashMap<String, String>();
+		for (Entry<String, String> field : fields.entrySet()) {
+			if (field.getKey().startsWith("Replies.")) {
+				replies.put(field.getKey().substring(8), field.getValue());
+			}
+		}
+		return replies;
 	}
 
 	/**
