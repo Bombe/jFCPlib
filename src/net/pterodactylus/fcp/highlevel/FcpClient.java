@@ -20,6 +20,7 @@
 package net.pterodactylus.fcp.highlevel;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 
 import net.pterodactylus.fcp.AddPeer;
@@ -38,6 +40,8 @@ import net.pterodactylus.fcp.DataFound;
 import net.pterodactylus.fcp.EndListPeerNotes;
 import net.pterodactylus.fcp.EndListPeers;
 import net.pterodactylus.fcp.EndListPersistentRequests;
+import net.pterodactylus.fcp.FCPPluginMessage;
+import net.pterodactylus.fcp.FCPPluginReply;
 import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
@@ -805,6 +809,80 @@ public class FcpClient {
 			}
 		}.execute();
 		return requests.values();
+	}
+
+	/**
+	 * Sends a message to a plugin and waits for the response.
+	 *
+	 * @param pluginClass
+	 *            The name of the plugin class
+	 * @param parameters
+	 *            The parameters for the plugin
+	 * @return The responses from the plugin
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 */
+	public Map<String, String> sendPluginMessage(String pluginClass, Map<String, String> parameters) throws IOException, FcpException {
+		return sendPluginMessage(pluginClass, parameters, 0, null);
+	}
+
+	/**
+	 * Sends a message to a plugin and waits for the response.
+	 *
+	 * @param pluginClass
+	 *            The name of the plugin class
+	 * @param parameters
+	 *            The parameters for the plugin
+	 * @param dataLength
+	 *            The length of the optional data stream, or {@code 0} if there
+	 *            is no optional data stream
+	 * @param dataInputStream
+	 *            The input stream for the payload, or {@code null} if there is
+	 *            no payload
+	 * @return The responses from the plugin
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 */
+	public Map<String, String> sendPluginMessage(final String pluginClass, final Map<String, String> parameters, final long dataLength, final InputStream dataInputStream) throws IOException, FcpException {
+		final Map<String, String> pluginReplies = Collections.synchronizedMap(new HashMap<String, String>());
+		new ExtendedFcpAdapter() {
+
+			@SuppressWarnings("synthetic-access")
+			private final String identifier = createIdentifier("FCPPluginMessage");
+
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				FCPPluginMessage fcpPluginMessage = new FCPPluginMessage(pluginClass);
+				for (Entry<String, String> parameter : parameters.entrySet()) {
+					fcpPluginMessage.setParameter(parameter.getKey(), parameter.getValue());
+				}
+				fcpPluginMessage.setIdentifier(identifier);
+				if ((dataLength > 0) && (dataInputStream != null)) {
+					fcpPluginMessage.setDataLength(dataLength);
+					fcpPluginMessage.setPayloadInputStream(dataInputStream);
+				}
+				fcpConnection.sendMessage(fcpPluginMessage);
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedFCPPluginReply(FcpConnection fcpConnection, FCPPluginReply fcpPluginReply) {
+				if (!fcpPluginReply.getIdentifier().equals(identifier)) {
+					return;
+				}
+				pluginReplies.putAll(fcpPluginReply.getReplies());
+				completionLatch.countDown();
+			}
+
+		}.execute();
+		return pluginReplies;
 	}
 
 	//
