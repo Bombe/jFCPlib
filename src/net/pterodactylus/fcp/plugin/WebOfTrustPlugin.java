@@ -50,6 +50,64 @@ public class WebOfTrustPlugin {
 	}
 
 	/**
+	 * Creates a new identity.
+	 *
+	 * @param nickname
+	 *            The nickname of the new identity
+	 * @param context
+	 *            The context for the new identity
+	 * @param publishTrustList
+	 *            {@code true} if the new identity should publish its trust list
+	 * @return The new identity
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public OwnIdentity createIdentity(String nickname, String context, boolean publishTrustList) throws IOException, FcpException {
+		return createIdentity(nickname, context, publishTrustList, null, null);
+	}
+
+	/**
+	 * Creates a new identity from the given request and insert URI.
+	 *
+	 * @param nickname
+	 *            The nickname of the new identity
+	 * @param context
+	 *            The context for the new identity
+	 * @param publishTrustList
+	 *            {@code true} if the new identity should publish its trust list
+	 * @param requestUri
+	 *            The request URI of the identity
+	 * @param insertUri
+	 *            The insert URI of the identity
+	 * @return The new identity
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public OwnIdentity createIdentity(String nickname, String context, boolean publishTrustList, String requestUri, String insertUri) throws IOException, FcpException {
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("Message", "CreateIdentity");
+		parameters.put("Nickname", nickname);
+		parameters.put("Context", context);
+		parameters.put("PublishTrustList", String.valueOf(publishTrustList));
+		if ((requestUri != null) && (insertUri != null)) {
+			parameters.put("RequestURI", requestUri);
+			parameters.put("InsertURI", insertUri);
+		}
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", parameters);
+		if (!replies.get("Message").equals("IdentityCreated")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “IdentityCreated” message!");
+		}
+		String identifier = replies.get("ID");
+		String newRequestUri = replies.get("RequestURI");
+		String newInsertUri = replies.get("InsertURI");
+		return new OwnIdentity(identifier, nickname, newRequestUri, newInsertUri);
+	}
+
+	/**
 	 * Returns all own identities of the web-of-trust plugins. Almost all other
 	 * commands require an {@link OwnIdentity} to return meaningful values.
 	 *
