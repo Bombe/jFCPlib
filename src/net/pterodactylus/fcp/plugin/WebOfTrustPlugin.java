@@ -325,16 +325,7 @@ public class WebOfTrustPlugin {
 	 *
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
 	 */
-	public static class OwnIdentity {
-
-		/** The identity’s identifier. */
-		private final String identifier;
-
-		/** The identity’s nickname. */
-		private final String nickname;
-
-		/** The identity’s request URI. */
-		private final String requestUri;
+	public static class OwnIdentity extends Identity {
 
 		/** The identity’s insert URI. */
 		private final String insertUri;
@@ -352,37 +343,8 @@ public class WebOfTrustPlugin {
 		 *            The insert URI of the identity
 		 */
 		public OwnIdentity(String identifier, String nickname, String requestUri, String insertUri) {
-			this.identifier = identifier;
-			this.nickname = nickname;
-			this.requestUri = requestUri;
+			super(identifier, nickname, requestUri);
 			this.insertUri = insertUri;
-		}
-
-		/**
-		 * Returns the identifier of this identity.
-		 *
-		 * @return This identity’s identifier
-		 */
-		public String getIdentifier() {
-			return identifier;
-		}
-
-		/**
-		 * Returns the nickname of this identity.
-		 *
-		 * @return This identity’s nickname
-		 */
-		public String getNickname() {
-			return nickname;
-		}
-
-		/**
-		 * Returns the request URI of this identity.
-		 *
-		 * @return This identity’s request URI
-		 */
-		public String getRequestUri() {
-			return requestUri;
 		}
 
 		/**
