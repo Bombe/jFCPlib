@@ -173,6 +173,27 @@ public class WebOfTrustPlugin {
 		return new IdentityTrust(trust, score, rank);
 	}
 
+	/**
+	 * Adds a new identity by its request URI.
+	 *
+	 * @param requestUri
+	 *            The request URI of the identity to add
+	 * @return The added identity
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public Identity addIdentity(String requestUri) throws IOException, FcpException {
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "AddIdentity", "RequestURI", requestUri));
+		if (!replies.get("Message").equals("IdentityAdded")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “IdentityAdded” message!");
+		}
+		String identifier = replies.get("ID");
+		String nickname = replies.get("Nickname");
+		return new Identity(identifier, nickname, requestUri);
+	}
+
 	//
 	// PRIVATE METHODS
 	//
