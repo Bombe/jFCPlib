@@ -389,6 +389,25 @@ public class WebOfTrustPlugin {
 		return replies.get("Property");
 	}
 
+	/**
+	 * Removes the given property from the given identity.
+	 *
+	 * @param ownIdentity
+	 *            The identity to remove a property from
+	 * @param property
+	 *            The name of the property to remove
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void removeProperty(OwnIdentity ownIdentity, String property) throws IOException, FcpException {
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "RemoveProperty", "Identity", ownIdentity.getIdentifier(), "Property", property));
+		if (!replies.get("Message").equals("PropertyRemoved")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “PropertyRemoved” message!");
+		}
+	}
+
 	//
 	// PRIVATE METHODS
 	//
