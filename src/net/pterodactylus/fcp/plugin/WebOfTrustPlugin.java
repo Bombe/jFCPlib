@@ -134,26 +134,24 @@ public class WebOfTrustPlugin {
 	}
 
 	/**
-	 * Returns the identity with the given identifier and the trust values
-	 * depending on the given own identity.
+	 * Returns the trust given to the identity with the given identifier by the
+	 * given own identity.
 	 *
 	 * @param ownIdentity
 	 *            The own identity that is used to calculate trust values
 	 * @param identifier
-	 *            The identifier of the identity to get
-	 * @return The request identity
+	 *            The identifier of the identity whose trust to get
+	 * @return The request identity trust
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @throws FcpException
 	 *             if an FCP error occurs
 	 */
-	public Identity getIdentity(OwnIdentity ownIdentity, String identifier) throws IOException, FcpException {
+	public IdentityTrust getIdentityTrust(OwnIdentity ownIdentity, String identifier) throws IOException, FcpException {
 		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "GetIdentity", "TreeOwner", ownIdentity.getIdentifier(), "Identity", identifier));
 		if (!replies.get("Message").equals("Identity")) {
 			throw new FcpException("WebOfTrust Plugin did not reply with “Identity” message!");
 		}
-		String nickname = replies.get("Nickname");
-		String requestUri = replies.get("RequestURI");
 		Byte trust = null;
 		try {
 			trust = Byte.valueOf(replies.get("Trust"));
@@ -172,7 +170,7 @@ public class WebOfTrustPlugin {
 		} catch (NumberFormatException nfe1) {
 			/* ignore. */
 		}
-		return new Identity(identifier, nickname, requestUri, trust, score, rank);
+		return new IdentityTrust(trust, score, rank);
 	}
 
 	//
@@ -213,15 +211,6 @@ public class WebOfTrustPlugin {
 		/** The identity’s request URI. */
 		private final String requestUri;
 
-		/** The identity’s trust value. */
-		private final Byte trust;
-
-		/** The identity’s score value. */
-		private final Integer score;
-
-		/** The identity’s rank. */
-		private final Integer rank;
-
 		/**
 		 * Creates a new identity.
 		 *
@@ -231,20 +220,11 @@ public class WebOfTrustPlugin {
 		 *            The nickname of the identity
 		 * @param requestUri
 		 *            The request URI of the identity
-		 * @param trust
-		 *            The trust value of the identity
-		 * @param score
-		 *            The score value of the identity
-		 * @param rank
-		 *            The rank of the identity
 		 */
-		public Identity(String identifier, String nickname, String requestUri, Byte trust, Integer score, Integer rank) {
+		public Identity(String identifier, String nickname, String requestUri) {
 			this.identifier = identifier;
 			this.nickname = nickname;
 			this.requestUri = requestUri;
-			this.trust = trust;
-			this.score = score;
-			this.rank = rank;
 		}
 
 		/**
@@ -272,6 +252,40 @@ public class WebOfTrustPlugin {
 		 */
 		public String getRequestUri() {
 			return requestUri;
+		}
+
+	}
+
+	/**
+	 * Container that stores the trust given to an identity.
+	 *
+	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
+	 */
+	public static class IdentityTrust {
+
+		/** The identity’s trust value. */
+		private final Byte trust;
+
+		/** The identity’s score value. */
+		private final Integer score;
+
+		/** The identity’s rank. */
+		private final Integer rank;
+
+		/**
+		 * Creates a new identity trust container.
+		 *
+		 * @param trust
+		 *            The trust value of the identity
+		 * @param score
+		 *            The score value of the identity
+		 * @param rank
+		 *            The rank of the identity
+		 */
+		public IdentityTrust(Byte trust, Integer score, Integer rank) {
+			this.trust = trust;
+			this.score = score;
+			this.rank = rank;
 		}
 
 		/**
