@@ -333,6 +333,52 @@ public class WebOfTrustPlugin {
 	}
 
 	/**
+	 * Container for the trust given from one identity to another.
+	 *
+	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
+	 */
+	public static class IdentityTrust {
+
+		/** The trust given to the identity. */
+		private final byte trust;
+
+		/** The command for the trust value. */
+		private final String comment;
+
+		/**
+		 * Creates a new identity trust container.
+		 *
+		 * @param trust
+		 *            The trust given to the identity
+		 * @param comment
+		 *            The comment for the trust value
+		 */
+		public IdentityTrust(byte trust, String comment) {
+			this.trust = trust;
+			this.comment = comment;
+		}
+
+		/**
+		 * Returns the trust value given to the identity.
+		 *
+		 * @return The trust value
+		 */
+		public byte getTrust() {
+			return trust;
+		}
+
+		/**
+		 * Returns the comment for the trust value.
+		 *
+		 * @return The comment for the trust value
+		 */
+		public String getComment() {
+			return comment;
+		}
+
+	}
+
+	/**
 	 * Container that stores the trust that is calculated by taking all trustees
 	 * and their trust lists into account.
 	 *
