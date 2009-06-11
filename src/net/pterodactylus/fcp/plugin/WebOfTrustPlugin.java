@@ -347,6 +347,27 @@ public class WebOfTrustPlugin {
 		}
 	}
 
+	/**
+	 * Sets the given property for the given identity.
+	 *
+	 * @param ownIdentity
+	 *            The identity to set a property for
+	 * @param property
+	 *            The name of the property to set
+	 * @param value
+	 *            The value of the property to set
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void setProperty(OwnIdentity ownIdentity, String property, String value) throws IOException, FcpException {
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "SetProperty", "Identity", ownIdentity.getIdentifier(), "Property", property, "Value", value));
+		if (!replies.get("Message").equals("PropertyAdded")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “PropertyAdded” message!");
+		}
+	}
+
 	//
 	// PRIVATE METHODS
 	//
