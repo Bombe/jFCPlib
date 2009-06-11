@@ -194,6 +194,38 @@ public class WebOfTrustPlugin {
 		return new Identity(identifier, nickname, requestUri);
 	}
 
+	/**
+	 * Returns identities by the given score.
+	 *
+	 * @param ownIdentity
+	 *            The own identity
+	 * @param context
+	 *            The context to get the identities for
+	 * @param positive
+	 *            {@code null} to return neutrally trusted identities, {@code
+	 *            true} to return positively trusted identities, {@code false}
+	 *            for negatively trusted identities
+	 * @return The trusted identites
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public Set<Identity> getIdentitesByScore(OwnIdentity ownIdentity, String context, Boolean positive) throws IOException, FcpException {
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "GetIdentitesByScore", "TreeOwner", ownIdentity.getIdentifier(), "Context", context, "Selection", ((positive == null) ? "0" : (positive ? "+" : "-"))));
+		if (!replies.get("Message").equals("Identities")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “Identities” message!");
+		}
+		Set<Identity> identities = new HashSet<Identity>();
+		for (int identityIndex = 1; replies.containsKey("Identity" + identityIndex); identityIndex++) {
+			String identifier = replies.get("Identity" + identityIndex);
+			String nickname = replies.get("Nickname" + identityIndex);
+			String requestUri = replies.get("RequestURI" + identityIndex);
+			identities.add(new Identity(identifier, nickname, requestUri));
+		}
+		return identities;
+	}
+
 	//
 	// PRIVATE METHODS
 	//
