@@ -368,6 +368,27 @@ public class WebOfTrustPlugin {
 		}
 	}
 
+	/**
+	 * Returns the value of the given property for the given identity.
+	 *
+	 * @param ownIdentity
+	 *            The identity to get a property for
+	 * @param property
+	 *            The name of the property to get
+	 * @return The value of the property
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public String getProperty(OwnIdentity ownIdentity, String property) throws IOException, FcpException {
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "GetProperty", "Identity", ownIdentity.getIdentifier(), "Property", property));
+		if (!replies.get("Message").equals("PropertyValue")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “PropertyValue” message!");
+		}
+		return replies.get("Property");
+	}
+
 	//
 	// PRIVATE METHODS
 	//
