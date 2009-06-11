@@ -257,6 +257,36 @@ public class WebOfTrustPlugin {
 	}
 
 	/**
+	 * Returns the identities that given identity trusts.
+	 *
+	 * @param identity
+	 *            The identity to get the trustees for
+	 * @param context
+	 *            The context to get the trustees for
+	 * @return The identities and their trust values
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public Map<Identity, IdentityTrust> getTrustees(Identity identity, String context) throws IOException, FcpException {
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "GetTrustees", "Identity", identity.getIdentifier(), "Context", context));
+		if (!replies.get("Message").equals("Identities")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “Identities” message!");
+		}
+		Map<Identity, IdentityTrust> identityTrusts = new HashMap<Identity, IdentityTrust>();
+		for (int identityIndex = 1; replies.containsKey("Identity" + identityIndex); identityIndex++) {
+			String identifier = replies.get("Identity" + identityIndex);
+			String nickname = replies.get("Nickname" + identityIndex);
+			String requestUri = replies.get("RequestURI" + identityIndex);
+			byte trust = Byte.parseByte(replies.get("Value" + identityIndex));
+			String comment = replies.get("Comment" + identityIndex);
+			identityTrusts.put(new Identity(identifier, nickname, requestUri), new IdentityTrust(trust, comment));
+		}
+		return identityTrusts;
+	}
+
+	/**
 	 * Sets the trust given to the given identify by the given own identity.
 	 *
 	 * @param ownIdentity
