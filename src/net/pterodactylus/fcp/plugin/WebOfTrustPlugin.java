@@ -226,6 +226,29 @@ public class WebOfTrustPlugin {
 		return identities;
 	}
 
+	/**
+	 * Sets the trust given to the given identify by the given own identity.
+	 *
+	 * @param ownIdentity
+	 *            The identity that gives the trust
+	 * @param identity
+	 *            The identity that receives the trust
+	 * @param trust
+	 *            The trust value (ranging from {@code -100} to {@code 100}
+	 * @param comment
+	 *            The comment for setting the trust
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void setTrust(OwnIdentity ownIdentity, Identity identity, byte trust, String comment) throws IOException, FcpException {
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "SetTrust", "Truster", ownIdentity.getIdentifier(), "Trustee", identity.getIdentifier(), "Value", String.valueOf(trust), "Comment", comment));
+		if (!replies.get("Message").equals("TrustSet")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “TrustSet” message!");
+		}
+	}
+
 	//
 	// PRIVATE METHODS
 	//
