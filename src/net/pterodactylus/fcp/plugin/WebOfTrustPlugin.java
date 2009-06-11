@@ -328,6 +328,25 @@ public class WebOfTrustPlugin {
 		}
 	}
 
+	/**
+	 * Removes the given context from the given identity.
+	 *
+	 * @param ownIdentity
+	 *            The identity to remove the context from
+	 * @param context
+	 *            The context to remove
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void removeContext(OwnIdentity ownIdentity, String context) throws IOException, FcpException {
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "RemoveContext", "Identity", ownIdentity.getIdentifier(), "Context", context));
+		if (!replies.get("Message").equals("ContextRemoved")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “ContextRemoved” message!");
+		}
+	}
+
 	//
 	// PRIVATE METHODS
 	//
