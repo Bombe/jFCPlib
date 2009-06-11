@@ -309,6 +309,25 @@ public class WebOfTrustPlugin {
 		}
 	}
 
+	/**
+	 * Adds the given context to the given identity.
+	 *
+	 * @param ownIdentity
+	 *            The identity to add the context to
+	 * @param context
+	 *            The context to add
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public void addContext(OwnIdentity ownIdentity, String context) throws IOException, FcpException {
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "AddContext", "Identity", ownIdentity.getIdentifier(), "Context", context));
+		if (!replies.get("Message").equals("ContextAdded")) {
+			throw new FcpException("WebOfTrust Plugin did not reply with “ContextAdded” message!");
+		}
+	}
+
 	//
 	// PRIVATE METHODS
 	//
