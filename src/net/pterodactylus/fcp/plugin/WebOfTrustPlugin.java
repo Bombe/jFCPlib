@@ -147,7 +147,7 @@ public class WebOfTrustPlugin {
 	 * @throws FcpException
 	 *             if an FCP error occurs
 	 */
-	public IdentityTrust getIdentityTrust(OwnIdentity ownIdentity, String identifier) throws IOException, FcpException {
+	public CalculatedTrust getIdentityTrust(OwnIdentity ownIdentity, String identifier) throws IOException, FcpException {
 		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "GetIdentity", "TreeOwner", ownIdentity.getIdentifier(), "Identity", identifier));
 		if (!replies.get("Message").equals("Identity")) {
 			throw new FcpException("WebOfTrust Plugin did not reply with “Identity” message!");
@@ -170,7 +170,7 @@ public class WebOfTrustPlugin {
 		} catch (NumberFormatException nfe1) {
 			/* ignore. */
 		}
-		return new IdentityTrust(trust, score, rank);
+		return new CalculatedTrust(trust, score, rank);
 	}
 
 	/**
@@ -333,62 +333,62 @@ public class WebOfTrustPlugin {
 	}
 
 	/**
-	 * Container that stores the trust given to an identity.
+	 * Container that stores the trust that is calculated by taking all trustees
+	 * and their trust lists into account.
 	 *
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
 	 */
-	public static class IdentityTrust {
+	public static class CalculatedTrust {
 
-		/** The identity’s trust value. */
+		/** The calculated trust value. */
 		private final Byte trust;
 
-		/** The identity’s score value. */
+		/** The calculated score value. */
 		private final Integer score;
 
-		/** The identity’s rank. */
+		/** The calculated rank. */
 		private final Integer rank;
 
 		/**
-		 * Creates a new identity trust container.
+		 * Creates a new calculated trust container.
 		 *
 		 * @param trust
-		 *            The trust value of the identity
+		 *            The calculated trust value
 		 * @param score
-		 *            The score value of the identity
+		 *            The calculated score value
 		 * @param rank
-		 *            The rank of the identity
+		 *            The calculated rank of the
 		 */
-		public IdentityTrust(Byte trust, Integer score, Integer rank) {
+		public CalculatedTrust(Byte trust, Integer score, Integer rank) {
 			this.trust = trust;
 			this.score = score;
 			this.rank = rank;
 		}
 
 		/**
-		 * Returns the trust value of this identity.
+		 * Returns the calculated trust value.
 		 *
-		 * @return This identity’s trust value, or {@code null} if this
-		 *         identity’s trust value is not known
+		 * @return The calculated trust value, or {@code null} if the trust
+		 *         value is not known
 		 */
 		public Byte getTrust() {
 			return trust;
 		}
 
 		/**
-		 * Returns the score value of this identity.
+		 * Returns the calculated score value.
 		 *
-		 * @return This identity’s score value, or {@code null} if this
-		 *         identity’s score value is not known
+		 * @return The calculated score value, or {@code null} if the score
+		 *         value is not known
 		 */
 		public Integer getScore() {
 			return score;
 		}
 
 		/**
-		 * Returns the rank of this identity.
+		 * Returns the calculated rank.
 		 *
-		 * @return This identity’s rank, or {@code null} if this identity’s rank
-		 *         is not known
+		 * @return The calculated rank, or {@code null} if the rank is not known
 		 */
 		public Integer getRank() {
 			return rank;
