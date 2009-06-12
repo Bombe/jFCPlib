@@ -489,6 +489,26 @@ public class WebOfTrustPlugin {
 			return requestUri;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if ((obj == null) || (obj.getClass() != this.getClass())) {
+				return false;
+			}
+			Identity identity = (Identity) obj;
+			return identifier.equals(identity.identifier);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int hashCode() {
+			return identifier.hashCode();
+		}
+
 	}
 
 	/**
