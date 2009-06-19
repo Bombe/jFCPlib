@@ -212,7 +212,7 @@ public class WebOfTrustPlugin {
 	 *             if an FCP error occurs
 	 */
 	public Set<Identity> getIdentitesByScore(OwnIdentity ownIdentity, String context, Boolean positive) throws IOException, FcpException {
-		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "GetIdentitesByScore", "TreeOwner", ownIdentity.getIdentifier(), "Context", context, "Selection", ((positive == null) ? "0" : (positive ? "+" : "-"))));
+		Map<String, String> replies = fcpClient.sendPluginMessage("plugins.WoT.WoT", createParameters("Message", "GetIdentitiesByScore", "TreeOwner", ownIdentity.getIdentifier(), "Context", context, "Selection", ((positive == null) ? "0" : (positive ? "+" : "-"))));
 		if (!replies.get("Message").equals("Identities")) {
 			throw new FcpException("WebOfTrust Plugin did not reply with “Identities” message!");
 		}
