@@ -47,11 +47,13 @@ import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
 import net.pterodactylus.fcp.GenerateSSK;
 import net.pterodactylus.fcp.GetFailed;
+import net.pterodactylus.fcp.GetNode;
 import net.pterodactylus.fcp.ListPeerNotes;
 import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.ListPersistentRequests;
 import net.pterodactylus.fcp.ModifyPeer;
 import net.pterodactylus.fcp.ModifyPeerNote;
+import net.pterodactylus.fcp.NodeData;
 import net.pterodactylus.fcp.NodeHello;
 import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
@@ -883,6 +885,47 @@ public class FcpClient {
 
 		}.execute();
 		return pluginReplies;
+	}
+
+	//
+	// NODE INFORMATION
+	//
+
+	/**
+	 * Returns information about the node.
+	 *
+	 * @param giveOpennetRef
+	 *            Whether to return the OpenNet reference
+	 * @param withPrivate
+	 *            Whether to return private node data
+	 * @param withVolatile
+	 *            Whether to return volatile node data
+	 * @return Node information
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 */
+	public NodeData getNodeInformation(final Boolean giveOpennetRef, final Boolean withPrivate, final Boolean withVolatile) throws IOException, FcpException {
+		final ObjectWrapper<NodeData> nodeDataWrapper = new ObjectWrapper<NodeData>();
+		new ExtendedFcpAdapter() {
+
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				GetNode getNodeMessage = new GetNode(giveOpennetRef, withPrivate, withVolatile);
+				fcpConnection.sendMessage(getNodeMessage);
+			}
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void receivedNodeData(FcpConnection fcpConnection, NodeData nodeData) {
+				nodeDataWrapper.set(nodeData);
+			}
+		}.execute();
+		return nodeDataWrapper.get();
 	}
 
 	//
