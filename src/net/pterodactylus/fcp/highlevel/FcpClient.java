@@ -923,6 +923,7 @@ public class FcpClient {
 			@Override
 			public void receivedNodeData(FcpConnection fcpConnection, NodeData nodeData) {
 				nodeDataWrapper.set(nodeData);
+				completionLatch.countDown();
 			}
 		}.execute();
 		return nodeDataWrapper.get();
