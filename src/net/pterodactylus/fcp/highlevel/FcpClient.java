@@ -81,6 +81,9 @@ public class FcpClient {
 	/** Object used for synchronization. */
 	private final Object syncObject = new Object();
 
+	/** Listener management. */
+	private final FcpClientListenerManager fcpClientListenerManager = new FcpClientListenerManager(this);
+
 	/** The name of this client. */
 	private final String name;
 
@@ -157,6 +160,41 @@ public class FcpClient {
 	public FcpClient(String name, InetAddress host, int port) {
 		this.name = name;
 		fcpConnection = new FcpConnection(host, port);
+		fcpConnection.addFcpListener(new FcpAdapter() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void connectionClosed(FcpConnection fcpConnection, Throwable throwable) {
+				fcpClientListenerManager.fireFcpClientDisconnected();
+			}
+		});
+	}
+
+	//
+	// LISTENER MANAGEMENT
+	//
+
+	/**
+	 * Adds an FCP client listener to the list of registered listeners.
+	 *
+	 * @param fcpClientListener
+	 *            The FCP client listener to add
+	 */
+	public void addFcpClientListener(FcpClientListener fcpClientListener) {
+		fcpClientListenerManager.addListener(fcpClientListener);
+	}
+
+	/**
+	 * Removes an FCP client listener from the list of registered listeners.
+	 *
+	 * @param fcpClientListener
+	 *            The FCP client listener to remove
+	 */
+	public void removeFcpClientListener(FcpClientListener fcpClientListener) {
+		fcpClientListenerManager.removeListener(fcpClientListener);
 	}
 
 	//
