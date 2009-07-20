@@ -227,7 +227,7 @@ public interface FcpListener extends EventListener {
 	 * @param finishedCompression
 	 *            The “FinishedCompression” message
 	 */
-	public void receviedFinishedCompression(FcpConnection fcpConnection, FinishedCompression finishedCompression);
+	public void receivedFinishedCompression(FcpConnection fcpConnection, FinishedCompression finishedCompression);
 
 	/**
 	 * Notifies a listener that an “UnknownPeerNoteType” was received.

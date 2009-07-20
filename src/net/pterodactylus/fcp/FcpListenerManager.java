@@ -293,14 +293,14 @@ public class FcpListenerManager extends AbstractListenerManager<FcpConnection, F
 	/**
 	 * Notifies all listeners that a “FinishedCompression” message was received.
 	 *
-	 * @see FcpListener#receviedFinishedCompression(FcpConnection,
+	 * @see FcpListener#receivedFinishedCompression(FcpConnection,
 	 *      FinishedCompression)
 	 * @param finishedCompression
 	 *            The “FinishedCompression” message
 	 */
 	public void fireReceivedFinishedCompression(FinishedCompression finishedCompression) {
 		for (FcpListener fcpListener : getListeners()) {
-			fcpListener.receviedFinishedCompression(getSource(), finishedCompression);
+			fcpListener.receivedFinishedCompression(getSource(), finishedCompression);
 		}
 	}
 

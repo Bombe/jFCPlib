@@ -166,7 +166,7 @@ public class FcpAdapter implements FcpListener {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void receviedFinishedCompression(FcpConnection fcpConnection, FinishedCompression finishedCompression) {
+	public void receivedFinishedCompression(FcpConnection fcpConnection, FinishedCompression finishedCompression) {
 		/* empty. */
 	}
 
