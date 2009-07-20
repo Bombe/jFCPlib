@@ -19,21 +19,14 @@
 
 package net.pterodactylus.fcp;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import net.pterodactylus.util.event.AbstractListenerManager;
 
 /**
  * Manages FCP listeners and event firing.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@pterodactylus.net&gt;
  */
-public class FcpListenerManager {
-
-	/** The source FCP connection. */
-	private final FcpConnection fcpConnection;
-
-	/** The registered listeners. */
-	private final List<FcpListener> fcpListeners = new CopyOnWriteArrayList<FcpListener>();
+public class FcpListenerManager extends AbstractListenerManager<FcpConnection, FcpListener> {
 
 	/**
 	 * Creates a new listener manager.
@@ -42,27 +35,7 @@ public class FcpListenerManager {
 	 *            The source FCP connection
 	 */
 	public FcpListenerManager(FcpConnection fcpConnection) {
-		this.fcpConnection = fcpConnection;
-	}
-
-	/**
-	 * Adds the given FCP listener to the list of registered listeners.
-	 *
-	 * @param fcpListener
-	 *            The FCP listener to add
-	 */
-	public void addListener(FcpListener fcpListener) {
-		fcpListeners.add(fcpListener);
-	}
-
-	/**
-	 * Removes the given FCP listener from the list of registered listeners.
-	 *
-	 * @param fcpListener
-	 *            The FCP listener to remove
-	 */
-	public void removeListener(FcpListener fcpListener) {
-		fcpListeners.remove(fcpListener);
+		super(fcpConnection);
 	}
 
 	/**
@@ -73,8 +46,8 @@ public class FcpListenerManager {
 	 *            The “NodeHello” message
 	 */
 	public void fireReceivedNodeHello(NodeHello nodeHello) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedNodeHello(fcpConnection, nodeHello);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedNodeHello(getSource(), nodeHello);
 		}
 	}
 
@@ -88,8 +61,8 @@ public class FcpListenerManager {
 	 *            The “CloseConnectionDuplicateClientName” message
 	 */
 	public void fireReceivedCloseConnectionDuplicateClientName(CloseConnectionDuplicateClientName closeConnectionDuplicateClientName) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedCloseConnectionDuplicateClientName(fcpConnection, closeConnectionDuplicateClientName);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedCloseConnectionDuplicateClientName(getSource(), closeConnectionDuplicateClientName);
 		}
 	}
 
@@ -101,8 +74,8 @@ public class FcpListenerManager {
 	 *            The “SSKKeypair” message
 	 */
 	public void fireReceivedSSKKeypair(SSKKeypair sskKeypair) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedSSKKeypair(fcpConnection, sskKeypair);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedSSKKeypair(getSource(), sskKeypair);
 		}
 	}
 
@@ -114,8 +87,8 @@ public class FcpListenerManager {
 	 *            The “Peer” message
 	 */
 	public void fireReceivedPeer(Peer peer) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPeer(fcpConnection, peer);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPeer(getSource(), peer);
 		}
 	}
 
@@ -127,8 +100,8 @@ public class FcpListenerManager {
 	 *            The “EndListPeers” message
 	 */
 	public void fireReceivedEndListPeers(EndListPeers endListPeers) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedEndListPeers(fcpConnection, endListPeers);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedEndListPeers(getSource(), endListPeers);
 		}
 	}
 
@@ -139,8 +112,8 @@ public class FcpListenerManager {
 	 * @param peerNote
 	 */
 	public void fireReceivedPeerNote(PeerNote peerNote) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPeerNote(fcpConnection, peerNote);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPeerNote(getSource(), peerNote);
 		}
 	}
 
@@ -153,8 +126,8 @@ public class FcpListenerManager {
 	 *            The “EndListPeerNotes” message
 	 */
 	public void fireReceivedEndListPeerNotes(EndListPeerNotes endListPeerNotes) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedEndListPeerNotes(fcpConnection, endListPeerNotes);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedEndListPeerNotes(getSource(), endListPeerNotes);
 		}
 	}
 
@@ -166,8 +139,8 @@ public class FcpListenerManager {
 	 *            The “PeerRemoved” message
 	 */
 	public void fireReceivedPeerRemoved(PeerRemoved peerRemoved) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPeerRemoved(fcpConnection, peerRemoved);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPeerRemoved(getSource(), peerRemoved);
 		}
 	}
 
@@ -179,8 +152,8 @@ public class FcpListenerManager {
 	 *            The “NodeData” message
 	 */
 	public void fireReceivedNodeData(NodeData nodeData) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedNodeData(fcpConnection, nodeData);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedNodeData(getSource(), nodeData);
 		}
 	}
 
@@ -192,8 +165,8 @@ public class FcpListenerManager {
 	 *            The “TestDDAReply” message
 	 */
 	public void fireReceivedTestDDAReply(TestDDAReply testDDAReply) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedTestDDAReply(fcpConnection, testDDAReply);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedTestDDAReply(getSource(), testDDAReply);
 		}
 	}
 
@@ -205,8 +178,8 @@ public class FcpListenerManager {
 	 *            The “TestDDAComplete” message
 	 */
 	public void fireReceivedTestDDAComplete(TestDDAComplete testDDAComplete) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedTestDDAComplete(fcpConnection, testDDAComplete);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedTestDDAComplete(getSource(), testDDAComplete);
 		}
 	}
 
@@ -218,8 +191,8 @@ public class FcpListenerManager {
 	 *            The “PersistentGet” message
 	 */
 	public void fireReceivedPersistentGet(PersistentGet persistentGet) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPersistentGet(fcpConnection, persistentGet);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPersistentGet(getSource(), persistentGet);
 		}
 	}
 
@@ -231,8 +204,8 @@ public class FcpListenerManager {
 	 *            The “PersistentPut” message
 	 */
 	public void fireReceivedPersistentPut(PersistentPut persistentPut) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPersistentPut(fcpConnection, persistentPut);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPersistentPut(getSource(), persistentPut);
 		}
 	}
 
@@ -246,8 +219,8 @@ public class FcpListenerManager {
 	 *            The “EndListPersistentRequests” message
 	 */
 	public void fireReceivedEndListPersistentRequests(EndListPersistentRequests endListPersistentRequests) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedEndListPersistentRequests(fcpConnection, endListPersistentRequests);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedEndListPersistentRequests(getSource(), endListPersistentRequests);
 		}
 	}
 
@@ -259,8 +232,8 @@ public class FcpListenerManager {
 	 *            The “URIGenerated” message
 	 */
 	public void fireReceivedURIGenerated(URIGenerated uriGenerated) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedURIGenerated(fcpConnection, uriGenerated);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedURIGenerated(getSource(), uriGenerated);
 		}
 	}
 
@@ -272,8 +245,8 @@ public class FcpListenerManager {
 	 *            The “DataFound” message
 	 */
 	public void fireReceivedDataFound(DataFound dataFound) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedDataFound(fcpConnection, dataFound);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedDataFound(getSource(), dataFound);
 		}
 	}
 
@@ -285,8 +258,8 @@ public class FcpListenerManager {
 	 *            The “AllData” message
 	 */
 	public void fireReceivedAllData(AllData allData) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedAllData(fcpConnection, allData);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedAllData(getSource(), allData);
 		}
 	}
 
@@ -298,8 +271,8 @@ public class FcpListenerManager {
 	 *            The “SimpleProgress” message
 	 */
 	public void fireReceivedSimpleProgress(SimpleProgress simpleProgress) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedSimpleProgress(fcpConnection, simpleProgress);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedSimpleProgress(getSource(), simpleProgress);
 		}
 	}
 
@@ -312,8 +285,8 @@ public class FcpListenerManager {
 	 *            The “StartedCompression” message
 	 */
 	public void fireReceivedStartedCompression(StartedCompression startedCompression) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedStartedCompression(fcpConnection, startedCompression);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedStartedCompression(getSource(), startedCompression);
 		}
 	}
 
@@ -326,8 +299,8 @@ public class FcpListenerManager {
 	 *            The “FinishedCompression” message
 	 */
 	public void fireReceivedFinishedCompression(FinishedCompression finishedCompression) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receviedFinishedCompression(fcpConnection, finishedCompression);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receviedFinishedCompression(getSource(), finishedCompression);
 		}
 	}
 
@@ -341,8 +314,8 @@ public class FcpListenerManager {
 	 *            The “UnknownPeerNoteType” message
 	 */
 	public void fireReceivedUnknownPeerNoteType(UnknownPeerNoteType unknownPeerNoteType) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedUnknownPeerNoteType(fcpConnection, unknownPeerNoteType);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedUnknownPeerNoteType(getSource(), unknownPeerNoteType);
 		}
 	}
 
@@ -356,8 +329,8 @@ public class FcpListenerManager {
 	 *            The “UnknownNodeIdentifier” message
 	 */
 	public void fireReceivedUnknownNodeIdentifier(UnknownNodeIdentifier unknownNodeIdentifier) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedUnknownNodeIdentifier(fcpConnection, unknownNodeIdentifier);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedUnknownNodeIdentifier(getSource(), unknownNodeIdentifier);
 		}
 	}
 
@@ -369,8 +342,8 @@ public class FcpListenerManager {
 	 *            The “ConfigData” message
 	 */
 	public void fireReceivedConfigData(ConfigData configData) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedConfigData(fcpConnection, configData);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedConfigData(getSource(), configData);
 		}
 	}
 
@@ -382,8 +355,8 @@ public class FcpListenerManager {
 	 *            The “GetFailed” message
 	 */
 	public void fireReceivedGetFailed(GetFailed getFailed) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedGetFailed(fcpConnection, getFailed);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedGetFailed(getSource(), getFailed);
 		}
 	}
 
@@ -395,8 +368,8 @@ public class FcpListenerManager {
 	 *            The “PutFailed” message
 	 */
 	public void fireReceivedPutFailed(PutFailed putFailed) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPutFailed(fcpConnection, putFailed);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPutFailed(getSource(), putFailed);
 		}
 	}
 
@@ -410,8 +383,8 @@ public class FcpListenerManager {
 	 *            The “IdentifierCollision” message
 	 */
 	public void fireReceivedIdentifierCollision(IdentifierCollision identifierCollision) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedIdentifierCollision(fcpConnection, identifierCollision);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedIdentifierCollision(getSource(), identifierCollision);
 		}
 	}
 
@@ -424,8 +397,8 @@ public class FcpListenerManager {
 	 *            The “PersistentPutDir” message
 	 */
 	public void fireReceivedPersistentPutDir(PersistentPutDir persistentPutDir) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPersistentPutDir(fcpConnection, persistentPutDir);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPersistentPutDir(getSource(), persistentPutDir);
 		}
 	}
 
@@ -439,8 +412,8 @@ public class FcpListenerManager {
 	 *            The “PersistentRequestRemoved” message
 	 */
 	public void fireReceivedPersistentRequestRemoved(PersistentRequestRemoved persistentRequestRemoved) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPersistentRequestRemoved(fcpConnection, persistentRequestRemoved);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPersistentRequestRemoved(getSource(), persistentRequestRemoved);
 		}
 	}
 
@@ -453,8 +426,8 @@ public class FcpListenerManager {
 	 *            The “SubscribedUSKUpdate” message
 	 */
 	public void fireReceivedSubscribedUSKUpdate(SubscribedUSKUpdate subscribedUSKUpdate) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedSubscribedUSKUpdate(fcpConnection, subscribedUSKUpdate);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedSubscribedUSKUpdate(getSource(), subscribedUSKUpdate);
 		}
 	}
 
@@ -466,8 +439,8 @@ public class FcpListenerManager {
 	 *            The “PluginInfo” message
 	 */
 	public void fireReceivedPluginInfo(PluginInfo pluginInfo) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPluginInfo(fcpConnection, pluginInfo);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPluginInfo(getSource(), pluginInfo);
 		}
 	}
 
@@ -479,8 +452,8 @@ public class FcpListenerManager {
 	 *            The “FCPPluginReply” message
 	 */
 	public void fireReceivedFCPPluginReply(FCPPluginReply fcpPluginReply) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedFCPPluginReply(fcpConnection, fcpPluginReply);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedFCPPluginReply(getSource(), fcpPluginReply);
 		}
 	}
 
@@ -494,8 +467,8 @@ public class FcpListenerManager {
 	 *            The “PersistentRequestModified” message
 	 */
 	public void fireReceivedPersistentRequestModified(PersistentRequestModified persistentRequestModified) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPersistentRequestModified(fcpConnection, persistentRequestModified);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPersistentRequestModified(getSource(), persistentRequestModified);
 		}
 	}
 
@@ -507,8 +480,8 @@ public class FcpListenerManager {
 	 *            The “PutSuccessful” message
 	 */
 	public void fireReceivedPutSuccessful(PutSuccessful putSuccessful) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPutSuccessful(fcpConnection, putSuccessful);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPutSuccessful(getSource(), putSuccessful);
 		}
 	}
 
@@ -520,8 +493,8 @@ public class FcpListenerManager {
 	 *            The “PutFetchable” message
 	 */
 	public void fireReceivedPutFetchable(PutFetchable putFetchable) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedPutFetchable(fcpConnection, putFetchable);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPutFetchable(getSource(), putFetchable);
 		}
 	}
 
@@ -533,8 +506,8 @@ public class FcpListenerManager {
 	 *            The “ProtocolError” message
 	 */
 	public void fireReceivedProtocolError(ProtocolError protocolError) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedProtocolError(fcpConnection, protocolError);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedProtocolError(getSource(), protocolError);
 		}
 	}
 
@@ -546,8 +519,8 @@ public class FcpListenerManager {
 	 *            The message that was received
 	 */
 	public void fireMessageReceived(FcpMessage fcpMessage) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.receivedMessage(fcpConnection, fcpMessage);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedMessage(getSource(), fcpMessage);
 		}
 	}
 
@@ -560,8 +533,8 @@ public class FcpListenerManager {
 	 * @see FcpListener#connectionClosed(FcpConnection, Throwable)
 	 */
 	public void fireConnectionClosed(Throwable throwable) {
-		for (FcpListener fcpListener : fcpListeners) {
-			fcpListener.connectionClosed(fcpConnection, throwable);
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.connectionClosed(getSource(), throwable);
 		}
 	}
 
