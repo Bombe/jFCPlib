@@ -168,6 +168,7 @@ public class FcpClient {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void connectionClosed(FcpConnection fcpConnection, Throwable throwable) {
+				connected = false;
 				fcpClientListenerManager.fireFcpClientDisconnected();
 			}
 		});
@@ -176,6 +177,26 @@ public class FcpClient {
 	//
 	// LISTENER MANAGEMENT
 	//
+
+	/**
+	 * Adds an FCP listener to the underlying connection.
+	 *
+	 * @param fcpListener
+	 *            The FCP listener to add
+	 */
+	public void addFcpListener(FcpListener fcpListener) {
+		fcpConnection.addFcpListener(fcpListener);
+	}
+
+	/**
+	 * Removes an FCP listener from the underlying connection.
+	 *
+	 * @param fcpListener
+	 *            The FCP listener to remove
+	 */
+	public void removeFcpListener(FcpListener fcpListener) {
+		fcpConnection.removeFcpListener(fcpListener);
+	}
 
 	/**
 	 * Adds an FCP client listener to the list of registered listeners.
