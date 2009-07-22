@@ -186,7 +186,7 @@ public class ClientPutComplexDir extends FcpMessage {
 	 */
 	public void addFileEntry(FileEntry fileEntry) {
 		Map<String, String> fields = fileEntry.getFields();
-		for (Entry<String, String> fieldEntry: fields.entrySet()) {
+		for (Entry<String, String> fieldEntry : fields.entrySet()) {
 			setField("Files." + fileIndex + "." + fieldEntry.getKey(), fieldEntry.getValue());
 		}
 		fileIndex++;
@@ -199,8 +199,8 @@ public class ClientPutComplexDir extends FcpMessage {
 	 * {@inheritDoc}
 	 * <p>
 	 * Do not call this method to add input streams! The input streams, if any,
-	 * will be taken directly from the {@link FileEntry}s and the stream you
-	 * set here will be overridden!
+	 * will be taken directly from the {@link FileEntry}s and the stream you set
+	 * here will be overridden!
 	 */
 	@Override
 	public void setPayloadInputStream(InputStream payloadInputStream) {

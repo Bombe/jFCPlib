@@ -46,8 +46,8 @@ public class PutFailed extends BaseMessage {
 	/**
 	 * Returns the code of the error.
 	 * 
-	 * @return The code of the error, or <code>-1</code> if the error code
-	 *         could not be parsed
+	 * @return The code of the error, or <code>-1</code> if the error code could
+	 *         not be parsed
 	 */
 	public int getCode() {
 		return FcpUtils.safeParseInt(getField("Code"));
@@ -129,7 +129,7 @@ public class PutFailed extends BaseMessage {
 	public int[] getComplexErrorCodes() {
 		Map<String, String> allFields = getFields();
 		List<Integer> errorCodeList = new ArrayList<Integer>();
-		for (Entry<String, String> field: allFields.entrySet()) {
+		for (Entry<String, String> field : allFields.entrySet()) {
 			String fieldKey = field.getKey();
 			if (fieldKey.startsWith("Errors.")) {
 				int nextDot = fieldKey.indexOf('.', 7);
@@ -143,7 +143,7 @@ public class PutFailed extends BaseMessage {
 		}
 		int[] errorCodes = new int[errorCodeList.size()];
 		int errorIndex = 0;
-		for (int errorCode: errorCodeList) {
+		for (int errorCode : errorCodeList) {
 			errorCodes[errorIndex++] = errorCode;
 		}
 		return errorCodes;

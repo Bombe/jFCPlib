@@ -37,8 +37,8 @@ public class GetNode extends FcpMessage {
 	/**
 	 * Creates a “GetNode” command that returns the request noderef of the node,
 	 * including private and volatile data, if requested. If any of the Boolean
-	 * parameters are <code>null</code> the parameter is ignored and the
-	 * node’s default value is used.
+	 * parameters are <code>null</code> the parameter is ignored and the node’s
+	 * default value is used.
 	 * 
 	 * @param giveOpennetRef
 	 *            <code>true</code> to request the opennet noderef,

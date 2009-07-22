@@ -20,8 +20,8 @@ package net.pterodactylus.fcp;
 
 /**
  * The “URIGenerated” message signals the client that an URI was generated for a
- * {@link ClientPut} (or {@link ClientPutDiskDir} or {@link ClientPutComplexDir})
- * request.
+ * {@link ClientPut} (or {@link ClientPutDiskDir} or {@link ClientPutComplexDir}
+ * ) request.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */

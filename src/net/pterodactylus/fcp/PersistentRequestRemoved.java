@@ -51,8 +51,8 @@ public class PersistentRequestRemoved extends BaseMessage {
 	 * Returns whether the request was removed from the global queue.
 	 * 
 	 * @return <code>true</code> if the request was removed from the global
-	 *         queue, <code>false</code> if it was removed from the
-	 *         client-local queue
+	 *         queue, <code>false</code> if it was removed from the client-local
+	 *         queue
 	 */
 	public boolean isGlobal() {
 		return Boolean.valueOf(getField("Global"));

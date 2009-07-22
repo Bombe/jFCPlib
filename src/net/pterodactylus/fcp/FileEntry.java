@@ -57,8 +57,8 @@ public abstract class FileEntry {
 	 * @param name
 	 *            The name of the file
 	 * @param contentType
-	 *            The content type of the file, or <code>null</code> to let
-	 *            the node auto-detect it
+	 *            The content type of the file, or <code>null</code> to let the
+	 *            node auto-detect it
 	 * @param length
 	 *            The length of the file
 	 * @param dataInputStream
@@ -77,8 +77,8 @@ public abstract class FileEntry {
 	 * @param filename
 	 *            The name of the file on disk
 	 * @param contentType
-	 *            The content type of the file, or <code>null</code> to let
-	 *            the node auto-detect it
+	 *            The content type of the file, or <code>null</code> to let the
+	 *            node auto-detect it
 	 * @param length
 	 *            The length of the file, or <code>-1</code> to not specify a
 	 *            size
@@ -145,8 +145,8 @@ public abstract class FileEntry {
 		 * @param name
 		 *            The name of the file
 		 * @param contentType
-		 *            The content type of the file, or <code>null</code> to
-		 *            let the node auto-detect it
+		 *            The content type of the file, or <code>null</code> to let
+		 *            the node auto-detect it
 		 * @param length
 		 *            The length of the file
 		 * @param inputStream
@@ -223,8 +223,8 @@ public abstract class FileEntry {
 		 * @param filename
 		 *            The name of the on-disk file
 		 * @param contentType
-		 *            The content type of the file, or <code>null</code> to
-		 *            let the node auto-detect it
+		 *            The content type of the file, or <code>null</code> to let
+		 *            the node auto-detect it
 		 * @param length
 		 *            The length of the file
 		 */

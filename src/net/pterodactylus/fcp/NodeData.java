@@ -167,8 +167,8 @@ public class NodeData extends BaseMessage {
 	 * 
 	 * @param field
 	 *            The name of the field
-	 * @return The value of the field, or <code>null</code> if there is no
-	 *         such field
+	 * @return The value of the field, or <code>null</code> if there is no such
+	 *         field
 	 */
 	public String getVolatile(String field) {
 		return getField("volatile." + field);

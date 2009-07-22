@@ -236,7 +236,6 @@ public abstract class Request {
 	 * @param fatal
 	 *            <code>true</code> if this request failed fatally,
 	 *            <code>false</code> otherwise
-	 *
 	 */
 	void setFatal(boolean fatal) {
 		this.fatal = fatal;

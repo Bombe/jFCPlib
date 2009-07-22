@@ -49,8 +49,8 @@ public class ProtocolError extends BaseMessage {
 	/**
 	 * Returns the error code.
 	 * 
-	 * @return The error code, or <code>-1</code> if the error code could not
-	 *         be parsed
+	 * @return The error code, or <code>-1</code> if the error code could not be
+	 *         parsed
 	 */
 	public int getCode() {
 		return FcpUtils.safeParseInt(getField("Code"));
@@ -68,8 +68,8 @@ public class ProtocolError extends BaseMessage {
 	/**
 	 * Returns some extra description of the error.
 	 * 
-	 * @return Extra description of the error, or <code>null</code> if there
-	 *         is none
+	 * @return Extra description of the error, or <code>null</code> if there is
+	 *         none
 	 */
 	public String getExtraDescription() {
 		return getField("ExtraDescription");

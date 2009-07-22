@@ -106,8 +106,8 @@ public class ClientPutDiskDir extends FcpMessage {
 	 * already been compressed.
 	 * 
 	 * @param dontCompress
-	 *            <code>true</code> to skip compression of the data in the
-	 *            node, <code>false</code> to allow compression
+	 *            <code>true</code> to skip compression of the data in the node,
+	 *            <code>false</code> to allow compression
 	 */
 	public void setDontCompress(boolean dontCompress) {
 		setField("DontCompress", String.valueOf(dontCompress));

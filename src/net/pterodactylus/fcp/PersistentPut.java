@@ -49,8 +49,8 @@ public class PersistentPut extends BaseMessage {
 	/**
 	 * Returns the data length of the request.
 	 * 
-	 * @return The data length of the request, or <code>-1</code> if the
-	 *         length could not be parsed
+	 * @return The data length of the request, or <code>-1</code> if the length
+	 *         could not be parsed
 	 */
 	public long getDataLength() {
 		return FcpUtils.safeParseLong(getField("DataLength"));
@@ -80,8 +80,8 @@ public class PersistentPut extends BaseMessage {
 	 * <code>-1</code> is returned each block is tried forever.
 	 * 
 	 * @return The maximum number of retries for failed blocks, or
-	 *         <code>-1</code> for unlimited retries, or <code>-2</code> if
-	 *         the number of retries could not be parsed
+	 *         <code>-1</code> for unlimited retries, or <code>-2</code> if the
+	 *         number of retries could not be parsed
 	 */
 	public int getMaxRetries() {
 		return FcpUtils.safeParseInt(getField("MaxRetries"));
@@ -118,8 +118,8 @@ public class PersistentPut extends BaseMessage {
 	/**
 	 * Returns whether this request has started.
 	 * 
-	 * @return <code>true</code> if the request has started,
-	 *         <code>false</code> otherwise
+	 * @return <code>true</code> if the request has started, <code>false</code>
+	 *         otherwise
 	 */
 	public boolean isStarted() {
 		return Boolean.valueOf(getField("Started"));

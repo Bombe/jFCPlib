@@ -101,10 +101,8 @@ public class PersistentPutDir extends BaseMessage {
 	 */
 	public int getFileCount() {
 		int fileCount = -1;
-		while (getField("Files." + ++fileCount + ".UploadFrom") != null) { /*
-																			 * do
-																			 * nothing.
-																			 */
+		while (getField("Files." + ++fileCount + ".UploadFrom") != null) {
+			/* do nothing. */
 		}
 		return fileCount;
 	}

@@ -88,8 +88,8 @@ public class FcpMessage implements Iterable<String> {
 	 * 
 	 * @param field
 	 *            The name of the field to check for
-	 * @return <code>true</code> if the message has a field with the given
-	 *         name, <code>false</code> otherwise
+	 * @return <code>true</code> if the message has a field with the given name,
+	 *         <code>false</code> otherwise
 	 */
 	public boolean hasField(String field) {
 		return fields.containsKey(field);
@@ -116,8 +116,8 @@ public class FcpMessage implements Iterable<String> {
 	 * 
 	 * @param field
 	 *            The name of the field
-	 * @return The value of the field, or <code>null</code> if there is no
-	 *         such field
+	 * @return The value of the field, or <code>null</code> if there is no such
+	 *         field
 	 */
 	public String getField(String field) {
 		return fields.get(field);
@@ -151,10 +151,10 @@ public class FcpMessage implements Iterable<String> {
 
 	/**
 	 * Writes this message to the given output stream. If the message has a
-	 * payload (i.e. {@link #payloadInputStream} is not <code>null</code>)
-	 * the payload is written to the given output stream after the message as
-	 * well. That means that this method can only be called once because on the
-	 * second invocation the payload input stream could not be read (again).
+	 * payload (i.e. {@link #payloadInputStream} is not <code>null</code>) the
+	 * payload is written to the given output stream after the message as well.
+	 * That means that this method can only be called once because on the second
+	 * invocation the payload input stream could not be read (again).
 	 * 
 	 * @param outputStream
 	 *            The output stream to write the message to
@@ -163,7 +163,7 @@ public class FcpMessage implements Iterable<String> {
 	 */
 	public void write(OutputStream outputStream) throws IOException {
 		writeLine(outputStream, name);
-		for (Entry<String, String> fieldEntry: fields.entrySet()) {
+		for (Entry<String, String> fieldEntry : fields.entrySet()) {
 			writeLine(outputStream, fieldEntry.getKey() + "=" + fieldEntry.getValue());
 		}
 		writeLine(outputStream, "EndMessage");

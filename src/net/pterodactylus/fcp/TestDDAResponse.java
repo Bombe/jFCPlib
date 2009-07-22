@@ -51,8 +51,8 @@ public class TestDDAResponse extends FcpMessage {
 	 * @param directory
 	 *            The directory from the {@link TestDDARequest} command
 	 * @param readContent
-	 *            The read content, or <code>null</code> if you did not
-	 *            request read access
+	 *            The read content, or <code>null</code> if you did not request
+	 *            read access
 	 */
 	public TestDDAResponse(String directory, String readContent) {
 		super("TestDDAResponse");

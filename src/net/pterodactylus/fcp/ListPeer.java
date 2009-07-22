@@ -28,9 +28,9 @@ public class ListPeer extends FcpMessage {
 
 	/**
 	 * Creates a new “ListPeer” request that returns information about the node
-	 * specified by <code>nodeIdentifier</code>. <code>nodeIdentifier</code>
-	 * can be of several formats: The node’s name, its identity, or its IP
-	 * address and port (connection with a ‘:’).
+	 * specified by <code>nodeIdentifier</code>. <code>nodeIdentifier</code> can
+	 * be of several formats: The node’s name, its identity, or its IP address
+	 * and port (connection with a ‘:’).
 	 * 
 	 * @param nodeIdentifier
 	 *            The identifier of the node to get details about

@@ -22,7 +22,8 @@ package net.pterodactylus.fcp;
 /**
  * A “ClientPut” requests inserts a single file into freenet, either uploading
  * it directly with this messge ({@link UploadFrom#direct}), uploading it from
- * disk ({@link UploadFrom#disk}) or by creating a redirect to another URI ({@link UploadFrom#redirect}).
+ * disk ({@link UploadFrom#disk}) or by creating a redirect to another URI (
+ * {@link UploadFrom#redirect}).
  * 
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
@@ -47,17 +48,16 @@ public class ClientPut extends FcpMessage {
 
 	/**
 	 * Creates a new “ClientPut” message that inserts a file to the given URI.
-	 * Depending on <code>uploadFrom</code> the file data has to be supplied
-	 * in different ways: If <code>uploadFrom</code> is
-	 * {@link UploadFrom#direct}, use
-	 * {@link #setPayloadInputStream(java.io.InputStream)} to supply the input
-	 * data. If <code>uploadFrom</code> is {@link UploadFrom#disk}, use
+	 * Depending on <code>uploadFrom</code> the file data has to be supplied in
+	 * different ways: If <code>uploadFrom</code> is {@link UploadFrom#direct},
+	 * use {@link #setPayloadInputStream(java.io.InputStream)} to supply the
+	 * input data. If <code>uploadFrom</code> is {@link UploadFrom#disk}, use
 	 * {@link #setFilename(String)} to supply the file to upload. You have to
 	 * test your direct-disk access (see {@link TestDDARequest},
 	 * {@link TestDDAReply}, {@link TestDDAResponse}, {@link TestDDAComplete})
 	 * before using this option! If <code>uploadFrom</code> is
-	 * {@link UploadFrom#redirect}, use {@link #setTargetURI(String)} to set
-	 * the target URI of the redirect.
+	 * {@link UploadFrom#redirect}, use {@link #setTargetURI(String)} to set the
+	 * target URI of the redirect.
 	 * 
 	 * @param uri
 	 *            The URI to insert to
@@ -145,8 +145,8 @@ public class ClientPut extends FcpMessage {
 	 * already been compressed.
 	 * 
 	 * @param dontCompress
-	 *            <code>true</code> to skip compression of the data in the
-	 *            node, <code>false</code> to allow compression
+	 *            <code>true</code> to skip compression of the data in the node,
+	 *            <code>false</code> to allow compression
 	 */
 	public void setDontCompress(boolean dontCompress) {
 		setField("DontCompress", String.valueOf(dontCompress));

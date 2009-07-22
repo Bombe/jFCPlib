@@ -111,8 +111,8 @@ public class FcpUtils {
 	}
 
 	/**
-	 * Tries to parse the given string into an int, returning <code>-1</code>
-	 * if the string can not be parsed.
+	 * Tries to parse the given string into an int, returning <code>-1</code> if
+	 * the string can not be parsed.
 	 * 
 	 * @param value
 	 *            The string to parse
@@ -204,8 +204,8 @@ public class FcpUtils {
 
 	/**
 	 * Copies as many bytes as possible (i.e. until {@link InputStream#read()}
-	 * returns <code>-1</code>) from the source input stream to the
-	 * destination output stream.
+	 * returns <code>-1</code>) from the source input stream to the destination
+	 * output stream.
 	 * 
 	 * @param source
 	 *            The input stream to read from
@@ -220,8 +220,8 @@ public class FcpUtils {
 
 	/**
 	 * Copies <code>length</code> bytes from the source input stream to the
-	 * destination output stream. If <code>length</code> is <code>-1</code>
-	 * as much bytes as possible will be copied (i.e. until
+	 * destination output stream. If <code>length</code> is <code>-1</code> as
+	 * much bytes as possible will be copied (i.e. until
 	 * {@link InputStream#read()} returns <code>-1</code> to signal the end of
 	 * the stream).
 	 * 
@@ -240,8 +240,8 @@ public class FcpUtils {
 
 	/**
 	 * Copies <code>length</code> bytes from the source input stream to the
-	 * destination output stream. If <code>length</code> is <code>-1</code>
-	 * as much bytes as possible will be copied (i.e. until
+	 * destination output stream. If <code>length</code> is <code>-1</code> as
+	 * much bytes as possible will be copied (i.e. until
 	 * {@link InputStream#read()} returns <code>-1</code> to signal the end of
 	 * the stream).
 	 * 

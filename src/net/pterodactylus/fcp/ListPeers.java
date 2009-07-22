@@ -43,11 +43,11 @@ public class ListPeers extends FcpMessage {
 	 * @param identifier
 	 *            The identifier of the request
 	 * @param withMetadata
-	 *            If <code>true</code> metadata of the peers is included in
-	 *            the reply
+	 *            If <code>true</code> metadata of the peers is included in the
+	 *            reply
 	 * @param withVolatile
-	 *            if <code>true</code> volatile data of the peers is included
-	 *            in the reply
+	 *            if <code>true</code> volatile data of the peers is included in
+	 *            the reply
 	 */
 	public ListPeers(String identifier, boolean withMetadata, boolean withVolatile) {
 		super("ListPeers");
