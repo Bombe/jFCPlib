@@ -372,6 +372,16 @@ public interface FcpListener extends EventListener {
 	public void receivedPutFetchable(FcpConnection fcpConnection, PutFetchable putFetchable);
 
 	/**
+	 * Notifies a listener that a bookmark was updated.
+	 *
+	 * @param fcpConnection
+	 *            The connection that received the message
+	 * @param receivedBookmarkFeed
+	 *            The “ReceivedBookmarkFeed” message
+	 */
+	public void receivedBookmarkFeed(FcpConnection fcpConnection, ReceivedBookmarkFeed receivedBookmarkFeed);
+
+	/**
 	 * Notifies a listener that a “ProtocolError” was received.
 	 * 
 	 * @param fcpConnection

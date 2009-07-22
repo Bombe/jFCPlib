@@ -278,6 +278,13 @@ public class FcpAdapter implements FcpListener {
 	/**
 	 * {@inheritDoc}
 	 */
+	public void receivedBookmarkFeed(FcpConnection fcpConnection, ReceivedBookmarkFeed receivedBookmarkFeed) {
+		/* empty. */
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void receivedMessage(FcpConnection fcpConnection, FcpMessage fcpMessage) {
 		/* empty. */
 	}
