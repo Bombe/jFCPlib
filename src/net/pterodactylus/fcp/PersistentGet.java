@@ -19,7 +19,6 @@
 
 package net.pterodactylus.fcp;
 
-
 /**
  * The “PersistentGet” message is sent to the client to inform it about a
  * persistent download, either in the client-local queue or in the global queue.
