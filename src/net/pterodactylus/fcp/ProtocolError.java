@@ -20,14 +20,14 @@ package net.pterodactylus.fcp;
 
 /**
  * The “ProtocolError” message signals that something has gone really wrong.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class ProtocolError extends BaseMessage {
 
 	/**
 	 * Creates a new “ProtocolError” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -37,7 +37,7 @@ public class ProtocolError extends BaseMessage {
 
 	/**
 	 * Returns whether the causing message had the “Global” flag set.
-	 * 
+	 *
 	 * @return <code>true</code> if the causing message had the “Global” flag
 	 *         set
 	 */
@@ -47,7 +47,7 @@ public class ProtocolError extends BaseMessage {
 
 	/**
 	 * Returns the error code.
-	 * 
+	 *
 	 * @return The error code, or <code>-1</code> if the error code could not be
 	 *         parsed
 	 */
@@ -57,7 +57,7 @@ public class ProtocolError extends BaseMessage {
 
 	/**
 	 * Returns the description of the error.
-	 * 
+	 *
 	 * @return The description of the error
 	 */
 	public String getCodeDescription() {
@@ -66,7 +66,7 @@ public class ProtocolError extends BaseMessage {
 
 	/**
 	 * Returns some extra description of the error.
-	 * 
+	 *
 	 * @return Extra description of the error, or <code>null</code> if there is
 	 *         none
 	 */
@@ -76,7 +76,7 @@ public class ProtocolError extends BaseMessage {
 
 	/**
 	 * Returns whether the connection to the node can stay open.
-	 * 
+	 *
 	 * @return <code>true</code> when the connection has to be closed,
 	 *         <code>false</code> otherwise
 	 */
@@ -86,7 +86,7 @@ public class ProtocolError extends BaseMessage {
 
 	/**
 	 * The identifier of the causing request, if any.
-	 * 
+	 *
 	 * @return The identifier of the causing request
 	 */
 	public String getIdentifier() {

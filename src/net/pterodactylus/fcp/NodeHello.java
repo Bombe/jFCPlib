@@ -20,14 +20,14 @@ package net.pterodactylus.fcp;
 
 /**
  * Some convenience methods for parsing a “NodeHello” message from the node.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class NodeHello extends BaseMessage {
 
 	/**
 	 * Createa a new “NodeHello” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received FCP message
 	 */
@@ -38,7 +38,7 @@ public class NodeHello extends BaseMessage {
 	/**
 	 * Returns the build of the node. This may not be a number but also a string
 	 * like “@custom@” in case you built the node yourself.
-	 * 
+	 *
 	 * @return The build of the node
 	 */
 	public String getBuild() {
@@ -48,7 +48,7 @@ public class NodeHello extends BaseMessage {
 	/**
 	 * Returns the build number of the node. This may not be a number but also a
 	 * string like “@custom@” in case you built the node yourself.
-	 * 
+	 *
 	 * @return The build number of the node, or <code>-1</code> if the build
 	 *         number could not be determined
 	 */
@@ -58,7 +58,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the number of compression codecs.
-	 * 
+	 *
 	 * @return The number of compression codecs
 	 */
 	public String getCompressionCodecs() {
@@ -67,7 +67,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the number of compression codecs.
-	 * 
+	 *
 	 * @return The number of compression codecs, or <code>-1</code> if the
 	 *         number of compression codecs could not be determined
 	 */
@@ -77,7 +77,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the unique connection identifier.
-	 * 
+	 *
 	 * @return The connection identifier
 	 */
 	public String getConnectionIdentifier() {
@@ -86,7 +86,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the build of the external library file.
-	 * 
+	 *
 	 * @return The build of the external library file
 	 */
 	public String getExtBuild() {
@@ -95,7 +95,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the build number of the external library file.
-	 * 
+	 *
 	 * @return The build number of the external library file, or <code>-1</code>
 	 *         if the build number could not be determined
 	 */
@@ -105,7 +105,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the revision of the external library file.
-	 * 
+	 *
 	 * @return The revision of the external library file
 	 */
 	public String getExtRevision() {
@@ -114,7 +114,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the revision number of the external library file.
-	 * 
+	 *
 	 * @return The revision number of the external library file, or
 	 *         <code>-1</code> if the revision number could not be determined
 	 */
@@ -124,7 +124,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the FCP version the node speaks.
-	 * 
+	 *
 	 * @return The FCP version the node speaks
 	 */
 	public String getFCPVersion() {
@@ -134,7 +134,7 @@ public class NodeHello extends BaseMessage {
 	/**
 	 * Returns the make of the node, e.g. “Fred” (freenet reference
 	 * implementation).
-	 * 
+	 *
 	 * @return The make of the node
 	 */
 	public String getNode() {
@@ -143,7 +143,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the language of the node as 2-letter code, e.g. “en” or “de”.
-	 * 
+	 *
 	 * @return The language of the node
 	 */
 	public String getNodeLanguage() {
@@ -152,7 +152,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the revision of the node.
-	 * 
+	 *
 	 * @return The revision of the node
 	 */
 	public String getRevision() {
@@ -161,7 +161,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the revision number of the node.
-	 * 
+	 *
 	 * @return The revision number of the node, or <code>-1</code> if the
 	 *         revision number coult not be determined
 	 */
@@ -171,7 +171,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns whether the node is currently is testnet mode.
-	 * 
+	 *
 	 * @return <code>true</code> if the node is currently in testnet mode,
 	 *         <code>false</code> otherwise
 	 */
@@ -181,7 +181,7 @@ public class NodeHello extends BaseMessage {
 
 	/**
 	 * Returns the version of the node.
-	 * 
+	 *
 	 * @return The version of the node
 	 */
 	public String getVersion() {

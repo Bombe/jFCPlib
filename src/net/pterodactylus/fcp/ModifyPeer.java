@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * The “ModifyPeer” request lets you modify certain properties of a peer.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class ModifyPeer extends FcpMessage {
@@ -28,7 +28,7 @@ public class ModifyPeer extends FcpMessage {
 	/**
 	 * Creates a new “ModifyPeer” request. All Boolean parameters may be null to
 	 * not influence the current setting.
-	 * 
+	 *
 	 * @param nodeIdentifier
 	 *            The identifier of the node, i.e. name, identity, or IP address
 	 *            and port

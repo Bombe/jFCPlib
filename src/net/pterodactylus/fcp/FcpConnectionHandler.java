@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
 
 /**
  * Handles an FCP connection to a node.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 class FcpConnectionHandler implements Runnable {
@@ -45,7 +45,7 @@ class FcpConnectionHandler implements Runnable {
 	/**
 	 * Creates a new connection handler that operates on the given connection
 	 * and input stream.
-	 * 
+	 *
 	 * @param fcpConnection
 	 *            The underlying FCP connection
 	 * @param remoteInputStream
@@ -119,7 +119,7 @@ class FcpConnectionHandler implements Runnable {
 	/**
 	 * Reads bytes from {@link #remoteInputStream} until ‘\r’ or ‘\n’ are
 	 * encountered and decodes the read bytes using UTF-8.
-	 * 
+	 *
 	 * @return The decoded line
 	 * @throws IOException
 	 *             if an I/O error occurs

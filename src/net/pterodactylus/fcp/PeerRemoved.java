@@ -20,14 +20,14 @@ package net.pterodactylus.fcp;
 
 /**
  * A “PeerRemoved” message is sent by the node when a peer has been removed.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class PeerRemoved extends BaseMessage {
 
 	/**
 	 * Creates a new “PeerRemoved” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -37,7 +37,7 @@ public class PeerRemoved extends BaseMessage {
 
 	/**
 	 * Returns the identity of the removed peer.
-	 * 
+	 *
 	 * @return The identity of the removed peer
 	 */
 	public String getIdentity() {
@@ -46,7 +46,7 @@ public class PeerRemoved extends BaseMessage {
 
 	/**
 	 * Returns the node identifier of the removed peer.
-	 * 
+	 *
 	 * @return The node identifier of the removed peer
 	 */
 	public String getNodeIdentifier() {

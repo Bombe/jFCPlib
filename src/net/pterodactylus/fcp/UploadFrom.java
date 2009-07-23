@@ -21,7 +21,7 @@ package net.pterodactylus.fcp;
 /**
  * Enumeration for the different values for the “UploadFrom” field in
  * {@link ClientPut} and {@link ClientGet} requests.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public enum UploadFrom {

@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  * that can be composed of several bits. {@link #PROGRESS} and
  * {@link #COMPRESSION} are single bits in that mask and can be combined into a
  * new verbosity using {@link #add(Verbosity)}.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class Verbosity {
@@ -46,7 +46,7 @@ public class Verbosity {
 
 	/**
 	 * Creates a new verbosity with the given level.
-	 * 
+	 *
 	 * @param level
 	 *            The verbosity level
 	 */
@@ -57,7 +57,7 @@ public class Verbosity {
 	/**
 	 * Adds the given verbosity to this verbosity and returns a verbosity with
 	 * the new value. The value of this verbosity is not changed.
-	 * 
+	 *
 	 * @param verbosity
 	 *            The verbosity to add to this verbosity
 	 * @return The verbosity with the new level.
@@ -68,7 +68,7 @@ public class Verbosity {
 
 	/**
 	 * Checks whether this Verbosity contains all bits of the given Verbosity.
-	 * 
+	 *
 	 * @param verbosity
 	 *            The verbosity to check for in this Verbosity
 	 * @return <code>true</code> if and only if all set bits in the given
@@ -88,7 +88,7 @@ public class Verbosity {
 
 	/**
 	 * Parses the given string and creates a Verbosity with the given level.
-	 * 
+	 *
 	 * @param s
 	 *            The string to parse
 	 * @return The parsed verbosity, or {@link #NONE} if the string could not be

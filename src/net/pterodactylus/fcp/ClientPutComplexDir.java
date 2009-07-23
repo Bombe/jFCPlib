@@ -33,7 +33,7 @@ import net.pterodactylus.fcp.FileEntry.DirectFileEntry;
 /**
  * The “ClientPutComplexDir” lets you upload a directory with different sources
  * for each file.
- * 
+ *
  * @see FileEntry
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
@@ -47,7 +47,7 @@ public class ClientPutComplexDir extends FcpMessage {
 
 	/**
 	 * Creates a new “ClientPutComplexDir” with the given identifier and URI.
-	 * 
+	 *
 	 * @param identifier
 	 *            The identifier of the request
 	 * @param uri
@@ -61,7 +61,7 @@ public class ClientPutComplexDir extends FcpMessage {
 
 	/**
 	 * Sets the verbosity of the request.
-	 * 
+	 *
 	 * @param verbosity
 	 *            The verbosity of the request
 	 */
@@ -71,7 +71,7 @@ public class ClientPutComplexDir extends FcpMessage {
 
 	/**
 	 * Sets the maximum number of retries for failed blocks.
-	 * 
+	 *
 	 * @param maxRetries
 	 *            The maximum number of retries for failed blocks, or
 	 *            <code>-1</code> to retry endlessly
@@ -82,7 +82,7 @@ public class ClientPutComplexDir extends FcpMessage {
 
 	/**
 	 * Sets the priority of the request.
-	 * 
+	 *
 	 * @param priority
 	 *            The priority of the request
 	 */
@@ -92,7 +92,7 @@ public class ClientPutComplexDir extends FcpMessage {
 
 	/**
 	 * Sets whether to generate the final URI only.
-	 * 
+	 *
 	 * @param getCHKOnly
 	 *            <code>true</code> to generate the final CHK only,
 	 *            <code>false</code> to complete the insert
@@ -103,7 +103,7 @@ public class ClientPutComplexDir extends FcpMessage {
 
 	/**
 	 * Sets whether the request is on the global queue.
-	 * 
+	 *
 	 * @param global
 	 *            <code>true</code> to put the request on the global queue,
 	 *            <code>false</code> to put it on the client-local queue
@@ -114,7 +114,7 @@ public class ClientPutComplexDir extends FcpMessage {
 
 	/**
 	 * Sets whether the node should not try to compress the data.
-	 * 
+	 *
 	 * @param dontCompress
 	 *            <code>true</code> to skip compression of the data,
 	 *            <code>false</code> to try and compress the data
@@ -125,7 +125,7 @@ public class ClientPutComplexDir extends FcpMessage {
 
 	/**
 	 * Sets the client token of the request.
-	 * 
+	 *
 	 * @param clientToken
 	 *            The client token of the request
 	 */
@@ -135,7 +135,7 @@ public class ClientPutComplexDir extends FcpMessage {
 
 	/**
 	 * Sets the persistence of the request.
-	 * 
+	 *
 	 * @param persistence
 	 *            The persistence of the request
 	 */
@@ -146,7 +146,7 @@ public class ClientPutComplexDir extends FcpMessage {
 	/**
 	 * Sets the target filename of the request. This is useful for inserts that
 	 * go to “CHK@” only and creates a manifest with a single file.
-	 * 
+	 *
 	 * @param targetFilename
 	 *            The target filename
 	 */
@@ -157,7 +157,7 @@ public class ClientPutComplexDir extends FcpMessage {
 	/**
 	 * Sets whether to encode the complete data early to generate the
 	 * {@link URIGenerated} message early.
-	 * 
+	 *
 	 * @param earlyEncode
 	 *            <code>true</code> to encode the complete data early,
 	 *            <code>false</code> otherwise
@@ -169,7 +169,7 @@ public class ClientPutComplexDir extends FcpMessage {
 	/**
 	 * Sets the default name. This is the name of the file that should be shown
 	 * if no file was specified.
-	 * 
+	 *
 	 * @param defaultName
 	 *            The default name
 	 */
@@ -179,7 +179,7 @@ public class ClientPutComplexDir extends FcpMessage {
 
 	/**
 	 * Adds an entry for a file.
-	 * 
+	 *
 	 * @param fileEntry
 	 *            The file entry to add
 	 */

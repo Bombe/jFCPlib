@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * A “ConfigData” message contains various aspects of the node’s configuration.
- * 
+ *
  * @see GetConfig
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
@@ -28,7 +28,7 @@ public class ConfigData extends BaseMessage {
 
 	/**
 	 * Creates a new “ConfigData” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -38,7 +38,7 @@ public class ConfigData extends BaseMessage {
 
 	/**
 	 * Returns the current value of the given option.
-	 * 
+	 *
 	 * @param option
 	 *            The name of the option
 	 * @return The current value of the option
@@ -49,7 +49,7 @@ public class ConfigData extends BaseMessage {
 
 	/**
 	 * Returns the short description of the given option.
-	 * 
+	 *
 	 * @param option
 	 *            The name of the option
 	 * @return The short description of the option
@@ -60,7 +60,7 @@ public class ConfigData extends BaseMessage {
 
 	/**
 	 * Returns the long description of the given option.
-	 * 
+	 *
 	 * @param option
 	 *            The name of the option
 	 * @return The long description of the option
@@ -71,7 +71,7 @@ public class ConfigData extends BaseMessage {
 
 	/**
 	 * Returns the data type of the given option.
-	 * 
+	 *
 	 * @param option
 	 *            The name of the option
 	 * @return The data type of the option
@@ -82,7 +82,7 @@ public class ConfigData extends BaseMessage {
 
 	/**
 	 * Returns the default value of the given option.
-	 * 
+	 *
 	 * @param option
 	 *            The name of the option
 	 * @return The default value of the option
@@ -93,7 +93,7 @@ public class ConfigData extends BaseMessage {
 
 	/**
 	 * Returns the sort order of the given option.
-	 * 
+	 *
 	 * @param option
 	 *            The name of the option
 	 * @return The sort order of the option, or <code>-1</code> if the sort
@@ -105,7 +105,7 @@ public class ConfigData extends BaseMessage {
 
 	/**
 	 * Returns the expert flag of the given option.
-	 * 
+	 *
 	 * @param option
 	 *            The name of the option
 	 * @return The expert flag of the option
@@ -116,7 +116,7 @@ public class ConfigData extends BaseMessage {
 
 	/**
 	 * Returns the force-write flag of the given option
-	 * 
+	 *
 	 * @param option
 	 *            The name of the option
 	 * @return The force-write flag of the given option

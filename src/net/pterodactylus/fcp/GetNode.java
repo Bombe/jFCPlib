@@ -21,7 +21,7 @@ package net.pterodactylus.fcp;
 /**
  * The “GetNode” command returns the darknet or opennet noderef of the node,
  * optionally including private and volatile data.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class GetNode extends FcpMessage {
@@ -38,7 +38,7 @@ public class GetNode extends FcpMessage {
 	 * including private and volatile data, if requested. If any of the Boolean
 	 * parameters are <code>null</code> the parameter is ignored and the node’s
 	 * default value is used.
-	 * 
+	 *
 	 * @param giveOpennetRef
 	 *            <code>true</code> to request the opennet noderef,
 	 *            <code>false</code> for darknet

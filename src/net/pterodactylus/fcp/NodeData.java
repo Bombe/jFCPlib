@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * The “NodeData” contains the noderef of the node, along with additional data.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class NodeData extends BaseMessage {
@@ -30,7 +30,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Creates a new “NodeData” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -41,7 +41,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns the noderef of the node.
-	 * 
+	 *
 	 * @return The noderef of the node
 	 */
 	public NodeRef getNodeRef() {
@@ -51,7 +51,7 @@ public class NodeData extends BaseMessage {
 	/**
 	 * Returns the last good version, i.e. the oldest version the node will
 	 * connect to.
-	 * 
+	 *
 	 * @return The last good version
 	 */
 	public Version getLastGoodVersion() {
@@ -60,7 +60,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns the signature of the noderef.
-	 * 
+	 *
 	 * @return The signature of the noderef
 	 */
 	public String getSignature() {
@@ -69,7 +69,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns whether the noderef is the opennet noderef of the node
-	 * 
+	 *
 	 * @return <code>true</code> if the noderef is the opennet noderef of the
 	 *         node, <code>false</code> otherwise
 	 */
@@ -79,7 +79,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns the identity of the node
-	 * 
+	 *
 	 * @return The identity of the node
 	 */
 	public String getIdentity() {
@@ -88,7 +88,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns the name of the node.
-	 * 
+	 *
 	 * @return The name of the node
 	 */
 	public String getMyName() {
@@ -97,7 +97,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns the version of the node.
-	 * 
+	 *
 	 * @return The version of the node
 	 */
 	public Version getVersion() {
@@ -106,7 +106,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns IP addresses and port number of the node.
-	 * 
+	 *
 	 * @return The IP addresses and port numbers of the node
 	 */
 	public String getPhysicalUDP() {
@@ -115,7 +115,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns the ARK of the node.
-	 * 
+	 *
 	 * @return The ARK of the node
 	 */
 	public ARK getARK() {
@@ -124,7 +124,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns the public key of the node.
-	 * 
+	 *
 	 * @return The public key of the node
 	 */
 	public String getDSAPublicKey() {
@@ -133,7 +133,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns the private key of the node.
-	 * 
+	 *
 	 * @return The private key of the node
 	 */
 	public String getDSKPrivateKey() {
@@ -142,7 +142,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns the DSA group of the node.
-	 * 
+	 *
 	 * @return The DSA group of the node
 	 */
 	public DSAGroup getDSAGroup() {
@@ -151,7 +151,7 @@ public class NodeData extends BaseMessage {
 
 	/**
 	 * Returns the negotiation types supported by the node.
-	 * 
+	 *
 	 * @return The node’s supported negotiation types
 	 */
 	public int[] getNegotiationTypes() {
@@ -163,7 +163,7 @@ public class NodeData extends BaseMessage {
 	 * is prepended with “volatile.” so if you want to get the value of the
 	 * field with the name “volatile.freeJavaMemory” you only need to specify
 	 * “freeJavaMemory”.
-	 * 
+	 *
 	 * @param field
 	 *            The name of the field
 	 * @return The value of the field, or <code>null</code> if there is no such

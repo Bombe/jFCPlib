@@ -20,14 +20,14 @@ package net.pterodactylus.fcp;
 
 /**
  * The “PluginInfo” message is a reply to the {@link GetPluginInfo} request.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class PluginInfo extends BaseMessage {
 
 	/**
 	 * Creates a new “PluginInfo” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -37,7 +37,7 @@ public class PluginInfo extends BaseMessage {
 
 	/**
 	 * Returns the name of the plugin.
-	 * 
+	 *
 	 * @return The name of the plugin
 	 */
 	public String getPluginName() {
@@ -46,7 +46,7 @@ public class PluginInfo extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {
@@ -55,7 +55,7 @@ public class PluginInfo extends BaseMessage {
 
 	/**
 	 * Returns the original URI of the plugin.
-	 * 
+	 *
 	 * @return The original URI of the plugin
 	 */
 	public String getOriginalURI() {
@@ -64,7 +64,7 @@ public class PluginInfo extends BaseMessage {
 
 	/**
 	 * Returns whether the plugin is started.
-	 * 
+	 *
 	 * @return <code>true</code> if the plugin is started, <code>false</code>
 	 *         otherwise
 	 */

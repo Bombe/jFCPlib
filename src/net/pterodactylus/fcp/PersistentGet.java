@@ -21,14 +21,14 @@ package net.pterodactylus.fcp;
 /**
  * The “PersistentGet” message is sent to the client to inform it about a
  * persistent download, either in the client-local queue or in the global queue.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class PersistentGet extends BaseMessage {
 
 	/**
 	 * Creates a new “PersistentGet” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -38,7 +38,7 @@ public class PersistentGet extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {
@@ -47,7 +47,7 @@ public class PersistentGet extends BaseMessage {
 
 	/**
 	 * Returns the URI of the request.
-	 * 
+	 *
 	 * @return The URI of the request
 	 */
 	public String getURI() {
@@ -56,7 +56,7 @@ public class PersistentGet extends BaseMessage {
 
 	/**
 	 * Returns the verbosity of the request.
-	 * 
+	 *
 	 * @return The verbosity of the request
 	 */
 	public Verbosity getVerbosity() {
@@ -65,7 +65,7 @@ public class PersistentGet extends BaseMessage {
 
 	/**
 	 * Returns the return type of the request.
-	 * 
+	 *
 	 * @return The return type of the request
 	 */
 	public ReturnType getReturnType() {
@@ -79,7 +79,7 @@ public class PersistentGet extends BaseMessage {
 	/**
 	 * Returns the name of the file the data is downloaded to. This field will
 	 * only be set if {@link #getReturnType()} is {@link ReturnType#disk}.
-	 * 
+	 *
 	 * @return The name of the file the data is downloaded to
 	 */
 	public String getFilename() {
@@ -89,7 +89,7 @@ public class PersistentGet extends BaseMessage {
 	/**
 	 * Returns the name of the temporary file. This field will only be set if
 	 * {@link #getReturnType()} is {@link ReturnType#disk}.
-	 * 
+	 *
 	 * @return The name of the temporary file
 	 */
 	public String getTempFilename() {
@@ -98,7 +98,7 @@ public class PersistentGet extends BaseMessage {
 
 	/**
 	 * Returns the client token of the request.
-	 * 
+	 *
 	 * @return The client token of the request
 	 */
 	public String getClientToken() {
@@ -107,7 +107,7 @@ public class PersistentGet extends BaseMessage {
 
 	/**
 	 * Returns the priority of the request.
-	 * 
+	 *
 	 * @return The priority of the request
 	 */
 	public Priority getPriority() {
@@ -116,7 +116,7 @@ public class PersistentGet extends BaseMessage {
 
 	/**
 	 * Returns the persistence of the request.
-	 * 
+	 *
 	 * @return The persistence of the request, or {@link Persistence#unknown} if
 	 *         the persistence could not be parsed
 	 */
@@ -131,7 +131,7 @@ public class PersistentGet extends BaseMessage {
 	/**
 	 * Returns whether this request is on the global queue or on the
 	 * client-local queue.
-	 * 
+	 *
 	 * @return <code>true</code> if the request is on the global queue,
 	 *         <code>false</code> if the request is on the client-local queue
 	 */
@@ -141,7 +141,7 @@ public class PersistentGet extends BaseMessage {
 
 	/**
 	 * Returns the maximum number of retries for a failed block.
-	 * 
+	 *
 	 * @return The maximum number of retries for a failed block, <code>-1</code>
 	 *         for endless retries, <code>-2</code> if the number could not be
 	 *         parsed

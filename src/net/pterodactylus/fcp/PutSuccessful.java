@@ -21,14 +21,14 @@ package net.pterodactylus.fcp;
 /**
  * The “PutSuccessful” message informs a client about a successfully finished
  * {@link ClientPut} (or similar) request.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class PutSuccessful extends BaseMessage {
 
 	/**
 	 * Creates a new “PutSuccessful” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -38,7 +38,7 @@ public class PutSuccessful extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {
@@ -47,7 +47,7 @@ public class PutSuccessful extends BaseMessage {
 
 	/**
 	 * Returns whether the request is on the global queue.
-	 * 
+	 *
 	 * @return <code>true</code> if the request is on the global queue,
 	 *         <code>false</code> if it is on the client-local queue
 	 */
@@ -57,7 +57,7 @@ public class PutSuccessful extends BaseMessage {
 
 	/**
 	 * Returns the final URI of the {@link ClientPut} request.
-	 * 
+	 *
 	 * @return The final URI of the request
 	 */
 	public String getURI() {
@@ -66,7 +66,7 @@ public class PutSuccessful extends BaseMessage {
 
 	/**
 	 * Returns the time the insert started.
-	 * 
+	 *
 	 * @return The time the insert started (in milliseconds since Jan 1, 1970
 	 *         UTC), or <code>-1</code> if the time could not be parsed
 	 */
@@ -76,7 +76,7 @@ public class PutSuccessful extends BaseMessage {
 
 	/**
 	 * Returns the time the insert completed.
-	 * 
+	 *
 	 * @return The time the insert completed (in milliseconds since Jan 1, 1970
 	 *         UTC), or <code>-1</code> if the time could not be parsed
 	 */

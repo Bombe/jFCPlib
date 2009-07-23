@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * Command that shuts down the node.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class Shutdown extends FcpMessage {

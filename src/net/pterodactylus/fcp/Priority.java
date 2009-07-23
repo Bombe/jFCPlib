@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * The priority classes used by the Freenet node.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public enum Priority {

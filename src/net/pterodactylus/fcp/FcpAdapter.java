@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * Adapter for {@link FcpListener}.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class FcpAdapter implements FcpListener {
@@ -83,7 +83,7 @@ public class FcpAdapter implements FcpListener {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @see FcpListener#receivedNodeData(FcpConnection, NodeData)
 	 */
 	public void receivedNodeData(FcpConnection fcpConnection, NodeData nodeData) {
@@ -92,7 +92,7 @@ public class FcpAdapter implements FcpListener {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @see FcpListener#receivedTestDDAReply(FcpConnection, TestDDAReply)
 	 */
 	public void receivedTestDDAReply(FcpConnection fcpConnection, TestDDAReply testDDAReply) {

@@ -20,14 +20,14 @@ package net.pterodactylus.fcp;
 
 /**
  * The “RemovePeer” command removes a peer.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class RemovePeer extends FcpMessage {
 
 	/**
 	 * Creates a new “RemovePeer” command that removes the given peer.
-	 * 
+	 *
 	 * @param nodeIdentifier
 	 *            The identifier of the node, i.e. its name, identity, or IP
 	 *            address and port pair

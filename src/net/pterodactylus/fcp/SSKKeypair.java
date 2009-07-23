@@ -21,14 +21,14 @@ package net.pterodactylus.fcp;
 /**
  * An “SSKKeypair” message that is sent as a response to a {@link GenerateSSK}
  * message.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class SSKKeypair extends BaseMessage {
 
 	/**
 	 * Creates a new “SSKKeypair” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -38,7 +38,7 @@ public class SSKKeypair extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {
@@ -47,7 +47,7 @@ public class SSKKeypair extends BaseMessage {
 
 	/**
 	 * Returns the URI that must be used to insert data.
-	 * 
+	 *
 	 * @return The insert URI
 	 */
 	public String getInsertURI() {
@@ -56,7 +56,7 @@ public class SSKKeypair extends BaseMessage {
 
 	/**
 	 * Returns the URI that must be used to request data.
-	 * 
+	 *
 	 * @return The request URI
 	 */
 	public String getRequestURI() {

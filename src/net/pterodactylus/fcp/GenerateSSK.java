@@ -21,7 +21,7 @@ package net.pterodactylus.fcp;
 /**
  * A “GenerateSSK” message. This message tells the node to generate a new SSK
  * key pair.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class GenerateSSK extends FcpMessage {
@@ -35,7 +35,7 @@ public class GenerateSSK extends FcpMessage {
 
 	/**
 	 * Creates a new “GenerateSSK” message with the given client identifier.
-	 * 
+	 *
 	 * @param clientIdentifier
 	 *            The client identifier
 	 */

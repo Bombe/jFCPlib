@@ -21,7 +21,7 @@ package net.pterodactylus.fcp;
 /**
  * The ”UnknownPeerNoteType” message signals the client that the type of peer
  * note used in a previous {@link ModifyPeerNote} is unknown.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class UnknownPeerNoteType extends BaseMessage {
@@ -29,7 +29,7 @@ public class UnknownPeerNoteType extends BaseMessage {
 	/**
 	 * Creates a new ”UnknownPeerNoteType” message that wraps the received
 	 * message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -39,7 +39,7 @@ public class UnknownPeerNoteType extends BaseMessage {
 
 	/**
 	 * Returns the type of peer note that is unkown.
-	 * 
+	 *
 	 * @return The unknown peer note type
 	 */
 	public int getPeerNoteType() {

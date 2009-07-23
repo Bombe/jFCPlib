@@ -21,7 +21,7 @@ package net.pterodactylus.fcp;
 /**
  * The “IdentifierCollision” message signals the client that the identifier
  * chosen for a request is already existing.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class IdentifierCollision extends BaseMessage {
@@ -29,7 +29,7 @@ public class IdentifierCollision extends BaseMessage {
 	/**
 	 * Creates a new “IdentifierCollision” message that wraps the received
 	 * message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -39,7 +39,7 @@ public class IdentifierCollision extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {
@@ -48,7 +48,7 @@ public class IdentifierCollision extends BaseMessage {
 
 	/**
 	 * Returns whether the request is on the global queue.
-	 * 
+	 *
 	 * @return <code>true</code> if the request is on the global queue,
 	 *         <code>false</code> if it is on the client-local queue
 	 */

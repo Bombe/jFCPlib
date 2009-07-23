@@ -21,7 +21,7 @@ package net.pterodactylus.fcp;
 /**
  * The “StartedCompression” message signals the client the compressing for a
  * request has started.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class StartedCompression extends BaseMessage {
@@ -29,7 +29,7 @@ public class StartedCompression extends BaseMessage {
 	/**
 	 * Creates a new “StartedCompression” message that wraps the received
 	 * message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -39,7 +39,7 @@ public class StartedCompression extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {
@@ -48,7 +48,7 @@ public class StartedCompression extends BaseMessage {
 
 	/**
 	 * Returns the number of the codec that is used for compression.
-	 * 
+	 *
 	 * @return The codec used for the compression, or <code>-1</code> if the
 	 *         codec could not be parsed
 	 */

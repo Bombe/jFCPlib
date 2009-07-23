@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * Convenience class for persistence values.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public enum Persistence {

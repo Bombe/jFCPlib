@@ -21,7 +21,7 @@ package net.pterodactylus.fcp;
 /**
  * A reference for a node. The noderef contains all data that is necessary to
  * establish a trusted and secure connection to the node.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class NodeRef {
@@ -75,7 +75,7 @@ public class NodeRef {
 	/**
 	 * Creates a new noderef that is initialized with fields from the given
 	 * message.
-	 * 
+	 *
 	 * @param fromMessage
 	 *            The message to get initial values for the noderef from
 	 */
@@ -99,7 +99,7 @@ public class NodeRef {
 
 	/**
 	 * Returns the identity of the node.
-	 * 
+	 *
 	 * @return The identity of the node
 	 */
 	public String getIdentity() {
@@ -108,7 +108,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the identity of the node.
-	 * 
+	 *
 	 * @param identity
 	 *            The identity of the node
 	 */
@@ -118,7 +118,7 @@ public class NodeRef {
 
 	/**
 	 * Returns whether the node is an opennet peer.
-	 * 
+	 *
 	 * @return <code>true</code> if the node is an opennet peer,
 	 *         <code>false</code> otherwise
 	 */
@@ -128,7 +128,7 @@ public class NodeRef {
 
 	/**
 	 * Sets whether the node is an opennet peer.
-	 * 
+	 *
 	 * @param opennet
 	 *            <code>true</code> if the node is an opennet peer,
 	 *            <code>false</code> otherwise
@@ -140,7 +140,7 @@ public class NodeRef {
 	/**
 	 * Returns the name of the node. If the node is an opennet peer, it will not
 	 * have a name!
-	 * 
+	 *
 	 * @return The name of the node, or <code>null</code> if the node is an
 	 *         opennet peer
 	 */
@@ -150,7 +150,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the name of the peer.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the peer
 	 */
@@ -160,7 +160,7 @@ public class NodeRef {
 
 	/**
 	 * Returns the location of the node.
-	 * 
+	 *
 	 * @return The location of the node
 	 */
 	public double getLocation() {
@@ -169,7 +169,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the location of the node
-	 * 
+	 *
 	 * @param location
 	 *            The location of the node
 	 */
@@ -179,7 +179,7 @@ public class NodeRef {
 
 	/**
 	 * Returns the IP addresses and port numbers of the node.
-	 * 
+	 *
 	 * @return The IP addresses and port numbers of the node
 	 */
 	public String getPhysicalUDP() {
@@ -188,7 +188,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the IP addresses and port numbers of the node.
-	 * 
+	 *
 	 * @param physicalUDP
 	 *            The IP addresses and port numbers of the node
 	 */
@@ -198,7 +198,7 @@ public class NodeRef {
 
 	/**
 	 * Returns the ARK of the node.
-	 * 
+	 *
 	 * @return The ARK of the node
 	 */
 	public ARK getARK() {
@@ -207,7 +207,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the ARK of the node.
-	 * 
+	 *
 	 * @param ark
 	 *            The ARK of the node
 	 */
@@ -217,7 +217,7 @@ public class NodeRef {
 
 	/**
 	 * Returns the public DSA key of the node.
-	 * 
+	 *
 	 * @return The public DSA key of the node
 	 */
 	public String getDSAPublicKey() {
@@ -226,7 +226,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the public DSA key of the node.
-	 * 
+	 *
 	 * @param dsaPublicKey
 	 *            The public DSA key of the node
 	 */
@@ -236,7 +236,7 @@ public class NodeRef {
 
 	/**
 	 * Returns the DSA group of the node.
-	 * 
+	 *
 	 * @return The DSA group of the node
 	 */
 	public DSAGroup getDSAGroup() {
@@ -245,7 +245,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the DSA group of the node.
-	 * 
+	 *
 	 * @param dsaGroup
 	 *            The DSA group of the node
 	 */
@@ -255,7 +255,7 @@ public class NodeRef {
 
 	/**
 	 * Returns the negotiation types supported by the node.
-	 * 
+	 *
 	 * @return The node’s supported negotiation types
 	 */
 	public int[] getNegotiationTypes() {
@@ -264,7 +264,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the negotiation types supported by the node.
-	 * 
+	 *
 	 * @param negotiationTypes
 	 *            The node’s supported negotiation types
 	 */
@@ -274,7 +274,7 @@ public class NodeRef {
 
 	/**
 	 * Returns the version of the node.
-	 * 
+	 *
 	 * @return The version of the node
 	 */
 	public Version getVersion() {
@@ -283,7 +283,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the version of the node.
-	 * 
+	 *
 	 * @param version
 	 *            The version of the node
 	 */
@@ -293,7 +293,7 @@ public class NodeRef {
 
 	/**
 	 * Returns the last good version of the node.
-	 * 
+	 *
 	 * @return The oldest version the node will connect to
 	 */
 	public Version getLastGoodVersion() {
@@ -302,7 +302,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the last good version of the node.
-	 * 
+	 *
 	 * @param lastGoodVersion
 	 *            The oldest version the node will connect to
 	 */
@@ -312,7 +312,7 @@ public class NodeRef {
 
 	/**
 	 * Returns whether the node is a testnet node.
-	 * 
+	 *
 	 * @return <code>true</code> if the node is a testnet node,
 	 *         <code>false</code> otherwise
 	 */
@@ -322,7 +322,7 @@ public class NodeRef {
 
 	/**
 	 * Sets whether this node is a testnet node.
-	 * 
+	 *
 	 * @param testnet
 	 *            <code>true</code> if the node is a testnet node,
 	 *            <code>false</code> otherwise
@@ -333,7 +333,7 @@ public class NodeRef {
 
 	/**
 	 * Returns the signature of the noderef.
-	 * 
+	 *
 	 * @return The signature of the noderef
 	 */
 	public String getSignature() {
@@ -342,7 +342,7 @@ public class NodeRef {
 
 	/**
 	 * Sets the signature of the noderef.
-	 * 
+	 *
 	 * @param signature
 	 *            The signature of the noderef
 	 */

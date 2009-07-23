@@ -21,14 +21,14 @@ package net.pterodactylus.fcp;
 /**
  * The “WatchGlobal” messages enables clients to watch the global queue in
  * addition to the client-local queue.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class WatchGlobal extends FcpMessage {
 
 	/**
 	 * Enables or disables watching the global queue.
-	 * 
+	 *
 	 * @param enabled
 	 *            <code>true</code> to watch the global queue and the
 	 *            client-local queue, <code>false</code> to watch only the
@@ -41,7 +41,7 @@ public class WatchGlobal extends FcpMessage {
 	/**
 	 * Enables or disables watching the global queue, optionally masking out
 	 * certain events.
-	 * 
+	 *
 	 * @param enabled
 	 *            <code>true</code> to watch the global queue and the
 	 *            client-local queue, <code>false</code> to watch only the

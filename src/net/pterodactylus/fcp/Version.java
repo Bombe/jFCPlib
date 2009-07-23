@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
 
 /**
  * Container for the “lastGoodVersion” field.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class Version {
@@ -43,7 +43,7 @@ public class Version {
 	 * Creates a new Version from the given string. The string consists of the
 	 * four required fields node name, tree version, protocol version, and build
 	 * number, separated by a comma.
-	 * 
+	 *
 	 * @param version
 	 *            The version string
 	 * @throws NullPointerException
@@ -71,7 +71,7 @@ public class Version {
 
 	/**
 	 * Creates a new Version from the given parts.
-	 * 
+	 *
 	 * @param nodeName
 	 *            The name of the node implementation
 	 * @param treeVersion
@@ -90,7 +90,7 @@ public class Version {
 
 	/**
 	 * Returns the name of the node implementation.
-	 * 
+	 *
 	 * @return The node name
 	 */
 	public String getNodeName() {
@@ -99,7 +99,7 @@ public class Version {
 
 	/**
 	 * The tree version of the node.
-	 * 
+	 *
 	 * @return The tree version of the node
 	 */
 	public String getTreeVersion() {
@@ -108,7 +108,7 @@ public class Version {
 
 	/**
 	 * The protocol version of the node
-	 * 
+	 *
 	 * @return The protocol version of the node
 	 */
 	public String getProtocolVersion() {
@@ -117,7 +117,7 @@ public class Version {
 
 	/**
 	 * The build number of the node.
-	 * 
+	 *
 	 * @return The build number of the node
 	 */
 	public int getBuildNumber() {

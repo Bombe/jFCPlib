@@ -22,14 +22,14 @@ package net.pterodactylus.fcp;
  * A “DataFound” message signals the client that the data requested by a
  * {@link ClientGet} operation has been found. This message does not include the
  * actual data, though.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class DataFound extends BaseMessage {
 
 	/**
 	 * Creates a new “DataFound” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -39,7 +39,7 @@ public class DataFound extends BaseMessage {
 
 	/**
 	 * Returns whether the request is on the global queue.
-	 * 
+	 *
 	 * @return <code>true</code> if the request is on the global queue,
 	 *         <code>false</code> if the request is on the client-local queue
 	 */
@@ -49,7 +49,7 @@ public class DataFound extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {
@@ -58,7 +58,7 @@ public class DataFound extends BaseMessage {
 
 	/**
 	 * Returns the content type of the data.
-	 * 
+	 *
 	 * @return The content type of the data
 	 */
 	public String getMetadataContentType() {
@@ -67,7 +67,7 @@ public class DataFound extends BaseMessage {
 
 	/**
 	 * Returns the length of the data.
-	 * 
+	 *
 	 * @return The length of the data
 	 */
 	public long getDataLength() {

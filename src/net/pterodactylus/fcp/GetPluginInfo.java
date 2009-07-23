@@ -21,14 +21,14 @@ package net.pterodactylus.fcp;
 /**
  * The “GetPluginInfo” message requests information about a plugin from the
  * node, which will response with a {@link PluginInfo} message.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class GetPluginInfo extends FcpMessage {
 
 	/**
 	 * Creates a new “GetPluginInfo” message.
-	 * 
+	 *
 	 * @param pluginName
 	 *            The name of the plugin
 	 * @param identifier
@@ -42,7 +42,7 @@ public class GetPluginInfo extends FcpMessage {
 
 	/**
 	 * Sets whether detailed information about the plugin is wanted.
-	 * 
+	 *
 	 * @param detailed
 	 *            <code>true</code> to request detailed information about the
 	 *            plugin, <code>false</code> otherwise

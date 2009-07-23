@@ -28,7 +28,7 @@ import java.io.InputStream;
  * {@link #getPayloadInputStream()} to get the data. If an AllData message
  * passes through all registered {@link FcpListener}s without the payload being
  * consumed, the payload is discarded!
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class AllData extends BaseMessage {
@@ -38,7 +38,7 @@ public class AllData extends BaseMessage {
 
 	/**
 	 * Creates an “AllData” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 * @param payloadInputStream
@@ -51,7 +51,7 @@ public class AllData extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {
@@ -60,7 +60,7 @@ public class AllData extends BaseMessage {
 
 	/**
 	 * Returns the length of the data.
-	 * 
+	 *
 	 * @return The length of the data, or <code>-1</code> if the length could
 	 *         not be parsed
 	 */
@@ -70,7 +70,7 @@ public class AllData extends BaseMessage {
 
 	/**
 	 * Returns the startup time of the request.
-	 * 
+	 *
 	 * @return The startup time of the request (in milliseconds since Jan 1,
 	 *         1970 UTC), or <code>-1</code> if the time could not be parsed
 	 */
@@ -80,7 +80,7 @@ public class AllData extends BaseMessage {
 
 	/**
 	 * Returns the completion time of the request.
-	 * 
+	 *
 	 * @return The completion time of the request (in milliseconds since Jan 1,
 	 *         1970 UTC), or <code>-1</code> if the time could not be parsed
 	 */
@@ -92,7 +92,7 @@ public class AllData extends BaseMessage {
 	 * Returns the payload input stream. You <strong>have</strong> consume the
 	 * input stream before returning from the
 	 * {@link FcpListener#receivedAllData(FcpConnection, AllData)} method!
-	 * 
+	 *
 	 * @return The payload
 	 */
 	public InputStream getPayloadInputStream() {

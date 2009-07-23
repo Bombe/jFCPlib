@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * The “ListPeer” requests asks the node for a list of all peers it has.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class ListPeers extends FcpMessage {
@@ -28,7 +28,7 @@ public class ListPeers extends FcpMessage {
 	/**
 	 * Creates a new “ListPeers” request that only includes basic data of the
 	 * peers.
-	 * 
+	 *
 	 * @param identifier
 	 *            The identifier of the request
 	 */
@@ -38,7 +38,7 @@ public class ListPeers extends FcpMessage {
 
 	/**
 	 * Creates a new “ListPeers” request that includes wanted data of the peers.
-	 * 
+	 *
 	 * @param identifier
 	 *            The identifier of the request
 	 * @param withMetadata

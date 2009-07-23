@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Helper class with utility methods for the FCP protocol.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class FcpUtils {
@@ -44,7 +44,7 @@ public class FcpUtils {
 
 	/**
 	 * Returns a unique identifier.
-	 * 
+	 *
 	 * @return A unique identifier
 	 */
 	public static String getUniqueIdentifier() {
@@ -53,7 +53,7 @@ public class FcpUtils {
 
 	/**
 	 * Parses an integer field, separated by ‘;’ and returns the parsed values.
-	 * 
+	 *
 	 * @param field
 	 *            The field to parse
 	 * @return An array with the parsed values
@@ -74,7 +74,7 @@ public class FcpUtils {
 	/**
 	 * Encodes the given integer array into a string, separating the values by
 	 * ‘;’.
-	 * 
+	 *
 	 * @param values
 	 *            The values to encode
 	 * @return The encoded values
@@ -93,7 +93,7 @@ public class FcpUtils {
 	/**
 	 * Encodes the given string array into a string, separating the values by
 	 * ‘;’.
-	 * 
+	 *
 	 * @param values
 	 *            The values to encode
 	 * @return The encoded values
@@ -112,7 +112,7 @@ public class FcpUtils {
 	/**
 	 * Tries to parse the given string into an int, returning <code>-1</code> if
 	 * the string can not be parsed.
-	 * 
+	 *
 	 * @param value
 	 *            The string to parse
 	 * @return The parsed int, or <code>-1</code>
@@ -124,7 +124,7 @@ public class FcpUtils {
 	/**
 	 * Tries to parse the given string into an int, returning
 	 * <code>defaultValue</code> if the string can not be parsed.
-	 * 
+	 *
 	 * @param value
 	 *            The string to parse
 	 * @param defaultValue
@@ -142,7 +142,7 @@ public class FcpUtils {
 	/**
 	 * Tries to parse the given string into an long, returning <code>-1</code>
 	 * if the string can not be parsed.
-	 * 
+	 *
 	 * @param value
 	 *            The string to parse
 	 * @return The parsed long, or <code>-1</code>
@@ -154,7 +154,7 @@ public class FcpUtils {
 	/**
 	 * Tries to parse the given string into an long, returning
 	 * <code>defaultValue</code> if the string can not be parsed.
-	 * 
+	 *
 	 * @param value
 	 *            The string to parse
 	 * @param defaultValue
@@ -171,7 +171,7 @@ public class FcpUtils {
 
 	/**
 	 * Closes the given socket.
-	 * 
+	 *
 	 * @param socket
 	 *            The socket to close
 	 */
@@ -187,7 +187,7 @@ public class FcpUtils {
 
 	/**
 	 * Closes the given Closeable.
-	 * 
+	 *
 	 * @param closeable
 	 *            The Closeable to close
 	 */
@@ -205,7 +205,7 @@ public class FcpUtils {
 	 * Copies as many bytes as possible (i.e. until {@link InputStream#read()}
 	 * returns <code>-1</code>) from the source input stream to the destination
 	 * output stream.
-	 * 
+	 *
 	 * @param source
 	 *            The input stream to read from
 	 * @param destination
@@ -223,7 +223,7 @@ public class FcpUtils {
 	 * much bytes as possible will be copied (i.e. until
 	 * {@link InputStream#read()} returns <code>-1</code> to signal the end of
 	 * the stream).
-	 * 
+	 *
 	 * @param source
 	 *            The input stream to read from
 	 * @param destination
@@ -243,7 +243,7 @@ public class FcpUtils {
 	 * much bytes as possible will be copied (i.e. until
 	 * {@link InputStream#read()} returns <code>-1</code> to signal the end of
 	 * the stream).
-	 * 
+	 *
 	 * @param source
 	 *            The input stream to read from
 	 * @param destination
@@ -275,7 +275,7 @@ public class FcpUtils {
 	/**
 	 * This input stream stores the content of another input stream either in a
 	 * file or in memory, depending on the length of the input stream.
-	 * 
+	 *
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
 	 */
 	public static class TempInputStream extends InputStream {
@@ -295,7 +295,7 @@ public class FcpUtils {
 		/**
 		 * Creates a new temporary input stream that stores the given input
 		 * stream in a temporary file.
-		 * 
+		 *
 		 * @param originalInputStream
 		 *            The original input stream
 		 * @throws IOException
@@ -309,7 +309,7 @@ public class FcpUtils {
 		 * Creates a new temporary input stream that stores the given input
 		 * stream in memory if it is shorter than {@link #MAX_LENGTH_MEMORY},
 		 * otherwise it is stored in a file.
-		 * 
+		 *
 		 * @param originalInputStream
 		 *            The original input stream
 		 * @param length
@@ -325,7 +325,7 @@ public class FcpUtils {
 		 * Creates a new temporary input stream that stores the given input
 		 * stream in memory if it is shorter than <code>maxMemoryLength</code>,
 		 * otherwise it is stored in a file.
-		 * 
+		 *
 		 * @param originalInputStream
 		 *            The original input stream
 		 * @param length

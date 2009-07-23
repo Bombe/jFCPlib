@@ -22,7 +22,7 @@ import java.net.URL;
 
 /**
  * The “AddPeer” request adds a peer to the node.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class AddPeer extends FcpMessage {
@@ -37,7 +37,7 @@ public class AddPeer extends FcpMessage {
 	/**
 	 * Creates a new “AddPeer” request that reads the noderef of the peer from
 	 * the given file.
-	 * 
+	 *
 	 * @param file
 	 *            The file to read the noderef from
 	 */
@@ -49,7 +49,7 @@ public class AddPeer extends FcpMessage {
 	/**
 	 * Creates a new “AddPeer” request that reads the noderef of the peer from
 	 * the given URL.
-	 * 
+	 *
 	 * @param url
 	 *            The URL to read the noderef from
 	 */
@@ -60,7 +60,7 @@ public class AddPeer extends FcpMessage {
 
 	/**
 	 * Creates a new “AddPeer” request that adds the peer given by the noderef.
-	 * 
+	 *
 	 * @param nodeRef
 	 *            The noderef of the peer
 	 */
@@ -75,7 +75,7 @@ public class AddPeer extends FcpMessage {
 
 	/**
 	 * Sets the noderef of the peer to add.
-	 * 
+	 *
 	 * @param nodeRef
 	 *            The noderef of the peer
 	 */

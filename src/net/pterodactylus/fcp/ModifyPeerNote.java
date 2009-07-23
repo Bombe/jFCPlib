@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * The “ModifyPeerNote” command modifies a peer note.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class ModifyPeerNote extends FcpMessage {
@@ -28,7 +28,7 @@ public class ModifyPeerNote extends FcpMessage {
 	/**
 	 * Creates a new “ModifyPeerNote” request that changes peer note of the
 	 * given type and node to the given text.
-	 * 
+	 *
 	 * @see PeerNote
 	 * @param nodeIdentifier
 	 *            The identifier of the node, i.e. name, identity, or IP address

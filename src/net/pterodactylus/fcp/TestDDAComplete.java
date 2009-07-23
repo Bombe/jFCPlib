@@ -21,14 +21,14 @@ package net.pterodactylus.fcp;
 /**
  * The “TestDDAComplete” message signals that the node has finished checking
  * your read and write access to a certain directory.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class TestDDAComplete extends BaseMessage {
 
 	/**
 	 * Creates a new “TestDDAComplete” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -38,7 +38,7 @@ public class TestDDAComplete extends BaseMessage {
 
 	/**
 	 * Returns the directory the authorization is given for.
-	 * 
+	 *
 	 * @return The directory that was tested for read and/or write access
 	 */
 	public String getDirectory() {
@@ -47,7 +47,7 @@ public class TestDDAComplete extends BaseMessage {
 
 	/**
 	 * Returns whether read access to the directory is allowed.
-	 * 
+	 *
 	 * @return <code>true</code> if the client is allowed to read from that
 	 *         directory, <code>false</code> otherwise
 	 */
@@ -57,7 +57,7 @@ public class TestDDAComplete extends BaseMessage {
 
 	/**
 	 * Returns whether write access to the directory is allowed.
-	 * 
+	 *
 	 * @return <code>true</code> if the client is allowed to write into that
 	 *         directory, <code>false</code> otherwise
 	 */

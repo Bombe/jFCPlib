@@ -20,14 +20,14 @@ package net.pterodactylus.fcp;
 
 /**
  * The “TestDDARequest” initiates a DDA test sequence.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class TestDDARequest extends FcpMessage {
 
 	/**
 	 * Creates a new “TestDDARequest” command that initiates a DDA test.
-	 * 
+	 *
 	 * @param directory
 	 *            The directory you want to access files in
 	 * @param wantReadDirectory

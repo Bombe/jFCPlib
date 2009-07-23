@@ -21,14 +21,14 @@ package net.pterodactylus.fcp;
 /**
  * The “ClientPutDiskDir” message is used to insert a complete directory from
  * the disk to a single key.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class ClientPutDiskDir extends FcpMessage {
 
 	/**
 	 * Creates a new “ClientPutDiskDir” message.
-	 * 
+	 *
 	 * @param uri
 	 *            The URI to insert the file to
 	 * @param identifier
@@ -47,7 +47,7 @@ public class ClientPutDiskDir extends FcpMessage {
 	 * The verbosity of the request. Depending on this parameter you will
 	 * received only the bare minimum of messages for the request (i.e. “it
 	 * completed”) or a whole lot more.
-	 * 
+	 *
 	 * @see Verbosity
 	 * @param verbosity
 	 *            The verbosity of the request
@@ -58,7 +58,7 @@ public class ClientPutDiskDir extends FcpMessage {
 
 	/**
 	 * The number of retries for a request if the initial try failed.
-	 * 
+	 *
 	 * @param maxRetries
 	 *            The maximum number of retries after failure, or
 	 *            <code>-1</code> to retry forever.
@@ -69,7 +69,7 @@ public class ClientPutDiskDir extends FcpMessage {
 
 	/**
 	 * Sets the priority of the request.
-	 * 
+	 *
 	 * @param priority
 	 *            The priority of the request
 	 */
@@ -80,7 +80,7 @@ public class ClientPutDiskDir extends FcpMessage {
 	/**
 	 * Determines whether the node should really insert the data or generate the
 	 * final CHK only.
-	 * 
+	 *
 	 * @param getCHKOnly
 	 *            <code>true</code> to generate the final CHK only,
 	 *            <code>false</code> to really insert the data
@@ -91,7 +91,7 @@ public class ClientPutDiskDir extends FcpMessage {
 
 	/**
 	 * Determines whether this request appears on the global queue.
-	 * 
+	 *
 	 * @param global
 	 *            <code>true</code> to put the request on the global queue,
 	 *            <code>false</code> for the client-local queue.
@@ -103,7 +103,7 @@ public class ClientPutDiskDir extends FcpMessage {
 	/**
 	 * Determines whether the node should skip compression because the file has
 	 * already been compressed.
-	 * 
+	 *
 	 * @param dontCompress
 	 *            <code>true</code> to skip compression of the data in the node,
 	 *            <code>false</code> to allow compression
@@ -116,7 +116,7 @@ public class ClientPutDiskDir extends FcpMessage {
 	 * Sets an optional client token. This client token is mentioned in progress
 	 * and other request-related messages and can be used to identify this
 	 * request.
-	 * 
+	 *
 	 * @param clientToken
 	 *            The client token
 	 */
@@ -126,7 +126,7 @@ public class ClientPutDiskDir extends FcpMessage {
 
 	/**
 	 * Sets the persistence of this request.
-	 * 
+	 *
 	 * @param persistence
 	 *            The persistence of this request
 	 */
@@ -137,7 +137,7 @@ public class ClientPutDiskDir extends FcpMessage {
 	/**
 	 * Sets the name of the default file. The default file is shown when the key
 	 * is requested with an additional name.
-	 * 
+	 *
 	 * @param defaultName
 	 *            The name of the default file
 	 */
@@ -147,7 +147,7 @@ public class ClientPutDiskDir extends FcpMessage {
 
 	/**
 	 * Sets whether unreadable files allow the insert to continue.
-	 * 
+	 *
 	 * @param allowUnreadableFiles
 	 *            <code>true</code> to just ignore unreadable files,
 	 *            <code>false</code> to let the insert fail when an unreadable

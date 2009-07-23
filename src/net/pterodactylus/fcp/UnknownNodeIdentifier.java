@@ -21,7 +21,7 @@ package net.pterodactylus.fcp;
 /**
  * The “UnknownNodeIdentifier” message signals the client that the node
  * identifier given in a command like {@link ListPeer} is unknown.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class UnknownNodeIdentifier extends BaseMessage {
@@ -29,7 +29,7 @@ public class UnknownNodeIdentifier extends BaseMessage {
 	/**
 	 * Creates a new “UnknownNodeIdentifier” message that wraps the received
 	 * message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -39,7 +39,7 @@ public class UnknownNodeIdentifier extends BaseMessage {
 
 	/**
 	 * Returns the unknown node identifier.
-	 * 
+	 *
 	 * @return The unknown node identifier
 	 */
 	public String getNodeIdentifier() {

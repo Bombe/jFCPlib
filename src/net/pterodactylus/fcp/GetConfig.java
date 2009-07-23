@@ -21,7 +21,7 @@ package net.pterodactylus.fcp;
 /**
  * The “GetConfig” command tells the node to send its configuration to the
  * client.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class GetConfig extends FcpMessage {
@@ -36,7 +36,7 @@ public class GetConfig extends FcpMessage {
 	/**
 	 * Sets whether the {@link ConfigData} result message shall include the
 	 * current values.
-	 * 
+	 *
 	 * @param withCurrent
 	 *            <code>true</code> to include current values in the result,
 	 *            <code>false</code> otherwise
@@ -48,7 +48,7 @@ public class GetConfig extends FcpMessage {
 	/**
 	 * Sets whether the {@link ConfigData} result message shall include the
 	 * short descriptions.
-	 * 
+	 *
 	 * @param withShortDescription
 	 *            <code>true</code> to include the short descriptions in the
 	 *            result, <code>false</code> otherwise
@@ -60,7 +60,7 @@ public class GetConfig extends FcpMessage {
 	/**
 	 * Sets whether the {@link ConfigData} result message shall include the long
 	 * descriptions.
-	 * 
+	 *
 	 * @param withLongDescription
 	 *            <code>true</code> to include the long descriptions in the
 	 *            result, <code>false</code> otherwise
@@ -72,7 +72,7 @@ public class GetConfig extends FcpMessage {
 	/**
 	 * Sets whether the {@link ConfigData} result message shall include the data
 	 * types.
-	 * 
+	 *
 	 * @param withDataTypes
 	 *            <code>true</code> to include the data types in the result,
 	 *            <code>false</code> otherwise
@@ -84,7 +84,7 @@ public class GetConfig extends FcpMessage {
 	/**
 	 * Sets whether the {@link ConfigData} result message shall include the
 	 * defaults.
-	 * 
+	 *
 	 * @param setWithDefaults
 	 *            <code>true</code> to include the defaults in the result,
 	 *            <code>false</code> otherwise
@@ -96,7 +96,7 @@ public class GetConfig extends FcpMessage {
 	/**
 	 * Sets whether the {@link ConfigData} result message shall include the sort
 	 * order.
-	 * 
+	 *
 	 * @param withSortOrder
 	 *            <code>true</code> to include the sort order in the result,
 	 *            <code>false</code> otherwise
@@ -108,7 +108,7 @@ public class GetConfig extends FcpMessage {
 	/**
 	 * Sets whether the {@link ConfigData} result message shall include the
 	 * expert flag.
-	 * 
+	 *
 	 * @param withExpertFlag
 	 *            <code>true</code> to include the expert flag in the result,
 	 *            <code>false</code> otherwise
@@ -120,7 +120,7 @@ public class GetConfig extends FcpMessage {
 	/**
 	 * Sets whether the {@link ConfigData} result message shall include the
 	 * force-write flag.
-	 * 
+	 *
 	 * @param withForceWriteFlag
 	 *            <code>true</code> to include the force-write flag in the
 	 *            result, <code>false</code> otherwise

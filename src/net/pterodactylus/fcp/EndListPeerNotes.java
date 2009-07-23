@@ -21,14 +21,14 @@ package net.pterodactylus.fcp;
 /**
  * The “EndListPeerNotes” message signals the end of a list of “PeerNote”
  * messages.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class EndListPeerNotes extends BaseMessage {
 
 	/**
 	 * Creates a new “EndListPeerNotes” message that wraps the received message.
-	 * 
+	 *
 	 * @param fcpMessage
 	 *            The received message
 	 */

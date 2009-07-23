@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * Container for an SSK keypair.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class FcpKeyPair {
@@ -33,7 +33,7 @@ public class FcpKeyPair {
 
 	/**
 	 * Creates a new keypair from the given keys.
-	 * 
+	 *
 	 * @param publicKey
 	 *            The public key
 	 * @param privateKey
@@ -46,7 +46,7 @@ public class FcpKeyPair {
 
 	/**
 	 * Returns the public key of this keypair.
-	 * 
+	 *
 	 * @return The public key
 	 */
 	public String getPublicKey() {
@@ -55,7 +55,7 @@ public class FcpKeyPair {
 
 	/**
 	 * Returns the private key of this keypair.
-	 * 
+	 *
 	 * @return The private key
 	 */
 	public String getPrivateKey() {

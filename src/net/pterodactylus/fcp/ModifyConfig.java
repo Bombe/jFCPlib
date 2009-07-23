@@ -20,7 +20,7 @@ package net.pterodactylus.fcp;
 
 /**
  * The “ModifyConfig” message is used to change the node’s configuration.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class ModifyConfig extends FcpMessage {
@@ -34,7 +34,7 @@ public class ModifyConfig extends FcpMessage {
 
 	/**
 	 * Sets the option with the given name to the given value.
-	 * 
+	 *
 	 * @param option
 	 *            The name of the option
 	 * @param value

@@ -31,7 +31,7 @@ import java.util.Map.Entry;
  * An FCP message. FCP messages consist of a name, an arbitrary amount of
  * “fields” (i.e. key-value pairs), a message end marker, and optional payload
  * data that follows the marker.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class FcpMessage implements Iterable<String> {
@@ -50,7 +50,7 @@ public class FcpMessage implements Iterable<String> {
 
 	/**
 	 * Creates a new FCP message with the given name.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the FCP message
 	 */
@@ -62,7 +62,7 @@ public class FcpMessage implements Iterable<String> {
 	 * Creates a new FCP message with the given name and the given payload input
 	 * stream. The payload input stream is not read until the message is sent to
 	 * the node using {@link FcpConnection#sendMessage(FcpMessage)}.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the message
 	 * @param payloadInputStream
@@ -75,7 +75,7 @@ public class FcpMessage implements Iterable<String> {
 
 	/**
 	 * Returns the name of the message.
-	 * 
+	 *
 	 * @return The name of the message
 	 */
 	public String getName() {
@@ -84,7 +84,7 @@ public class FcpMessage implements Iterable<String> {
 
 	/**
 	 * Checks whether this message has a field with the given name.
-	 * 
+	 *
 	 * @param field
 	 *            The name of the field to check for
 	 * @return <code>true</code> if the message has a field with the given name,
@@ -97,7 +97,7 @@ public class FcpMessage implements Iterable<String> {
 	/**
 	 * Sets the field with the given name to the given value. If the field
 	 * already exists in this message it is overwritten.
-	 * 
+	 *
 	 * @param field
 	 *            The name of the field
 	 * @param value
@@ -112,7 +112,7 @@ public class FcpMessage implements Iterable<String> {
 
 	/**
 	 * Returns the value of the given field.
-	 * 
+	 *
 	 * @param field
 	 *            The name of the field
 	 * @return The value of the field, or <code>null</code> if there is no such
@@ -124,7 +124,7 @@ public class FcpMessage implements Iterable<String> {
 
 	/**
 	 * Returns all fields of this message.
-	 * 
+	 *
 	 * @return All fields of this message
 	 */
 	public Map<String, String> getFields() {
@@ -140,7 +140,7 @@ public class FcpMessage implements Iterable<String> {
 
 	/**
 	 * Sets the payload input stream of the message.
-	 * 
+	 *
 	 * @param payloadInputStream
 	 *            The payload input stream
 	 */
@@ -154,7 +154,7 @@ public class FcpMessage implements Iterable<String> {
 	 * payload is written to the given output stream after the message as well.
 	 * That means that this method can only be called once because on the second
 	 * invocation the payload input stream could not be read (again).
-	 * 
+	 *
 	 * @param outputStream
 	 *            The output stream to write the message to
 	 * @throws IOException
@@ -180,7 +180,7 @@ public class FcpMessage implements Iterable<String> {
 	/**
 	 * Writes the given line (followed by {@link #LINEFEED} to the given output
 	 * stream, using UTF-8 as encoding.
-	 * 
+	 *
 	 * @param outputStream
 	 *            The output stream to write to
 	 * @param line

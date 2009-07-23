@@ -23,7 +23,7 @@ package net.pterodactylus.fcp;
  * it directly with this messge ({@link UploadFrom#direct}), uploading it from
  * disk ({@link UploadFrom#disk}) or by creating a redirect to another URI (
  * {@link UploadFrom#redirect}).
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class ClientPut extends FcpMessage {
@@ -35,7 +35,7 @@ public class ClientPut extends FcpMessage {
 	 * constructor is the same as using
 	 * {@link #ClientPut(String, String, UploadFrom)} with
 	 * {@link UploadFrom#direct} as third parameter.
-	 * 
+	 *
 	 * @param uri
 	 *            The URI to insert the file to
 	 * @param identifier
@@ -57,7 +57,7 @@ public class ClientPut extends FcpMessage {
 	 * before using this option! If <code>uploadFrom</code> is
 	 * {@link UploadFrom#redirect}, use {@link #setTargetURI(String)} to set the
 	 * target URI of the redirect.
-	 * 
+	 *
 	 * @param uri
 	 *            The URI to insert to
 	 * @param identifier
@@ -74,7 +74,7 @@ public class ClientPut extends FcpMessage {
 
 	/**
 	 * The MIME type of the content.
-	 * 
+	 *
 	 * @param metadataContentType
 	 *            The MIME type of the content
 	 */
@@ -86,7 +86,7 @@ public class ClientPut extends FcpMessage {
 	 * The verbosity of the request. Depending on this parameter you will
 	 * received only the bare minimum of messages for the request (i.e. “it
 	 * completed”) or a whole lot more.
-	 * 
+	 *
 	 * @see Verbosity
 	 * @param verbosity
 	 *            The verbosity of the request
@@ -97,7 +97,7 @@ public class ClientPut extends FcpMessage {
 
 	/**
 	 * The number of retries for a request if the initial try failed.
-	 * 
+	 *
 	 * @param maxRetries
 	 *            The maximum number of retries after failure, or
 	 *            <code>-1</code> to retry forever.
@@ -108,7 +108,7 @@ public class ClientPut extends FcpMessage {
 
 	/**
 	 * Sets the priority of the request.
-	 * 
+	 *
 	 * @param priority
 	 *            The priority of the request
 	 */
@@ -119,7 +119,7 @@ public class ClientPut extends FcpMessage {
 	/**
 	 * Determines whether the node should really insert the data or generate the
 	 * final CHK only.
-	 * 
+	 *
 	 * @param getCHKOnly
 	 *            <code>true</code> to generate the final CHK only,
 	 *            <code>false</code> to really insert the data
@@ -130,7 +130,7 @@ public class ClientPut extends FcpMessage {
 
 	/**
 	 * Determines whether this request appears on the global queue.
-	 * 
+	 *
 	 * @param global
 	 *            <code>true</code> to put the request on the global queue,
 	 *            <code>false</code> for the client-local queue.
@@ -142,7 +142,7 @@ public class ClientPut extends FcpMessage {
 	/**
 	 * Determines whether the node should skip compression because the file has
 	 * already been compressed.
-	 * 
+	 *
 	 * @param dontCompress
 	 *            <code>true</code> to skip compression of the data in the node,
 	 *            <code>false</code> to allow compression
@@ -155,7 +155,7 @@ public class ClientPut extends FcpMessage {
 	 * Sets an optional client token. This client token is mentioned in progress
 	 * and other request-related messages and can be used to identify this
 	 * request.
-	 * 
+	 *
 	 * @param clientToken
 	 *            The client token
 	 */
@@ -165,7 +165,7 @@ public class ClientPut extends FcpMessage {
 
 	/**
 	 * Sets the persistence of this request.
-	 * 
+	 *
 	 * @param persistence
 	 *            The persistence of this request
 	 */
@@ -176,7 +176,7 @@ public class ClientPut extends FcpMessage {
 	/**
 	 * Sets the target filename of the inserted file. This value is ignored for
 	 * all inserts that do not have “CHK@” as a target.
-	 * 
+	 *
 	 * @param targetFilename
 	 *            The filename of the target
 	 */
@@ -187,7 +187,7 @@ public class ClientPut extends FcpMessage {
 	/**
 	 * Determines whether to encode the complete file early in the life of the
 	 * request.
-	 * 
+	 *
 	 * @param earlyEncode
 	 *            <code>true</code> to generate the final key long before the
 	 *            file is completely fetchable
@@ -199,7 +199,7 @@ public class ClientPut extends FcpMessage {
 	/**
 	 * Sets the length of the data that will be transferred after this message
 	 * if <code>uploadFrom</code> is {@link UploadFrom#direct} is used.
-	 * 
+	 *
 	 * @param dataLength
 	 *            The length of the data
 	 */
@@ -209,7 +209,7 @@ public class ClientPut extends FcpMessage {
 
 	/**
 	 * Sets the name of the file to upload the data from.
-	 * 
+	 *
 	 * @param filename
 	 *            The filename to upload
 	 */
@@ -220,7 +220,7 @@ public class ClientPut extends FcpMessage {
 	/**
 	 * If <code>uploadFrom</code> is {@link UploadFrom#redirect}, use this
 	 * method to determine that target of the redirect.
-	 * 
+	 *
 	 * @param targetURI
 	 *            The target URI to redirect to
 	 */

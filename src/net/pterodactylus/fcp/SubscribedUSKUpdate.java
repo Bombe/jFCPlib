@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  * if the new edition that was found is several editions ahead of the currently
  * last known edition, you will received a SubscribedUSKUpdate for each edition
  * inbetween as welL!
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class SubscribedUSKUpdate extends BaseMessage {
@@ -32,7 +32,7 @@ public class SubscribedUSKUpdate extends BaseMessage {
 	/**
 	 * Creates a new “SubscribedUSKUpdate” message that wraps the received
 	 * message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
@@ -42,7 +42,7 @@ public class SubscribedUSKUpdate extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the subscription.
-	 * 
+	 *
 	 * @return The identifier of the subscription
 	 */
 	public String getIdentifier() {
@@ -51,7 +51,7 @@ public class SubscribedUSKUpdate extends BaseMessage {
 
 	/**
 	 * Returns the new edition that was found.
-	 * 
+	 *
 	 * @return The new edition
 	 */
 	public int getEdition() {
@@ -60,7 +60,7 @@ public class SubscribedUSKUpdate extends BaseMessage {
 
 	/**
 	 * Returns the complete URI, including the new edition.
-	 * 
+	 *
 	 * @return The complete URI
 	 */
 	public String getURI() {

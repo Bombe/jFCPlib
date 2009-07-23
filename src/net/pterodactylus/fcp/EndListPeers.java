@@ -20,14 +20,14 @@ package net.pterodactylus.fcp;
 
 /**
  * This message marks the end of a list of “Peer” replies.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class EndListPeers extends BaseMessage {
 
 	/**
 	 * Creates a new “EndListPeers” message that wraps the received message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The message that was received
 	 */
@@ -37,7 +37,7 @@ public class EndListPeers extends BaseMessage {
 
 	/**
 	 * Returns the identifier of the request.
-	 * 
+	 *
 	 * @return The identifier of the request
 	 */
 	public String getIdentifier() {

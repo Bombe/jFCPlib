@@ -21,7 +21,7 @@ package net.pterodactylus.fcp;
 /**
  * The “EndListPersistentRequests” message signals the end of a list of
  * {@link PersistentGet} and {@link PersistentPut} requests.
- * 
+ *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class EndListPersistentRequests extends BaseMessage {
@@ -29,7 +29,7 @@ public class EndListPersistentRequests extends BaseMessage {
 	/**
 	 * Creates a new “EndListPersistentRequests” message that wraps the received
 	 * message.
-	 * 
+	 *
 	 * @param receivedMessage
 	 *            The received message
 	 */
