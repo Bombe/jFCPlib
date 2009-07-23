@@ -371,6 +371,16 @@ public interface FcpListener extends EventListener {
 	public void receivedPutFetchable(FcpConnection fcpConnection, PutFetchable putFetchable);
 
 	/**
+	 * Notifies a listener that a feed was sent to a peer.
+	 *
+	 * @param source
+	 *            The connection that received the message
+	 * @param sentFeed
+	 *            The “SentFeed” message
+	 */
+	public void receivedSentFeed(FcpConnection source, SentFeed sentFeed);
+
+	/**
 	 * Notifies a listener that a bookmark was updated.
 	 *
 	 * @param fcpConnection

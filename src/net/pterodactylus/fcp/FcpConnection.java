@@ -308,6 +308,8 @@ public class FcpConnection implements Closeable {
 			fcpListenerManager.fireReceivedNodeHello(new NodeHello(fcpMessage));
 		} else if ("CloseConnectionDuplicateClientName".equals(messageName)) {
 			fcpListenerManager.fireReceivedCloseConnectionDuplicateClientName(new CloseConnectionDuplicateClientName(fcpMessage));
+		} else if ("SentFeed".equals(messageName)) {
+			fcpListenerManager.fireSentFeed(new SentFeed(fcpMessage));
 		} else if ("ReceivedBookmarkFeed".equals(messageName)) {
 			fcpListenerManager.fireReceivedBookmarkFeed(new ReceivedBookmarkFeed(fcpMessage));
 		} else {

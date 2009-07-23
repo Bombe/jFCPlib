@@ -511,6 +511,19 @@ public class FcpListenerManager extends AbstractListenerManager<FcpConnection, F
 	}
 
 	/**
+	 * Notifies all listeners that a “SentFeed” message was received.
+	 *
+	 * @see FcpListener#receivedSentFeed(FcpConnection, SentFeed)
+	 * @param sentFeed
+	 *            The “SentFeed” message.
+	 */
+	public void fireSentFeed(SentFeed sentFeed) {
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedSentFeed(getSource(), sentFeed);
+		}
+	}
+
+	/**
 	 * Notifies all listeners that a “ReceivedBookmarkFeed” message was
 	 * received.
 	 *
