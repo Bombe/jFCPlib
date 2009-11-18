@@ -12,6 +12,11 @@
 			<version>3.8.2</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>net.pterodactylus</groupId>
+			<artifactId>utils</artifactId>
+			<version>0.1.1</version>
+		</dependency>
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
