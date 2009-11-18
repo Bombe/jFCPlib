@@ -89,6 +89,9 @@ public class FcpClient {
 	/** The underlying FCP connection. */
 	private final FcpConnection fcpConnection;
 
+	/** The {@link NodeHello} data sent by the node on connection. */
+	private volatile NodeHello nodeHello;
+
 	/** Whether the client is currently connected. */
 	private volatile boolean connected;
 
@@ -218,6 +221,20 @@ public class FcpClient {
 	}
 
 	//
+	// ACCESSORS
+	//
+
+	/**
+	 * Returns the {@link NodeHello} object that the node returned when
+	 * connecting.
+	 *
+	 * @return The {@code NodeHello} data container
+	 */
+	public NodeHello getNodeHello() {
+		return nodeHello;
+	}
+
+	//
 	// ACTIONS
 	//
 
@@ -251,8 +268,10 @@ public class FcpClient {
 			 * {@inheritDoc}
 			 */
 			@Override
+			@SuppressWarnings("synthetic-access")
 			public void receivedNodeHello(FcpConnection fcpConnection, NodeHello nodeHello) {
 				completionLatch.countDown();
+				FcpClient.this.nodeHello = nodeHello;
 			}
 		}.execute();
 	}
