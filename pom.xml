@@ -5,6 +5,13 @@
 	<version>0.1.1</version>
 	<name>jFCPlib</name>
 	<packaging>jar</packaging>
+	<distributionManagement>
+		<repository>
+			<id>pterodactylus</id>
+			<name>pterodactylus.net Maven Repository</name>
+			<url>scp://maven@maven.pterodactylus.net/home/maven/repository</url>
+		</repository>
+	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
