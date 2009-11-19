@@ -46,6 +46,7 @@ public class FcpConnectionTest extends FcpAdapter {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void receivedAllData(FcpConnection fcpConnection, AllData allData) {
 		System.out.println("AllData");
 		InputStream payloadInputStream = allData.getPayloadInputStream();
