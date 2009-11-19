@@ -18,6 +18,13 @@
 			<version>0.1.1</version>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>pterodactylus</id>
+			<name>pterodactylus.net Maven Repository</name>
+			<url>http://maven.pterodactylus.net</url>
+		</repository>
+	</repositories>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
