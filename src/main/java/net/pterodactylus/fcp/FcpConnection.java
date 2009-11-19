@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import net.pterodactylus.util.logging.Logging;
+
 /**
  * An FCP connection to a Freenet node.
  *
@@ -39,7 +41,7 @@ import java.util.logging.Logger;
 public class FcpConnection implements Closeable {
 
 	/** Logger. */
-	private static final Logger logger = Logger.getLogger(FcpConnection.class.getName());
+	private static final Logger logger = Logging.getLogger(FcpConnection.class.getName());
 
 	/** The default port for FCP v2. */
 	public static final int DEFAULT_PORT = 9481;
