@@ -109,6 +109,7 @@ public class FcpListenerManager extends AbstractListenerManager<FcpConnection, F
 	 *
 	 * @see FcpListener#receivedPeerNote(FcpConnection, PeerNote)
 	 * @param peerNote
+	 *            The “PeerNote” message
 	 */
 	public void fireReceivedPeerNote(PeerNote peerNote) {
 		for (FcpListener fcpListener : getListeners()) {
