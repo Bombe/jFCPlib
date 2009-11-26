@@ -21,12 +21,18 @@ package net.pterodactylus.fcp.highlevel;
 import net.pterodactylus.fcp.PersistentPut;
 
 /**
- * TODO
+ * High-level wrapper around a {@link PersistentPut}.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class PutRequest extends Request {
 
+	/**
+	 * Creates a new put request.
+	 *
+	 * @param persistentPut
+	 *            The FCP message to wrap
+	 */
 	PutRequest(PersistentPut persistentPut) {
 		super(persistentPut.getIdentifier(), persistentPut.getClientToken(), persistentPut.isGlobal());
 	}

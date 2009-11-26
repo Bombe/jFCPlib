@@ -260,85 +260,102 @@ public abstract class Request {
 	}
 
 	/**
-	 * TODO
+	 * Returns the number of required blocks. Any progress percentages should be
+	 * calculated against this value as 100%. Also, as long as
+	 * {@link #isFinalizedTotal()} returns {@code false} this value might
+	 * change.
 	 *
-	 * @return the requiredBlocks
+	 * @return The number of required blocks
 	 */
 	public int getRequiredBlocks() {
 		return requiredBlocks;
 	}
 
 	/**
-	 * TODO
+	 * Sets the number of required blocks.
 	 *
 	 * @param requiredBlocks
-	 *            the requiredBlocks to set
+	 *            The number of required blocks
 	 */
 	public void setRequiredBlocks(int requiredBlocks) {
 		this.requiredBlocks = requiredBlocks;
 	}
 
 	/**
-	 * TODO
+	 * Returns the number of succeeded blocks.
 	 *
-	 * @return the succeededBlocks
+	 * @return The number of succeeded blocks
 	 */
 	public int getSucceededBlocks() {
 		return succeededBlocks;
 	}
 
 	/**
-	 * TODO
+	 * Sets the number of succeeded blocks.
 	 *
 	 * @param succeededBlocks
-	 *            the succeededBlocks to set
+	 *            The number of succeeded blocks
 	 */
 	public void setSucceededBlocks(int succeededBlocks) {
 		this.succeededBlocks = succeededBlocks;
 	}
 
 	/**
-	 * TODO
+	 * Returns the number of failed blocks. These blocks may be retried untill
+	 * the maximum number of retries has been reached.
 	 *
-	 * @return the failedBlocks
+	 * @return The number of failed blocks
 	 */
 	public int getFailedBlocks() {
 		return failedBlocks;
 	}
 
 	/**
-	 * TODO
+	 * Sets the number of failed blocks.
 	 *
 	 * @param failedBlocks
-	 *            the failedBlocks to set
+	 *            The number of failed blocks
 	 */
 	public void setFailedBlocks(int failedBlocks) {
 		this.failedBlocks = failedBlocks;
 	}
 
 	/**
-	 * TODO
+	 * Returns the number of fatally failed blocks.
 	 *
-	 * @return the fatallyFailedBlocks
+	 * @return The number of fatally failed blocks
 	 */
 	public int getFatallyFailedBlocks() {
 		return fatallyFailedBlocks;
 	}
 
 	/**
-	 * TODO
+	 * Sets the number of fatally failed blocks.
 	 *
 	 * @param fatallyFailedBlocks
-	 *            the fatallyFailedBlocks to set
+	 *            The number of fatally failed blocks
 	 */
 	public void setFatallyFailedBlocks(int fatallyFailedBlocks) {
 		this.fatallyFailedBlocks = fatallyFailedBlocks;
 	}
 
+	/**
+	 * Returns whether the number of blocks has been finalized.
+	 *
+	 * @return {@code true} if the number of blocks is finalized, {@code false}
+	 *         otherwise
+	 */
 	public boolean isFinalizedTotal() {
 		return finalizedTotal;
 	}
 
+	/**
+	 * Sets whether the number of blocks has been finalized.
+	 *
+	 * @param finalizedTotal
+	 *            {@code true} if the number of blocks has been finalized,
+	 *            {@code false} otherwise
+	 */
 	void setFinalizedTotal(boolean finalizedTotal) {
 		this.finalizedTotal = finalizedTotal;
 	}
