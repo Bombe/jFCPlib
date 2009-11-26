@@ -255,7 +255,7 @@ public abstract class Request {
 	 * @param totalBlocks
 	 *            This request’s total number of blocks
 	 */
-	public void setTotalBlocks(int totalBlocks) {
+	void setTotalBlocks(int totalBlocks) {
 		this.totalBlocks = totalBlocks;
 	}
 
@@ -277,7 +277,7 @@ public abstract class Request {
 	 * @param requiredBlocks
 	 *            The number of required blocks
 	 */
-	public void setRequiredBlocks(int requiredBlocks) {
+	void setRequiredBlocks(int requiredBlocks) {
 		this.requiredBlocks = requiredBlocks;
 	}
 
@@ -296,7 +296,7 @@ public abstract class Request {
 	 * @param succeededBlocks
 	 *            The number of succeeded blocks
 	 */
-	public void setSucceededBlocks(int succeededBlocks) {
+	void setSucceededBlocks(int succeededBlocks) {
 		this.succeededBlocks = succeededBlocks;
 	}
 
@@ -316,7 +316,7 @@ public abstract class Request {
 	 * @param failedBlocks
 	 *            The number of failed blocks
 	 */
-	public void setFailedBlocks(int failedBlocks) {
+	void setFailedBlocks(int failedBlocks) {
 		this.failedBlocks = failedBlocks;
 	}
 
@@ -335,7 +335,7 @@ public abstract class Request {
 	 * @param fatallyFailedBlocks
 	 *            The number of fatally failed blocks
 	 */
-	public void setFatallyFailedBlocks(int fatallyFailedBlocks) {
+	void setFatallyFailedBlocks(int fatallyFailedBlocks) {
 		this.fatallyFailedBlocks = fatallyFailedBlocks;
 	}
 
