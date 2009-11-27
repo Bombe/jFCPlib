@@ -270,8 +270,8 @@ public class FcpClient {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void receivedNodeHello(FcpConnection fcpConnection, NodeHello nodeHello) {
-				completionLatch.countDown();
 				FcpClient.this.nodeHello = nodeHello;
+				completionLatch.countDown();
 			}
 		}.execute();
 	}
