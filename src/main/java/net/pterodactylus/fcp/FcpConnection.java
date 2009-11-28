@@ -68,7 +68,7 @@ public class FcpConnection implements Closeable {
 	private FcpConnectionHandler connectionHandler;
 
 	/** Incoming message statistics. */
-	private Map<String, Integer> incomingMessageStatistics = Collections.synchronizedMap(new HashMap<String, Integer>());
+	private static final Map<String, Integer> incomingMessageStatistics = Collections.synchronizedMap(new HashMap<String, Integer>());
 
 	/**
 	 * Creates a new FCP connection to the freenet node running on localhost,
