@@ -234,6 +234,15 @@ public class FcpClient {
 		return nodeHello;
 	}
 
+	/**
+	 * Returns the underlying FCP connection.
+	 *
+	 * @return The underlying FCP connection
+	 */
+	public FcpConnection getConnection() {
+		return fcpConnection;
+	}
+
 	//
 	// ACTIONS
 	//
