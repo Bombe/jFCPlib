@@ -83,9 +83,6 @@ public class FcpClient {
 	/** Listener management. */
 	private final FcpClientListenerManager fcpClientListenerManager = new FcpClientListenerManager(this);
 
-	/** The name of this client. */
-	private final String name;
-
 	/** The underlying FCP connection. */
 	private final FcpConnection fcpConnection;
 
@@ -98,34 +95,28 @@ public class FcpClient {
 	/**
 	 * Creates an FCP client with the given name.
 	 *
-	 * @param name
-	 *            The name of the FCP client
 	 * @throws UnknownHostException
 	 *             if the hostname “localhost” is unknown
 	 */
-	public FcpClient(String name) throws UnknownHostException {
-		this(name, "localhost");
+	public FcpClient() throws UnknownHostException {
+		this("localhost");
 	}
 
 	/**
 	 * Creates an FCP client.
 	 *
-	 * @param name
-	 *            The name of the FCP client
 	 * @param hostname
 	 *            The hostname of the Freenet node
 	 * @throws UnknownHostException
 	 *             if the given hostname can not be resolved
 	 */
-	public FcpClient(String name, String hostname) throws UnknownHostException {
-		this(name, hostname, FcpConnection.DEFAULT_PORT);
+	public FcpClient(String hostname) throws UnknownHostException {
+		this(hostname, FcpConnection.DEFAULT_PORT);
 	}
 
 	/**
 	 * Creates an FCP client.
 	 *
-	 * @param name
-	 *            The name of the FCP client
 	 * @param hostname
 	 *            The hostname of the Freenet node
 	 * @param port
@@ -133,34 +124,29 @@ public class FcpClient {
 	 * @throws UnknownHostException
 	 *             if the given hostname can not be resolved
 	 */
-	public FcpClient(String name, String hostname, int port) throws UnknownHostException {
-		this(name, InetAddress.getByName(hostname), port);
+	public FcpClient(String hostname, int port) throws UnknownHostException {
+		this(InetAddress.getByName(hostname), port);
 	}
 
 	/**
 	 * Creates an FCP client.
 	 *
-	 * @param name
-	 *            The name of the FCP client
 	 * @param host
 	 *            The host address of the Freenet node
 	 */
-	public FcpClient(String name, InetAddress host) {
-		this(name, host, FcpConnection.DEFAULT_PORT);
+	public FcpClient(InetAddress host) {
+		this(host, FcpConnection.DEFAULT_PORT);
 	}
 
 	/**
 	 * Creates an FCP client.
 	 *
-	 * @param name
-	 *            The name of the FCP client
 	 * @param host
 	 *            The host address of the Freenet node
 	 * @param port
 	 *            The Freenet node’s FCP port
 	 */
-	public FcpClient(String name, InetAddress host, int port) {
-		this.name = name;
+	public FcpClient(InetAddress host, int port) {
 		fcpConnection = new FcpConnection(host, port);
 		fcpConnection.addFcpListener(new FcpAdapter() {
 
@@ -250,12 +236,14 @@ public class FcpClient {
 	/**
 	 * Connects the FCP client.
 	 *
+	 * @param name
+	 *            The name of the client
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @throws FcpException
 	 *             if an FCP error occurs
 	 */
-	public void connect() throws IOException, FcpException {
+	public void connect(final String name) throws IOException, FcpException {
 		checkConnected(false);
 		connected = true;
 		new ExtendedFcpAdapter() {
