@@ -92,6 +92,9 @@ public class FcpClient {
 	/** Whether the client is currently connected. */
 	private volatile boolean connected;
 
+	/** The listener for “connection closed” events. */
+	private FcpListener connectionClosedListener;
+
 	/**
 	 * Creates an FCP client with the given name.
 	 *
@@ -173,7 +176,7 @@ public class FcpClient {
 	public FcpClient(FcpConnection fcpConnection, boolean connected) {
 		this.fcpConnection = fcpConnection;
 		this.connected = connected;
-		fcpConnection.addFcpListener(new FcpAdapter() {
+		connectionClosedListener = new FcpAdapter() {
 
 			/**
 			 * {@inheritDoc}
@@ -184,7 +187,8 @@ public class FcpClient {
 				FcpClient.this.connected = false;
 				fcpClientListenerManager.fireFcpClientDisconnected();
 			}
-		});
+		};
+		fcpConnection.addFcpListener(connectionClosedListener);
 	}
 
 	//
@@ -316,6 +320,13 @@ public class FcpClient {
 	 */
 	public boolean isConnected() {
 		return connected;
+	}
+
+	/**
+	 * Detaches this client from its underlying FCP connection.
+	 */
+	public void detach() {
+		fcpConnection.removeFcpListener(connectionClosedListener);
 	}
 
 	//
