@@ -147,7 +147,32 @@ public class FcpClient {
 	 *            The Freenet node’s FCP port
 	 */
 	public FcpClient(InetAddress host, int port) {
-		fcpConnection = new FcpConnection(host, port);
+		this(new FcpConnection(host, port));
+	}
+
+	/**
+	 * Creates a new high-level FCP client that will use the given connection.
+	 * This constructor will assume that the FCP connection is already
+	 * connected.
+	 *
+	 * @param fcpConnection
+	 *            The FCP connection to use
+	 */
+	public FcpClient(FcpConnection fcpConnection) {
+		this(fcpConnection, true);
+	}
+
+	/**
+	 * Creates a new high-level FCP client that will use the given connection.
+	 *
+	 * @param fcpConnection
+	 *            The FCP connection to use
+	 * @param connected
+	 *            The initial status of the FCP connection
+	 */
+	public FcpClient(FcpConnection fcpConnection, boolean connected) {
+		this.fcpConnection = fcpConnection;
+		this.connected = connected;
 		fcpConnection.addFcpListener(new FcpAdapter() {
 
 			/**
@@ -156,7 +181,7 @@ public class FcpClient {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void connectionClosed(FcpConnection fcpConnection, Throwable throwable) {
-				connected = false;
+				FcpClient.this.connected = false;
 				fcpClientListenerManager.fireFcpClientDisconnected();
 			}
 		});
