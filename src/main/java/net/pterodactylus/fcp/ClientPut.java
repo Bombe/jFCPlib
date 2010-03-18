@@ -129,6 +129,17 @@ public class ClientPut extends FcpMessage {
 	}
 
 	/**
+	 * Sets whether an insert request should be forked when it is cached.
+	 *
+	 * @param forkOnCacheable
+	 *            {@code true} to fork the insert when it is cached, {@code
+	 *            false} otherwise
+	 */
+	public void setForkOnCacheable(boolean forkOnCacheable) {
+		setField("ForkOnCacheable", String.valueOf(forkOnCacheable));
+	}
+
+	/**
 	 * Determines whether this request appears on the global queue.
 	 *
 	 * @param global

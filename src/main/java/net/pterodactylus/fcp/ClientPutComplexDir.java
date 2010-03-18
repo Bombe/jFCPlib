@@ -102,6 +102,17 @@ public class ClientPutComplexDir extends FcpMessage {
 	}
 
 	/**
+	 * Sets whether an insert request should be forked when it is cached.
+	 *
+	 * @param forkOnCacheable
+	 *            {@code true} to fork the insert when it is cached, {@code
+	 *            false} otherwise
+	 */
+	public void setForkOnCacheable(boolean forkOnCacheable) {
+		setField("ForkOnCacheable", String.valueOf(forkOnCacheable));
+	}
+
+	/**
 	 * Sets whether the request is on the global queue.
 	 *
 	 * @param global
