@@ -150,7 +150,7 @@ public class FcpClient {
 	 *            The Freenet node’s FCP port
 	 */
 	public FcpClient(InetAddress host, int port) {
-		this(new FcpConnection(host, port));
+		this(new FcpConnection(host, port), false);
 	}
 
 	/**
