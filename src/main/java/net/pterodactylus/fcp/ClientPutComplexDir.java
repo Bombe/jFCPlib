@@ -113,6 +113,26 @@ public class ClientPutComplexDir extends FcpMessage {
 	}
 
 	/**
+	 * Sets the number of additional inserts of single blocks.
+	 *
+	 * @param extraInsertsSingleBlock
+	 *            The number of additional inserts
+	 */
+	public void setExtraInsertsSingleBlock(int extraInsertsSingleBlock) {
+		setField("ExtraInsertsSingleBlock", String.valueOf(extraInsertsSingleBlock));
+	}
+
+	/**
+	 * Sets the number of additional inserts of splitfile header blocks.
+	 *
+	 * @param extraInsertsSplitfileHeaderBlock
+	 *            The number of additional inserts
+	 */
+	public void setExtraInsertsSplitfileHeaderBlock(int extraInsertsSplitfileHeaderBlock) {
+		setField("ExtraInsertsSplitfileHeaderBlock", String.valueOf(extraInsertsSplitfileHeaderBlock));
+	}
+
+	/**
 	 * Sets whether the request is on the global queue.
 	 *
 	 * @param global
