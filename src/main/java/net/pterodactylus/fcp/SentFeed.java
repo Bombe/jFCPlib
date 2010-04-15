@@ -23,7 +23,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class SentFeed extends BaseMessage {
+public class SentFeed extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “SentFeed” message from the given FCP message.

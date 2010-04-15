@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class FinishedCompression extends BaseMessage {
+public class FinishedCompression extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “FinishedCompression” message that wraps the received

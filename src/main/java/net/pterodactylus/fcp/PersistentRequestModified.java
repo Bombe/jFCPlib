@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PersistentRequestModified extends BaseMessage {
+public class PersistentRequestModified extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “PersistentRequestModified” message that wraps the received

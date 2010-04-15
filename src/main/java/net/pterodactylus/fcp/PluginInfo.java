@@ -23,7 +23,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PluginInfo extends BaseMessage {
+public class PluginInfo extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “PluginInfo” message that wraps the received message.

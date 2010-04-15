@@ -25,7 +25,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PutFetchable extends BaseMessage {
+public class PutFetchable extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “PutFetchable” message that wraps the received message.

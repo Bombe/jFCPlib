@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PersistentGet extends BaseMessage {
+public class PersistentGet extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “PersistentGet” message that wraps the received message.

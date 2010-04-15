@@ -25,7 +25,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class DataFound extends BaseMessage {
+public class DataFound extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “DataFound” message that wraps the received message.

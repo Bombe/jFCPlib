@@ -27,7 +27,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class SubscribedUSKUpdate extends BaseMessage {
+public class SubscribedUSKUpdate extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “SubscribedUSKUpdate” message that wraps the received

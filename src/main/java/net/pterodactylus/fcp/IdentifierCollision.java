@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class IdentifierCollision extends BaseMessage {
+public class IdentifierCollision extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “IdentifierCollision” message that wraps the received

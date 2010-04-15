@@ -28,7 +28,7 @@ import java.util.Map.Entry;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class Peer extends BaseMessage {
+public class Peer extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “Peer” reply from the received message.

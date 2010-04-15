@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class SSKKeypair extends BaseMessage {
+public class SSKKeypair extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “SSKKeypair” message that wraps the received message.

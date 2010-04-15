@@ -30,7 +30,7 @@ import java.util.Map.Entry;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class GetFailed extends BaseMessage {
+public class GetFailed extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “GetFailed” message that wraps the received message.

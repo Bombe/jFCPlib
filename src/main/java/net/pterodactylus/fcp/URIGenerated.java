@@ -25,7 +25,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class URIGenerated extends BaseMessage {
+public class URIGenerated extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “URIGenerated” message that wraps the received message.

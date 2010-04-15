@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PersistentRequestRemoved extends BaseMessage {
+public class PersistentRequestRemoved extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “PersistentRequestRemoved” message that wraps the received

@@ -25,7 +25,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PersistentPutDir extends BaseMessage {
+public class PersistentPutDir extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “PersistentPutDir” message that wraps the received message.

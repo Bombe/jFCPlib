@@ -30,7 +30,7 @@ import java.util.Map.Entry;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PutFailed extends BaseMessage {
+public class PutFailed extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “PutFailed” message that wraps the received message.

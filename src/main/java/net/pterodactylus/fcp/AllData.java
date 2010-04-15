@@ -31,7 +31,7 @@ import java.io.InputStream;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class AllData extends BaseMessage {
+public class AllData extends BaseMessage implements Identifiable {
 
 	/** The payload. */
 	private InputStream payloadInputStream;
