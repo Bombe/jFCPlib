@@ -28,11 +28,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import net.pterodactylus.fcp.AddPeer;
+import net.pterodactylus.fcp.AllData;
+import net.pterodactylus.fcp.ClientGet;
 import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
 import net.pterodactylus.fcp.DataFound;
@@ -67,6 +69,7 @@ import net.pterodactylus.fcp.SimpleProgress;
 import net.pterodactylus.fcp.WatchGlobal;
 import net.pterodactylus.util.filter.Filter;
 import net.pterodactylus.util.filter.Filters;
+import net.pterodactylus.util.io.TemporaryInputStream;
 import net.pterodactylus.util.thread.ObjectWrapper;
 
 /**
@@ -300,6 +303,72 @@ public class FcpClient {
 				completionLatch.countDown();
 			}
 		}.execute();
+	}
+
+	/**
+	 * Returns the file with the given URI.
+	 *
+	 * @param uri
+	 *            The URI to get
+	 * @return The result of the get request
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public GetResult getURI(final String uri) throws IOException, FcpException {
+		checkConnected(true);
+		final GetResult getResult = new GetResult();
+		new ExtendedFcpAdapter() {
+
+			@SuppressWarnings("synthetic-access")
+			private final String identifier = createIdentifier("client-get");
+
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				ClientGet clientGet = new ClientGet(uri, identifier);
+				fcpConnection.sendMessage(clientGet);
+			}
+
+			@Override
+			public void receivedGetFailed(FcpConnection fcpConnection, GetFailed getFailed) {
+				if (!getFailed.getIdentifier().equals(identifier)) {
+					return;
+				}
+				if (getFailed.getCode() == 27) {
+					/* redirect! */
+					String newUri = getFailed.getRedirectURI();
+					getResult.realUri(newUri);
+					try {
+						fcpConnection.sendMessage(new ClientGet(newUri, identifier));
+					} catch (IOException ioe1) {
+						getResult.success(false).exception(ioe1);
+						completionLatch.countDown();
+					}
+				} else {
+					getResult.success(false).errorCode(getFailed.getCode());
+					completionLatch.countDown();
+				}
+			}
+
+			@Override
+			public void receivedAllData(FcpConnection fcpConnection, AllData allData) {
+				if (!allData.getIdentifier().equals(identifier)) {
+					return;
+				}
+				InputStream temporaryInputStream;
+				try {
+					temporaryInputStream = new TemporaryInputStream(allData.getPayloadInputStream());
+					getResult.success(true).contentType(allData.getContentType()).contentLength(allData.getDataLength()).inputStream(temporaryInputStream);
+				} catch (IOException ioe1) {
+					getResult.success(false).exception(ioe1);
+				}
+				completionLatch.countDown();
+			}
+
+		}.execute();
+		return getResult;
 	}
 
 	/**
