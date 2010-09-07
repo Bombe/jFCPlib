@@ -99,4 +99,13 @@ public class AllData extends BaseMessage implements Identifiable {
 		return payloadInputStream;
 	}
 
+	/**
+	 * Returns the content type of the found file.
+	 *
+	 * @return The content type
+	 */
+	public String getContentType() {
+		return getField("Metadata.ContentType");
+	}
+
 }
