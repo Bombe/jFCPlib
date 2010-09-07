@@ -45,6 +45,7 @@ public class SubscribedUSKUpdate extends BaseMessage implements Identifiable {
 	 *
 	 * @return The identifier of the subscription
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

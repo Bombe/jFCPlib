@@ -196,6 +196,7 @@ public class FcpConnection implements Closeable {
 	 * Closes the connection. If there is no connection to the node, this method
 	 * does nothing.
 	 */
+	@Override
 	public void close() {
 		handleDisconnect(null);
 	}

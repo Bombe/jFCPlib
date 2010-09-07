@@ -42,6 +42,7 @@ public class PersistentRequestRemoved extends BaseMessage implements Identifiabl
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

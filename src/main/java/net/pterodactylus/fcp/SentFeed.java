@@ -42,6 +42,7 @@ public class SentFeed extends BaseMessage implements Identifiable {
 	 *
 	 * @return The send feed’s identifier
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

@@ -57,6 +57,7 @@ public class GetFailed extends BaseMessage implements Identifiable {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

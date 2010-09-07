@@ -844,6 +844,7 @@ public class FcpClient {
 			/**
 			 * {@inheritDoc}
 			 */
+			@Override
 			public boolean filterObject(Request request) {
 				return request instanceof GetRequest;
 			}
@@ -869,6 +870,7 @@ public class FcpClient {
 			/**
 			 * {@inheritDoc}
 			 */
+			@Override
 			public boolean filterObject(Request request) {
 				return request instanceof PutRequest;
 			}
