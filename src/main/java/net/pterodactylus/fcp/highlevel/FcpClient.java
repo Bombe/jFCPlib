@@ -336,7 +336,7 @@ public class FcpClient {
 				if (!getFailed.getIdentifier().equals(identifier)) {
 					return;
 				}
-				if (getFailed.getCode() == 27) {
+				if ((getFailed.getCode() == 27) || (getFailed.getCode() == 24)) {
 					/* redirect! */
 					String newUri = getFailed.getRedirectURI();
 					getResult.realUri(newUri);
