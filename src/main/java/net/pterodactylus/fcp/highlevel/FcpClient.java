@@ -18,6 +18,7 @@
 
 package net.pterodactylus.fcp.highlevel;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -78,7 +79,7 @@ import net.pterodactylus.util.thread.ObjectWrapper;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class FcpClient {
+public class FcpClient implements Closeable {
 
 	/** Object used for synchronization. */
 	private final Object syncObject = new Object();
@@ -379,6 +380,14 @@ public class FcpClient {
 			fcpConnection.close();
 			syncObject.notifyAll();
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void close() {
+		disconnect();
 	}
 
 	/**
