@@ -307,7 +307,8 @@ public class FcpClient implements Closeable {
 	}
 
 	/**
-	 * Returns the file with the given URI.
+	 * Returns the file with the given URI. The retrieved data will be run
+	 * through Freenet’s content filter.
 	 *
 	 * @param uri
 	 *            The URI to get
@@ -318,6 +319,24 @@ public class FcpClient implements Closeable {
 	 *             if an FCP error occurs
 	 */
 	public GetResult getURI(final String uri) throws IOException, FcpException {
+		return getURI(uri, true);
+	}
+
+	/**
+	 * Returns the file with the given URI.
+	 *
+	 * @param uri
+	 *            The URI to get
+	 * @param filterData
+	 *            {@code true} to filter the retrieved data, {@code false}
+	 *            otherwise
+	 * @return The result of the get request
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public GetResult getURI(final String uri, final boolean filterData) throws IOException, FcpException {
 		checkConnected(true);
 		final GetResult getResult = new GetResult();
 		new ExtendedFcpAdapter() {
@@ -329,6 +348,7 @@ public class FcpClient implements Closeable {
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
 				ClientGet clientGet = new ClientGet(uri, identifier);
+				clientGet.setFilterData(filterData);
 				fcpConnection.sendMessage(clientGet);
 			}
 
@@ -342,7 +362,9 @@ public class FcpClient implements Closeable {
 					String newUri = getFailed.getRedirectURI();
 					getResult.realUri(newUri);
 					try {
-						fcpConnection.sendMessage(new ClientGet(newUri, identifier));
+						ClientGet clientGet = new ClientGet(newUri, identifier);
+						clientGet.setFilterData(filterData);
+						fcpConnection.sendMessage(clientGet);
 					} catch (IOException ioe1) {
 						getResult.success(false).exception(ioe1);
 						completionLatch.countDown();
