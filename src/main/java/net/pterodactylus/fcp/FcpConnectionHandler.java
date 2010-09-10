@@ -101,7 +101,7 @@ class FcpConnectionHandler implements Runnable {
 				}
 				String field = line.substring(0, equalSign);
 				String value = line.substring(equalSign + 1);
-				assert fcpMessage != null : "fcp message is null";
+				assert fcpMessage != null: "fcp message is null";
 				fcpMessage.setField(field, value);
 			} catch (IOException ioe1) {
 				throwable = ioe1;

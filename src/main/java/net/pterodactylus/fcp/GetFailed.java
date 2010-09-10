@@ -45,8 +45,8 @@ public class GetFailed extends BaseMessage implements Identifiable {
 	/**
 	 * Returns the code of the error.
 	 *
-	 * @return The code of the error, or <code>-1</code> if the error code could
-	 *         not be parsed
+	 * @return The code of the error, or <code>-1</code> if the error code
+	 *         could not be parsed
 	 */
 	public int getCode() {
 		return FcpUtils.safeParseInt(getField("Code"));
@@ -119,10 +119,11 @@ public class GetFailed extends BaseMessage implements Identifiable {
 	}
 
 	/**
-	 * Returns whether the expected values (see {@link #getExpectedDataLength()}
-	 * and {@link #getExpectedMetadataContentType()}) have already been
-	 * finalized and can be trusted. If the values have not been finalized that
-	 * can change over time.
+	 * Returns whether the expected values (see
+	 * {@link #getExpectedDataLength()} and
+	 * {@link #getExpectedMetadataContentType()}) have already been finalized
+	 * and can be trusted. If the values have not been finalized that can
+	 * change over time.
 	 *
 	 * @return <code>true</code> if the expected values have already been
 	 *         finalized, <code>false</code> otherwise
@@ -143,8 +144,8 @@ public class GetFailed extends BaseMessage implements Identifiable {
 	}
 
 	/**
-	 * Returns whether the request failed fatally. If a request fails fatally it
-	 * can never complete, even with inifinite retries.
+	 * Returns whether the request failed fatally. If a request fails fatally
+	 * it can never complete, even with inifinite retries.
 	 *
 	 * @return <code>true</code> if the request failed fatally,
 	 *         <code>false</code> otherwise

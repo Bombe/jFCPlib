@@ -19,11 +19,11 @@
 package net.pterodactylus.fcp;
 
 /**
- * A “SubscribedUSKUpdate” message is sent each time a new edition of a USK that
- * was previously subscribed to with {@link SubscribeUSK} was found. Note that
- * if the new edition that was found is several editions ahead of the currently
- * last known edition, you will received a SubscribedUSKUpdate for each edition
- * inbetween as welL!
+ * A “SubscribedUSKUpdate” message is sent each time a new edition of a USK
+ * that was previously subscribed to with {@link SubscribeUSK} was found. Note
+ * that if the new edition that was found is several editions ahead of the
+ * currently last known edition, you will received a SubscribedUSKUpdate for
+ * each edition inbetween as welL!
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */

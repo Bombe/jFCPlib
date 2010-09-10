@@ -193,8 +193,8 @@ public class FcpConnection implements Closeable {
 	}
 
 	/**
-	 * Closes the connection. If there is no connection to the node, this method
-	 * does nothing.
+	 * Closes the connection. If there is no connection to the node, this
+	 * method does nothing.
 	 */
 	@Override
 	public void close() {
@@ -324,8 +324,8 @@ public class FcpConnection implements Closeable {
 	 * Handles a disconnect from the node.
 	 *
 	 * @param throwable
-	 *            The exception that caused the disconnect, or <code>null</code>
-	 *            if there was no exception
+	 *            The exception that caused the disconnect, or
+	 *            <code>null</code> if there was no exception
 	 */
 	synchronized void handleDisconnect(Throwable throwable) {
 		FcpUtils.close(remoteInputStream);
@@ -373,8 +373,8 @@ public class FcpConnection implements Closeable {
 	}
 
 	/**
-	 * A wrapper around an {@link InputStream} that only supplies a limit number
-	 * of bytes from the underlying input stream.
+	 * A wrapper around an {@link InputStream} that only supplies a limit
+	 * number of bytes from the underlying input stream.
 	 *
 	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
 	 */

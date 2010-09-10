@@ -37,7 +37,8 @@ public class ListPeers extends FcpMessage {
 	}
 
 	/**
-	 * Creates a new “ListPeers” request that includes wanted data of the peers.
+	 * Creates a new “ListPeers” request that includes wanted data of the
+	 * peers.
 	 *
 	 * @param identifier
 	 *            The identifier of the request
@@ -45,8 +46,8 @@ public class ListPeers extends FcpMessage {
 	 *            If <code>true</code> metadata of the peers is included in the
 	 *            reply
 	 * @param withVolatile
-	 *            if <code>true</code> volatile data of the peers is included in
-	 *            the reply
+	 *            if <code>true</code> volatile data of the peers is included
+	 *            in the reply
 	 */
 	public ListPeers(String identifier, boolean withMetadata, boolean withVolatile) {
 		super("ListPeers");

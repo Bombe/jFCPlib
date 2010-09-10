@@ -28,7 +28,8 @@ package net.pterodactylus.fcp;
 public class PersistentPutDir extends BaseMessage implements Identifiable {
 
 	/**
-	 * Creates a new “PersistentPutDir” message that wraps the received message.
+	 * Creates a new “PersistentPutDir” message that wraps the received
+	 * message.
 	 *
 	 * @param receivedMessage
 	 *            The received message

@@ -31,7 +31,8 @@ public class TestDDARequest extends FcpMessage {
 	 * @param directory
 	 *            The directory you want to access files in
 	 * @param wantReadDirectory
-	 *            <code>true</code> if you want to read files from the directory
+	 *            <code>true</code> if you want to read files from the
+	 *            directory
 	 * @param wantWriteDirectory
 	 *            <code>true</code> if you want to write files to the directory
 	 */

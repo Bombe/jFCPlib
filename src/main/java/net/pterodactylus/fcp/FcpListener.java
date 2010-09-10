@@ -401,9 +401,10 @@ public interface FcpListener extends EventListener {
 	public void receivedProtocolError(FcpConnection fcpConnection, ProtocolError protocolError);
 
 	/**
-	 * Notifies a listener that a message has been received. This method is only
-	 * called if {@link FcpConnection#handleMessage(FcpMessage)} does not
-	 * recognize the message. Should that ever happen, please file a bug report!
+	 * Notifies a listener that a message has been received. This method is
+	 * only called if {@link FcpConnection#handleMessage(FcpMessage)} does not
+	 * recognize the message. Should that ever happen, please file a bug
+	 * report!
 	 *
 	 * @param fcpConnection
 	 *            The connection that received the message
@@ -413,15 +414,15 @@ public interface FcpListener extends EventListener {
 	public void receivedMessage(FcpConnection fcpConnection, FcpMessage fcpMessage);
 
 	/**
-	 * Notifies a listener that a connection was closed. A closed connection can
-	 * be reestablished by calling {@link FcpConnection#connect()} on the same
-	 * object again.
+	 * Notifies a listener that a connection was closed. A closed connection
+	 * can be reestablished by calling {@link FcpConnection#connect()} on the
+	 * same object again.
 	 *
 	 * @param fcpConnection
 	 *            The connection that was closed.
 	 * @param throwable
-	 *            The exception that caused the disconnect, or <code>null</code>
-	 *            if there was no exception
+	 *            The exception that caused the disconnect, or
+	 *            <code>null</code> if there was no exception
 	 */
 	public void connectionClosed(FcpConnection fcpConnection, Throwable throwable);
 

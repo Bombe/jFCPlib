@@ -57,16 +57,16 @@ public class ReceivedBookmarkFeed extends BaseMessage {
 	/**
 	 * Returns whether the bookmark has an active link image.
 	 *
-	 * @return {@code true} if the bookmark has an active link image, {@code
-	 *         false} otherwise
+	 * @return {@code true} if the bookmark has an active link image,
+	 *         {@code false} otherwise
 	 */
 	public boolean hasActiveLink() {
 		return Boolean.parseBoolean(getField("HasAnActiveLink"));
 	}
 
 	/**
-	 * Returns the description of the bookmark. Note that the description may be
-	 * {@code null} and if it is not, it is base64-encoded!
+	 * Returns the description of the bookmark. Note that the description may
+	 * be {@code null} and if it is not, it is base64-encoded!
 	 *
 	 * @return The bookmark’s description, or {@code null} if the bookmark has
 	 *         no description

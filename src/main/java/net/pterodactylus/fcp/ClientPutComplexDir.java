@@ -105,8 +105,8 @@ public class ClientPutComplexDir extends FcpMessage {
 	 * Sets whether an insert request should be forked when it is cached.
 	 *
 	 * @param forkOnCacheable
-	 *            {@code true} to fork the insert when it is cached, {@code
-	 *            false} otherwise
+	 *            {@code true} to fork the insert when it is cached,
+	 *            {@code false} otherwise
 	 */
 	public void setForkOnCacheable(boolean forkOnCacheable) {
 		setField("ForkOnCacheable", String.valueOf(forkOnCacheable));
@@ -229,8 +229,8 @@ public class ClientPutComplexDir extends FcpMessage {
 	 * {@inheritDoc}
 	 * <p>
 	 * Do not call this method to add input streams! The input streams, if any,
-	 * will be taken directly from the {@link FileEntry}s and the stream you set
-	 * here will be overridden!
+	 * will be taken directly from the {@link FileEntry}s and the stream you
+	 * set here will be overridden!
 	 */
 	@Override
 	public void setPayloadInputStream(InputStream payloadInputStream) {

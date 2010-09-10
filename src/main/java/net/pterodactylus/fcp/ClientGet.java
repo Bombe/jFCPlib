@@ -89,8 +89,8 @@ public class ClientGet extends FcpMessage {
 	}
 
 	/**
-	 * Sets the maximum size of the file to retrieve. If the file is larger than
-	 * this size the request will fail!
+	 * Sets the maximum size of the file to retrieve. If the file is larger
+	 * than this size the request will fail!
 	 *
 	 * @param maxSize
 	 *            The maximum size of the file to retrieve
@@ -207,8 +207,8 @@ public class ClientGet extends FcpMessage {
 	}
 
 	/**
-	 * Sets the name for the temporary file. You should only call this method if
-	 * your return type is {@link ReturnType#disk}!
+	 * Sets the name for the temporary file. You should only call this method
+	 * if your return type is {@link ReturnType#disk}!
 	 *
 	 * @param tempFilename
 	 *            The name of the temporary file

@@ -45,8 +45,8 @@ public class PutFailed extends BaseMessage implements Identifiable {
 	/**
 	 * Returns the code of the error.
 	 *
-	 * @return The code of the error, or <code>-1</code> if the error code could
-	 *         not be parsed
+	 * @return The code of the error, or <code>-1</code> if the error code
+	 *         could not be parsed
 	 */
 	public int getCode() {
 		return FcpUtils.safeParseInt(getField("Code"));
@@ -109,8 +109,8 @@ public class PutFailed extends BaseMessage implements Identifiable {
 	}
 
 	/**
-	 * Returns whether the request failed fatally. If a request fails fatally it
-	 * can never complete, even with inifinite retries.
+	 * Returns whether the request failed fatally. If a request fails fatally
+	 * it can never complete, even with inifinite retries.
 	 *
 	 * @return <code>true</code> if the request failed fatally,
 	 *         <code>false</code> otherwise

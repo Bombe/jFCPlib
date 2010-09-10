@@ -60,8 +60,8 @@ public class PeerNote extends BaseMessage {
 	/**
 	 * Returns the type of the peer note.
 	 *
-	 * @return The type of the peer note, or <code>-1</code> if the type can not
-	 *         be parsed
+	 * @return The type of the peer note, or <code>-1</code> if the type can
+	 *         not be parsed
 	 */
 	public int getPeerNoteType() {
 		return FcpUtils.safeParseInt(getField("PeerNoteType"));

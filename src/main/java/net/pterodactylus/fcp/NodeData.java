@@ -159,10 +159,10 @@ public class NodeData extends BaseMessage {
 	}
 
 	/**
-	 * Returns one of the volatile fields from the message. The given field name
-	 * is prepended with “volatile.” so if you want to get the value of the
-	 * field with the name “volatile.freeJavaMemory” you only need to specify
-	 * “freeJavaMemory”.
+	 * Returns one of the volatile fields from the message. The given field
+	 * name is prepended with “volatile.” so if you want to get the value of
+	 * the field with the name “volatile.freeJavaMemory” you only need to
+	 * specify “freeJavaMemory”.
 	 *
 	 * @param field
 	 *            The name of the field

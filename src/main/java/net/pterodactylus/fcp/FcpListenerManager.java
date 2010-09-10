@@ -291,7 +291,8 @@ public class FcpListenerManager extends AbstractListenerManager<FcpConnection, F
 	}
 
 	/**
-	 * Notifies all listeners that a “FinishedCompression” message was received.
+	 * Notifies all listeners that a “FinishedCompression” message was
+	 * received.
 	 *
 	 * @see FcpListener#receivedFinishedCompression(FcpConnection,
 	 *      FinishedCompression)
@@ -418,7 +419,8 @@ public class FcpListenerManager extends AbstractListenerManager<FcpConnection, F
 	}
 
 	/**
-	 * Notifies all listeners that a “SubscribedUSKUpdate” message was received.
+	 * Notifies all listeners that a “SubscribedUSKUpdate” message was
+	 * received.
 	 *
 	 * @see FcpListener#receivedSubscribedUSKUpdate(FcpConnection,
 	 *      SubscribedUSKUpdate)
@@ -556,8 +558,8 @@ public class FcpListenerManager extends AbstractListenerManager<FcpConnection, F
 	 * Notifies all listeners that the connection to the node was closed.
 	 *
 	 * @param throwable
-	 *            The exception that caused the disconnect, or <code>null</code>
-	 *            if there was no exception
+	 *            The exception that caused the disconnect, or
+	 *            <code>null</code> if there was no exception
 	 * @see FcpListener#connectionClosed(FcpConnection, Throwable)
 	 */
 	public void fireConnectionClosed(Throwable throwable) {

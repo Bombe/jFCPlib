@@ -602,8 +602,8 @@ public class FcpClient implements Closeable {
 
 	/**
 	 * Adds a peer, reading the noderef of the peer from the given file.
-	 * <strong>Note:</strong> the file to read the noderef from has to reside on
-	 * the same machine as the node!
+	 * <strong>Note:</strong> the file to read the noderef from has to reside
+	 * on the same machine as the node!
 	 *
 	 * @param file
 	 *            The name of the file containing the peer’s noderef
@@ -913,8 +913,8 @@ public class FcpClient implements Closeable {
 	 *
 	 * @param global
 	 *            <code>true</code> to return requests from the global queue,
-	 *            <code>false</code> to only show requests from the client-local
-	 *            queue
+	 *            <code>false</code> to only show requests from the
+	 *            client-local queue
 	 * @return All requests
 	 * @throws IOException
 	 *             if an I/O error occurs

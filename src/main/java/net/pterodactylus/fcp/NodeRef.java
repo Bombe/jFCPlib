@@ -138,8 +138,8 @@ public class NodeRef {
 	}
 
 	/**
-	 * Returns the name of the node. If the node is an opennet peer, it will not
-	 * have a name!
+	 * Returns the name of the node. If the node is an opennet peer, it will
+	 * not have a name!
 	 *
 	 * @return The name of the node, or <code>null</code> if the node is an
 	 *         opennet peer

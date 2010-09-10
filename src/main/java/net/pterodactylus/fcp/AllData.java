@@ -22,9 +22,9 @@ import java.io.InputStream;
 
 /**
  * The “AllData” message carries the payload of a successful {@link ClientGet}
- * request. You will only received this message if the {@link ClientGet} request
- * was started with a return type of {@link ReturnType#direct}. If you get this
- * message and decide that the data is for you, call
+ * request. You will only received this message if the {@link ClientGet}
+ * request was started with a return type of {@link ReturnType#direct}. If you
+ * get this message and decide that the data is for you, call
  * {@link #getPayloadInputStream()} to get the data. If an AllData message
  * passes through all registered {@link FcpListener}s without the payload being
  * consumed, the payload is discarded!

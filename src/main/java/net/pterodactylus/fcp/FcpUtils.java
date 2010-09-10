@@ -110,8 +110,8 @@ public class FcpUtils {
 	}
 
 	/**
-	 * Tries to parse the given string into an int, returning <code>-1</code> if
-	 * the string can not be parsed.
+	 * Tries to parse the given string into an int, returning <code>-1</code>
+	 * if the string can not be parsed.
 	 *
 	 * @param value
 	 *            The string to parse

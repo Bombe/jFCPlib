@@ -27,8 +27,8 @@ package net.pterodactylus.fcp;
 public class EndListPersistentRequests extends BaseMessage {
 
 	/**
-	 * Creates a new “EndListPersistentRequests” message that wraps the received
-	 * message.
+	 * Creates a new “EndListPersistentRequests” message that wraps the
+	 * received message.
 	 *
 	 * @param receivedMessage
 	 *            The received message

@@ -20,7 +20,8 @@ package net.pterodactylus.fcp;
 
 /**
  * The “PersistentGet” message is sent to the client to inform it about a
- * persistent download, either in the client-local queue or in the global queue.
+ * persistent download, either in the client-local queue or in the global
+ * queue.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
@@ -118,8 +119,8 @@ public class PersistentGet extends BaseMessage implements Identifiable {
 	/**
 	 * Returns the persistence of the request.
 	 *
-	 * @return The persistence of the request, or {@link Persistence#unknown} if
-	 *         the persistence could not be parsed
+	 * @return The persistence of the request, or {@link Persistence#unknown}
+	 *         if the persistence could not be parsed
 	 */
 	public Persistence getPersistence() {
 		try {
@@ -143,9 +144,9 @@ public class PersistentGet extends BaseMessage implements Identifiable {
 	/**
 	 * Returns the maximum number of retries for a failed block.
 	 *
-	 * @return The maximum number of retries for a failed block, <code>-1</code>
-	 *         for endless retries, <code>-2</code> if the number could not be
-	 *         parsed
+	 * @return The maximum number of retries for a failed block,
+	 *         <code>-1</code> for endless retries, <code>-2</code> if the
+	 *         number could not be parsed
 	 */
 	public int getMaxRetries() {
 		return FcpUtils.safeParseInt(getField("MaxRetries"), -2);

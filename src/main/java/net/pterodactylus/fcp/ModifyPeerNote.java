@@ -31,8 +31,8 @@ public class ModifyPeerNote extends FcpMessage {
 	 *
 	 * @see PeerNote
 	 * @param nodeIdentifier
-	 *            The identifier of the node, i.e. name, identity, or IP address
-	 *            and port
+	 *            The identifier of the node, i.e. name, identity, or IP
+	 *            address and port
 	 * @param noteText
 	 *            The base64-encoded text
 	 * @param peerNoteType

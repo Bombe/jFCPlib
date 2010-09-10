@@ -27,8 +27,8 @@ package net.pterodactylus.fcp;
 public class PersistentRequestModified extends BaseMessage implements Identifiable {
 
 	/**
-	 * Creates a new “PersistentRequestModified” message that wraps the received
-	 * message.
+	 * Creates a new “PersistentRequestModified” message that wraps the
+	 * received message.
 	 *
 	 * @param receivedMessage
 	 *            The received message

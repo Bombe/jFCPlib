@@ -27,7 +27,8 @@ package net.pterodactylus.fcp;
 public class EndListPeerNotes extends BaseMessage {
 
 	/**
-	 * Creates a new “EndListPeerNotes” message that wraps the received message.
+	 * Creates a new “EndListPeerNotes” message that wraps the received
+	 * message.
 	 *
 	 * @param fcpMessage
 	 *            The received message

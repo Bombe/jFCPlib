@@ -55,8 +55,8 @@ public class ClientPut extends FcpMessage {
 	 * test your direct-disk access (see {@link TestDDARequest},
 	 * {@link TestDDAReply}, {@link TestDDAResponse}, {@link TestDDAComplete})
 	 * before using this option! If <code>uploadFrom</code> is
-	 * {@link UploadFrom#redirect}, use {@link #setTargetURI(String)} to set the
-	 * target URI of the redirect.
+	 * {@link UploadFrom#redirect}, use {@link #setTargetURI(String)} to set
+	 * the target URI of the redirect.
 	 *
 	 * @param uri
 	 *            The URI to insert to
@@ -117,8 +117,8 @@ public class ClientPut extends FcpMessage {
 	}
 
 	/**
-	 * Determines whether the node should really insert the data or generate the
-	 * final CHK only.
+	 * Determines whether the node should really insert the data or generate
+	 * the final CHK only.
 	 *
 	 * @param getCHKOnly
 	 *            <code>true</code> to generate the final CHK only,
@@ -132,8 +132,8 @@ public class ClientPut extends FcpMessage {
 	 * Sets whether an insert request should be forked when it is cached.
 	 *
 	 * @param forkOnCacheable
-	 *            {@code true} to fork the insert when it is cached, {@code
-	 *            false} otherwise
+	 *            {@code true} to fork the insert when it is cached,
+	 *            {@code false} otherwise
 	 */
 	public void setForkOnCacheable(boolean forkOnCacheable) {
 		setField("ForkOnCacheable", String.valueOf(forkOnCacheable));
@@ -175,17 +175,17 @@ public class ClientPut extends FcpMessage {
 	 * already been compressed.
 	 *
 	 * @param dontCompress
-	 *            <code>true</code> to skip compression of the data in the node,
-	 *            <code>false</code> to allow compression
+	 *            <code>true</code> to skip compression of the data in the
+	 *            node, <code>false</code> to allow compression
 	 */
 	public void setDontCompress(boolean dontCompress) {
 		setField("DontCompress", String.valueOf(dontCompress));
 	}
 
 	/**
-	 * Sets an optional client token. This client token is mentioned in progress
-	 * and other request-related messages and can be used to identify this
-	 * request.
+	 * Sets an optional client token. This client token is mentioned in
+	 * progress and other request-related messages and can be used to identify
+	 * this request.
 	 *
 	 * @param clientToken
 	 *            The client token

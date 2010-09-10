@@ -78,8 +78,8 @@ public class ClientPutDiskDir extends FcpMessage {
 	}
 
 	/**
-	 * Determines whether the node should really insert the data or generate the
-	 * final CHK only.
+	 * Determines whether the node should really insert the data or generate
+	 * the final CHK only.
 	 *
 	 * @param getCHKOnly
 	 *            <code>true</code> to generate the final CHK only,
@@ -93,8 +93,8 @@ public class ClientPutDiskDir extends FcpMessage {
 	 * Sets whether an insert request should be forked when it is cached.
 	 *
 	 * @param forkOnCacheable
-	 *            {@code true} to fork the insert when it is cached, {@code
-	 *            false} otherwise
+	 *            {@code true} to fork the insert when it is cached,
+	 *            {@code false} otherwise
 	 */
 	public void setForkOnCacheable(boolean forkOnCacheable) {
 		setField("ForkOnCacheable", String.valueOf(forkOnCacheable));
@@ -136,17 +136,17 @@ public class ClientPutDiskDir extends FcpMessage {
 	 * already been compressed.
 	 *
 	 * @param dontCompress
-	 *            <code>true</code> to skip compression of the data in the node,
-	 *            <code>false</code> to allow compression
+	 *            <code>true</code> to skip compression of the data in the
+	 *            node, <code>false</code> to allow compression
 	 */
 	public void setDontCompress(boolean dontCompress) {
 		setField("DontCompress", String.valueOf(dontCompress));
 	}
 
 	/**
-	 * Sets an optional client token. This client token is mentioned in progress
-	 * and other request-related messages and can be used to identify this
-	 * request.
+	 * Sets an optional client token. This client token is mentioned in
+	 * progress and other request-related messages and can be used to identify
+	 * this request.
 	 *
 	 * @param clientToken
 	 *            The client token
@@ -166,8 +166,8 @@ public class ClientPutDiskDir extends FcpMessage {
 	}
 
 	/**
-	 * Sets the name of the default file. The default file is shown when the key
-	 * is requested with an additional name.
+	 * Sets the name of the default file. The default file is shown when the
+	 * key is requested with an additional name.
 	 *
 	 * @param defaultName
 	 *            The name of the default file
