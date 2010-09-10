@@ -174,6 +174,16 @@ public class ClientGet extends FcpMessage {
 	}
 
 	/**
+	 * Sets whether to filter the fetched content.
+	 *
+	 * @param filterData
+	 *            {@code true} to filter content, {@code false} otherwise
+	 */
+	public void setFilterData(boolean filterData) {
+		setField("FilterData", String.valueOf(filterData));
+	}
+
+	/**
 	 * Sets the allowed MIME types of the requested file. If the MIME type of
 	 * the file does not match one of the given MIME types the request will
 	 * fail!
