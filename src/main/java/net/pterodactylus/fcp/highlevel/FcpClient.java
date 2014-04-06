@@ -18,6 +18,8 @@
 
 package net.pterodactylus.fcp.highlevel;
 
+import static com.google.common.collect.FluentIterable.from;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +34,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.AddPeer;
 import net.pterodactylus.fcp.AllData;
@@ -68,10 +71,8 @@ import net.pterodactylus.fcp.RemovePeer;
 import net.pterodactylus.fcp.SSKKeypair;
 import net.pterodactylus.fcp.SimpleProgress;
 import net.pterodactylus.fcp.WatchGlobal;
-import net.pterodactylus.util.filter.Filter;
-import net.pterodactylus.util.filter.Filters;
-import net.pterodactylus.util.io.TemporaryInputStream;
-import net.pterodactylus.util.thread.ObjectWrapper;
+
+import com.google.common.base.Predicate;
 
 /**
  * High-level FCP client that hides the details of the underlying FCP
@@ -380,13 +381,7 @@ public class FcpClient implements Closeable {
 				if (!allData.getIdentifier().equals(identifier)) {
 					return;
 				}
-				InputStream temporaryInputStream;
-				try {
-					temporaryInputStream = new TemporaryInputStream(allData.getPayloadInputStream());
-					getResult.success(true).contentType(allData.getContentType()).contentLength(allData.getDataLength()).inputStream(temporaryInputStream);
-				} catch (IOException ioe1) {
-					getResult.success(false).exception(ioe1);
-				}
+				getResult.success(true).contentType(allData.getContentType()).contentLength(allData.getDataLength()).inputStream(allData.getPayloadInputStream());
 				completionLatch.countDown();
 			}
 
@@ -742,7 +737,7 @@ public class FcpClient implements Closeable {
 	 *             if an FCP error occurs
 	 */
 	public PeerNote getPeerNote(final Peer peer) throws IOException, FcpException {
-		final ObjectWrapper<PeerNote> objectWrapper = new ObjectWrapper<PeerNote>();
+		final AtomicReference<PeerNote> objectWrapper = new AtomicReference<PeerNote>();
 		new ExtendedFcpAdapter() {
 
 			/**
@@ -828,7 +823,7 @@ public class FcpClient implements Closeable {
 	 *             if an FCP error occurs
 	 */
 	public SSKKeypair generateKeyPair() throws IOException, FcpException {
-		final ObjectWrapper<SSKKeypair> sskKeypairWrapper = new ObjectWrapper<SSKKeypair>();
+		final AtomicReference<SSKKeypair> sskKeypairWrapper = new AtomicReference<SSKKeypair>();
 		new ExtendedFcpAdapter() {
 
 			/**
@@ -870,16 +865,12 @@ public class FcpClient implements Closeable {
 	 *             if an FCP error occurs
 	 */
 	public Collection<Request> getGetRequests(final boolean global) throws IOException, FcpException {
-		return Filters.filteredCollection(getRequests(global), new Filter<Request>() {
-
-			/**
-			 * {@inheritDoc}
-			 */
+		return from(getRequests(global)).filter(new Predicate<Request>() {
 			@Override
-			public boolean filterObject(Request request) {
+			public boolean apply(Request request) {
 				return request instanceof GetRequest;
 			}
-		});
+		}).toList();
 	}
 
 	/**
@@ -896,16 +887,12 @@ public class FcpClient implements Closeable {
 	 *             if an FCP error occurs
 	 */
 	public Collection<Request> getPutRequests(final boolean global) throws IOException, FcpException {
-		return Filters.filteredCollection(getRequests(global), new Filter<Request>() {
-
-			/**
-			 * {@inheritDoc}
-			 */
+		return from(getRequests(global)).filter(new Predicate<Request>() {
 			@Override
-			public boolean filterObject(Request request) {
+			public boolean apply(Request request) {
 				return request instanceof PutRequest;
 			}
-		});
+		}).toList();
 	}
 
 	/**
@@ -1119,7 +1106,7 @@ public class FcpClient implements Closeable {
 	 *             if an I/O error occurs
 	 */
 	public NodeData getNodeInformation(final Boolean giveOpennetRef, final Boolean withPrivate, final Boolean withVolatile) throws IOException, FcpException {
-		final ObjectWrapper<NodeData> nodeDataWrapper = new ObjectWrapper<NodeData>();
+		final AtomicReference<NodeData> nodeDataWrapper = new AtomicReference<NodeData>();
 		new ExtendedFcpAdapter() {
 
 			@Override

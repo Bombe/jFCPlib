@@ -18,14 +18,18 @@
 
 package net.pterodactylus.fcp.highlevel;
 
-import net.pterodactylus.util.event.AbstractListenerManager;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Manages {@link FcpClientListener}s and fires events.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class FcpClientListenerManager extends AbstractListenerManager<FcpClient, FcpClientListener> {
+public class FcpClientListenerManager {
+
+	private final FcpClient source;
+	private final List<FcpClientListener> listeners = new CopyOnWriteArrayList<FcpClientListener>();
 
 	/**
 	 * Creates a new FCP client listener manager.
@@ -34,7 +38,15 @@ public class FcpClientListenerManager extends AbstractListenerManager<FcpClient,
 	 *            The source FCP client
 	 */
 	public FcpClientListenerManager(FcpClient fcpClient) {
-		super(fcpClient);
+		this.source = fcpClient;
+	}
+
+	private FcpClient getSource() {
+		return source;
+	}
+
+	public List<FcpClientListener> getListeners() {
+		return listeners;
 	}
 
 	/**
@@ -46,6 +58,14 @@ public class FcpClientListenerManager extends AbstractListenerManager<FcpClient,
 		for (FcpClientListener fcpClientListener : getListeners()) {
 			fcpClientListener.fcpClientDisconnected(getSource());
 		}
+	}
+
+	public void addListener(FcpClientListener fcpClientListener) {
+		listeners.add(fcpClientListener);
+	}
+
+	public void removeListener(FcpClientListener fcpClientListener) {
+		listeners.remove(fcpClientListener);
 	}
 
 }
