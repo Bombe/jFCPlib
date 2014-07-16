@@ -90,6 +90,7 @@
 					</execution>
 					<execution>
 						<id>default-check</id>
+						<phase/>
 						<goals>
 							<goal>check</goal>
 						</goals>
