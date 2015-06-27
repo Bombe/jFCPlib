@@ -80,16 +80,31 @@ public class DefaultFcpClient implements FcpClient {
 		public Future<FcpKeyPair> execute() {
 			return threadPool.submit(() -> {
 				connect();
-				GenerateSSK generateSSK = new GenerateSSK();
-				AtomicReference<FcpKeyPair> keyPair = new AtomicReference<>();
+				Sequence sequence = new Sequence();
 				FcpReplySequence replySequence = new FcpReplySequence(threadPool, fcpConnection.get());
-				replySequence.handle(SSKKeypair.class)
-						.with((message) -> keyPair.set(
-								new FcpKeyPair(message.getRequestURI(), message.getInsertURI())));
-				replySequence.waitFor(() -> keyPair.get() != null);
-				replySequence.send(generateSSK).get();
-				return keyPair.get();
+				replySequence.handle(SSKKeypair.class).with(sequence::handleSSKKeypair);
+				replySequence.waitFor(sequence::isFinished);
+				replySequence.send(new GenerateSSK()).get();
+				return sequence.getKeyPair();
 			});
+		}
+
+		private class Sequence {
+
+			private AtomicReference<FcpKeyPair> keyPair = new AtomicReference<>();
+
+			public void handleSSKKeypair(SSKKeypair sskKeypair) {
+				keyPair.set(new FcpKeyPair(sskKeypair.getRequestURI(), sskKeypair.getInsertURI()));
+			}
+
+			public boolean isFinished() {
+				return keyPair.get() != null;
+			}
+
+			public FcpKeyPair getKeyPair() {
+				return keyPair.get();
+			}
+
 		}
 
 	}
