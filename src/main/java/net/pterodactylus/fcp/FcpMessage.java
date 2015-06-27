@@ -110,6 +110,11 @@ public class FcpMessage implements Iterable<String> {
 		fields.put(field, value);
 	}
 
+	public FcpMessage put(String field, String value) {
+		setField(field, value);
+		return this;
+	}
+
 	/**
 	 * Returns the value of the given field.
 	 *
