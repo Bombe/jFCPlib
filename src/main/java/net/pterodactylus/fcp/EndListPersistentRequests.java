@@ -33,7 +33,7 @@ public class EndListPersistentRequests extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	EndListPersistentRequests(FcpMessage receivedMessage) {
+	public EndListPersistentRequests(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

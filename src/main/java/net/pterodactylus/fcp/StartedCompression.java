@@ -33,7 +33,7 @@ public class StartedCompression extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	StartedCompression(FcpMessage receivedMessage) {
+	public StartedCompression(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

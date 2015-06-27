@@ -31,7 +31,7 @@ public class PluginInfo extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PluginInfo(FcpMessage receivedMessage) {
+	public PluginInfo(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

@@ -32,7 +32,7 @@ public class SimpleProgress extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	SimpleProgress(FcpMessage receivedMessage) {
+	public SimpleProgress(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

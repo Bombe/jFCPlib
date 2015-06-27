@@ -33,7 +33,7 @@ public class UnknownNodeIdentifier extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	UnknownNodeIdentifier(FcpMessage receivedMessage) {
+	public UnknownNodeIdentifier(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

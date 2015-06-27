@@ -32,7 +32,7 @@ public class SSKKeypair extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	SSKKeypair(FcpMessage receivedMessage) {
+	public SSKKeypair(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

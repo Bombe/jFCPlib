@@ -33,7 +33,7 @@ public class EndListPeerNotes extends BaseMessage {
 	 * @param fcpMessage
 	 *            The received message
 	 */
-	EndListPeerNotes(FcpMessage fcpMessage) {
+	public EndListPeerNotes(FcpMessage fcpMessage) {
 		super(fcpMessage);
 	}
 

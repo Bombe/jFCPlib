@@ -34,7 +34,7 @@ public class PersistentPutDir extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PersistentPutDir(FcpMessage receivedMessage) {
+	public PersistentPutDir(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

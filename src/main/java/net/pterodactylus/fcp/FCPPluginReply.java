@@ -42,7 +42,7 @@ public class FCPPluginReply extends BaseMessage implements Identifiable {
 	 * @param payloadInputStream
 	 *            The optional input stream for the payload
 	 */
-	FCPPluginReply(FcpMessage receivedMessage, InputStream payloadInputStream) {
+	public FCPPluginReply(FcpMessage receivedMessage, InputStream payloadInputStream) {
 		super(receivedMessage);
 		this.payloadInputStream = payloadInputStream;
 	}
