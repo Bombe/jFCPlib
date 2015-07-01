@@ -15,7 +15,7 @@ import org.hamcrest.Matcher;
  *
  * @author <a href="bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
-public class FakeTcpServer {
+public class FakeTcpServer implements AutoCloseable {
 
 	private final ServerSocket serverSocket;
 	private final ExecutorService executorService;
@@ -50,6 +50,11 @@ public class FakeTcpServer {
 
 	public String readLine() throws IOException {
 		return clientSocket.get().readLine();
+	}
+
+	@Override
+	public void close() throws IOException {
+		clientSocket.get().close();
 	}
 
 }
