@@ -8,5 +8,6 @@ package net.pterodactylus.fcp.quelaton;
 public interface FcpClient {
 
 	GenerateKeypairCommand generateKeypair();
+	ClientGetCommand clientGet();
 
 }

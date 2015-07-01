@@ -1,17 +1,24 @@
 package net.pterodactylus.fcp.quelaton;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import net.pterodactylus.fcp.FcpKeyPair;
+import net.pterodactylus.fcp.Priority;
 import net.pterodactylus.fcp.fake.FakeTcpServer;
+import net.pterodactylus.fcp.quelaton.ClientGetCommand.Data;
 
+import com.google.common.io.ByteStreams;
 import org.junit.After;
 import org.junit.Test;
 
@@ -71,6 +78,163 @@ public class DefaultFcpClientTest {
 			"ExtRevision=v29",
 			"EndMessage"
 		);
+	}
+
+	@Test
+	public void clientGetCanDownloadData() throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"AllData",
+			"Identifier=test",
+			"DataLength=6",
+			"StartupTime=1435610539000",
+			"CompletionTime=1435610540000",
+			"Metadata.ContentType=text/plain;charset=utf-8",
+			"Data",
+			"Hello"
+		);
+		Optional<Data> data = dataFuture.get();
+		assertThat(data.get().getMimeType(), is("text/plain;charset=utf-8"));
+		assertThat(data.get().size(), is(6L));
+		assertThat(ByteStreams.toByteArray(data.get().getInputStream()), is("Hello\n".getBytes(StandardCharsets.UTF_8)));
+	}
+
+	@Test
+	public void clientGetRecognizesGetFailed() throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"GetFailed",
+			"Identifier=test",
+			"Code=3",
+			"EndMessage"
+		);
+		Optional<Data> data = dataFuture.get();
+		assertThat(data.isPresent(), is(false));
+	}
+
+	@Test
+	public void clientGetRecognizesConnectionClosed() throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"EndMessage"
+		));
+		fcpServer.close();
+		Optional<Data> data = dataFuture.get();
+		assertThat(data.isPresent(), is(false));
+	}
+
+	@Test
+	public void clientGetWithIgnoreDataStoreSettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
+		fcpClient.clientGet().ignoreDataStore().identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"IgnoreDS=true",
+			"EndMessage"
+		));
+	}
+
+	@Test
+	public void clientGetWithDataStoreOnlySettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
+		fcpClient.clientGet().dataStoreOnly().identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"DSonly=true",
+			"EndMessage"
+		));
+	}
+
+	@Test
+	public void clientGetWithMaxSizeSettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
+		fcpClient.clientGet().maxSize(1048576).identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"MaxSize=1048576",
+			"EndMessage"
+		));
+	}
+
+	@Test
+	public void clientGetWithPrioritySettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
+		fcpClient.clientGet().priority(Priority.interactive).identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"PriorityClass=1",
+			"EndMessage"
+		));
+	}
+
+	@Test
+	public void clientGetWithRealTimeSettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
+		fcpClient.clientGet().realTime().identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"RealTimeFlag=true",
+			"EndMessage"
+		));
+	}
+
+	@Test
+	public void clientGetWithGlobalSettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
+		fcpClient.clientGet().global().identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"Global=true",
+			"EndMessage"
+		));
 	}
 
 }
