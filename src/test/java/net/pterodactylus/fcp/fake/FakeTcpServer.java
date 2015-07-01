@@ -44,8 +44,10 @@ public class FakeTcpServer implements AutoCloseable {
 		return clientSocket.get().collectUntil(lineMatcher);
 	}
 
-	public void writeLine(String line) throws IOException {
-		clientSocket.get().writeLine(line);
+	public void writeLine(String... lines) throws IOException {
+		for (String line : lines) {
+			clientSocket.get().writeLine(line);
+		}
 	}
 
 	public String readLine() throws IOException {
