@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
 import net.pterodactylus.fcp.FcpKeyPair;
 import net.pterodactylus.fcp.fake.FakeTcpServer;
 
+import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -28,6 +29,11 @@ public class DefaultFcpClientTest {
 	public DefaultFcpClientTest() throws IOException {
 		fcpServer = new FakeTcpServer(threadPool);
 		fcpClient = new DefaultFcpClient(threadPool, "localhost", fcpServer.getPort(), () -> "Test", () -> "2.0");
+	}
+
+	@After
+	public void tearDown() throws IOException {
+		fcpServer.close();
 	}
 
 	@Test
