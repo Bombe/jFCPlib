@@ -22,6 +22,9 @@ import org.junit.Test;
  */
 public class DefaultFcpClientTest {
 
+	private static final String INSERT_URI = "SSK@RVCHbJdkkyTCeNN9AYukEg76eyqmiosSaNKgE3U9zUw,7SHH53gletBVb9JD7nBsyClbLQsBubDPEIcwg908r7Y,AQECAAE/";
+	private static final String REQUEST_URI = "SSK@wtbgd2loNcJCXvtQVOftl2tuWBomDQHfqS6ytpPRhfw,7SHH53gletBVb9JD7nBsyClbLQsBubDPEIcwg908r7Y,AQACAAE/";
+
 	private final ExecutorService threadPool = Executors.newCachedThreadPool();
 	private final FakeTcpServer fcpServer;
 	private final DefaultFcpClient fcpClient;
@@ -41,34 +44,33 @@ public class DefaultFcpClientTest {
 		Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
 		connectNode();
 		fcpServer.collectUntil(is("EndMessage"));
-		fcpServer.writeLine("SSKKeypair\n"
-				+ "InsertURI=freenet:SSK@AKTTKG6YwjrHzWo67laRcoPqibyiTdyYufjVg54fBlWr,AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM/\n"
-				+ "RequestURI=freenet:SSK@BnHXXv3Fa43w~~iz1tNUd~cj4OpUuDjVouOWZ5XlpX0,AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM,AQABAAE/\n"
-				+ "Identifier=My Identifier from GenerateSSK\n"
-				+ "EndMessage");
+		fcpServer.writeLine("SSKKeypair",
+			"InsertURI=" + INSERT_URI + "",
+			"RequestURI=" + REQUEST_URI + "",
+			"Identifier=My Identifier from GenerateSSK",
+			"EndMessage");
 		FcpKeyPair keyPair = keyPairFuture.get();
-		assertThat(keyPair.getPublicKey(),
-				is("freenet:SSK@BnHXXv3Fa43w~~iz1tNUd~cj4OpUuDjVouOWZ5XlpX0,AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM,AQABAAE/"));
-		assertThat(keyPair.getPrivateKey(), is(
-				"freenet:SSK@AKTTKG6YwjrHzWo67laRcoPqibyiTdyYufjVg54fBlWr,AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM/"));
+		assertThat(keyPair.getPublicKey(), is(REQUEST_URI));
+		assertThat(keyPair.getPrivateKey(), is(INSERT_URI));
 	}
 
 	private void connectNode() throws InterruptedException, ExecutionException, IOException {
 		fcpServer.connect().get();
 		fcpServer.collectUntil(is("EndMessage"));
-		fcpServer.writeLine("NodeHello\n"
-				+ "FCPVersion=2.0\n"
-				+ "ConnectionIdentifier=754595fc35701d76096d8279d15c57e6\n"
-				+ "Version=Fred,0.7,1.0,1231\n"
-				+ "Node=Fred\n"
-				+ "NodeLanguage=ENGLISH\n"
-				+ "ExtRevision=23771\n"
-				+ "Build=1231\n"
-				+ "Testnet=false\n"
-				+ "ExtBuild=26\n"
-				+ "CompressionCodecs=3 - GZIP(0), BZIP2(1), LZMA(2)\n"
-				+ "Revision=@custom@\n"
-				+ "EndMessage");
+		fcpServer.writeLine("NodeHello",
+			"CompressionCodecs=4 - GZIP(0), BZIP2(1), LZMA(2), LZMA_NEW(3)",
+			"Revision=build01466",
+			"Testnet=false",
+			"Version=Fred,0.7,1.0,1466",
+			"Build=1466",
+			"ConnectionIdentifier=14318898267048452a81b36e7f13a3f0",
+			"Node=Fred",
+			"ExtBuild=29",
+			"FCPVersion=2.0",
+			"NodeLanguage=ENGLISH",
+			"ExtRevision=v29",
+			"EndMessage"
+		);
 	}
 
 }
