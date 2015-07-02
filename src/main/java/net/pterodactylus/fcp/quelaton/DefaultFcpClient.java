@@ -179,40 +179,39 @@ public class DefaultFcpClient implements FcpClient {
 
 		@Override
 		public Future<Optional<Data>> uri(String uri) {
-			return threadPool.submit(new Callable<Optional<Data>>() {
-				@Override
-				public Optional<Data> call() throws Exception {
-					DefaultFcpClient.this.connect();
-					ClientGet clientGet = new ClientGet(uri, identifier, ReturnType.direct);
-					if (ignoreDataStore) {
-						clientGet.setIgnoreDataStore(true);
-					}
-					if (dataStoreOnly) {
-						clientGet.setDataStoreOnly(true);
-					}
-					if (maxSize != null) {
-						clientGet.setMaxSize(maxSize);
-					}
-					if (priority != null) {
-						clientGet.setPriority(priority);
-					}
-					if (realTime) {
-						clientGet.setRealTimeFlag(true);
-					}
-					if (global) {
-						clientGet.setGlobal(true);
-					}
-					try (FcpReplySequence replySequence = new FcpReplySequence(threadPool, fcpConnection.get())) {
-						Sequence sequence = new Sequence(identifier);
-						replySequence.handle(AllData.class).with(sequence::allData);
-						replySequence.handle(GetFailed.class).with(sequence::getFailed);
-						replySequence.handleClose().with(sequence::disconnect);
-						replySequence.waitFor(sequence::isFinished);
-						replySequence.send(clientGet).get();
-						return sequence.isSuccessful() ? Optional.of(sequence.getData()) : Optional.empty();
-					}
-				}
-			});
+			return threadPool.submit(() -> execute(uri));
+		}
+
+		private Optional<Data> execute(String uri) throws IOException, ExecutionException, InterruptedException {
+			DefaultFcpClient.this.connect();
+			ClientGet clientGet = new ClientGet(uri, identifier, ReturnType.direct);
+			if (ignoreDataStore) {
+				clientGet.setIgnoreDataStore(true);
+			}
+			if (dataStoreOnly) {
+				clientGet.setDataStoreOnly(true);
+			}
+			if (maxSize != null) {
+				clientGet.setMaxSize(maxSize);
+			}
+			if (priority != null) {
+				clientGet.setPriority(priority);
+			}
+			if (realTime) {
+				clientGet.setRealTimeFlag(true);
+			}
+			if (global) {
+				clientGet.setGlobal(true);
+			}
+			try (FcpReplySequence replySequence = new FcpReplySequence(threadPool, fcpConnection.get())) {
+				Sequence sequence = new Sequence(identifier);
+				replySequence.handle(AllData.class).with(sequence::allData);
+				replySequence.handle(GetFailed.class).with(sequence::getFailed);
+				replySequence.handleClose().with(sequence::disconnect);
+				replySequence.waitFor(sequence::isFinished);
+				replySequence.send(clientGet).get();
+				return sequence.isSuccessful() ? Optional.of(sequence.getData()) : Optional.empty();
+			}
 		}
 
 		private class Sequence {
