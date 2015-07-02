@@ -109,6 +109,44 @@ public class DefaultFcpClientTest {
 	}
 
 	@Test
+	public void clientGetDownloadsDataForCorrectIdentifier() throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"AllData",
+			"Identifier=not-test",
+			"DataLength=12",
+			"StartupTime=1435610539000",
+			"CompletionTime=1435610540000",
+			"Metadata.ContentType=text/plain;charset=latin-9",
+			"Data",
+			"Hello World"
+		);
+		fcpServer.writeLine(
+			"AllData",
+			"Identifier=test",
+			"DataLength=6",
+			"StartupTime=1435610539000",
+			"CompletionTime=1435610540000",
+			"Metadata.ContentType=text/plain;charset=utf-8",
+			"Data",
+			"Hello"
+		);
+		Optional<Data> data = dataFuture.get();
+		assertThat(data.get().getMimeType(), is("text/plain;charset=utf-8"));
+		assertThat(data.get().size(), is(6L));
+		assertThat(ByteStreams.toByteArray(data.get().getInputStream()), is("Hello\n".getBytes(StandardCharsets.UTF_8)));
+	}
+
+	@Test
 	public void clientGetRecognizesGetFailed() throws InterruptedException, ExecutionException, IOException {
 		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
 		connectNode();
@@ -120,6 +158,34 @@ public class DefaultFcpClientTest {
 			"URI=KSK@foo.txt",
 			"EndMessage"
 		));
+		fcpServer.writeLine(
+			"GetFailed",
+			"Identifier=test",
+			"Code=3",
+			"EndMessage"
+		);
+		Optional<Data> data = dataFuture.get();
+		assertThat(data.isPresent(), is(false));
+	}
+
+	@Test
+	public void clientGetRecognizesGetFailedForCorrectIdentifier() throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, containsInAnyOrder(
+			"ClientGet",
+			"Identifier=test",
+			"ReturnType=direct",
+			"URI=KSK@foo.txt",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"GetFailed",
+			"Identifier=not-test",
+			"Code=3",
+			"EndMessage"
+		);
 		fcpServer.writeLine(
 			"GetFailed",
 			"Identifier=test",
