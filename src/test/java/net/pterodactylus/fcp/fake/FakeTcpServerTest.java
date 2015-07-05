@@ -45,8 +45,9 @@ public class FakeTcpServerTest {
 			public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
 			}
 		});
-		tcpServer.connect();
+		Future<?> connect = tcpServer.connect();
 		try (TextSocket clientSocket = new TextSocket(new Socket("127.0.0.1", tcpServer.getPort()))) {
+			connect.get();
 			clientSocket.writeLine("Hello");
 			clientSocket.writeLine("Bye");
 			List<String> receivedLines = tcpServer.collectUntil(is("Bye"));
