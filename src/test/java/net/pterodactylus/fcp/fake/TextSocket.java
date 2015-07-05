@@ -46,7 +46,7 @@ class TextSocket implements Closeable {
 	}
 
 	public List<String> collectUntil(Matcher<String> lineMatcher) throws IOException {
-		List<String> collectedLines = new ArrayList<String>();
+		List<String> collectedLines = new ArrayList<>();
 		while (true) {
 			String line = readLine();
 			if (line == null) {
