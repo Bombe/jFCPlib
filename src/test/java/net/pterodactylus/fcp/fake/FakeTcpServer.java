@@ -31,12 +31,9 @@ public class FakeTcpServer implements AutoCloseable {
 	}
 
 	public Future<?> connect() throws IOException {
-		return executorService.submit(new Callable<Void>() {
-			@Override
-			public Void call() throws Exception {
-				clientSocket.set(new TextSocket(serverSocket.accept()));
-				return null;
-			}
+		return executorService.submit(() -> {
+			clientSocket.set(new TextSocket(serverSocket.accept()));
+			return null;
 		});
 	}
 
