@@ -27,7 +27,7 @@ public class DefaultFcpClient implements FcpClient {
 	private final Supplier<String> expectedVersion;
 
 	public DefaultFcpClient(ExecutorService threadPool, String hostname, int port, Supplier<String> clientName,
-			Supplier<String> expectedVersion) {
+		Supplier<String> expectedVersion) {
 		this.threadPool = threadPool;
 		this.hostname = hostname;
 		this.port = port;
@@ -48,25 +48,7 @@ public class DefaultFcpClient implements FcpClient {
 	private FcpConnection createConnection() throws IOException {
 		FcpConnection connection = new FcpConnection(hostname, port);
 		connection.connect();
-		FcpReplySequence<?> nodeHelloSequence = new FcpReplySequence<Void>(threadPool, connection) {
-			private final AtomicReference<NodeHello> receivedNodeHello = new AtomicReference<>();
-			private final AtomicBoolean receivedClosed = new AtomicBoolean();
-			@Override
-			protected boolean isFinished() {
-				return receivedNodeHello.get() != null || receivedClosed.get();
-			}
-
-			@Override
-			protected void consumeNodeHello(NodeHello nodeHello) {
-				receivedNodeHello.set(nodeHello);
-			}
-
-			@Override
-			protected void consumeCloseConnectionDuplicateClientName(
-				CloseConnectionDuplicateClientName closeConnectionDuplicateClientName) {
-				receivedClosed.set(true);
-			}
-		};
+		FcpReplySequence<?> nodeHelloSequence = new ClientHelloReplySequence(connection);
 		ClientHello clientHello = new ClientHello(clientName.get(), expectedVersion.get());
 		try {
 			nodeHelloSequence.send(clientHello).get();
@@ -85,6 +67,35 @@ public class DefaultFcpClient implements FcpClient {
 	@Override
 	public ClientGetCommand clientGet() {
 		return new ClientGetCommandImpl(threadPool, this::connect);
+	}
+
+	private class ClientHelloReplySequence extends FcpReplySequence<Void> {
+
+		private final AtomicReference<NodeHello> receivedNodeHello;
+		private final AtomicBoolean receivedClosed;
+
+		public ClientHelloReplySequence(FcpConnection connection) {
+			super(DefaultFcpClient.this.threadPool, connection);
+			receivedNodeHello = new AtomicReference<>();
+			receivedClosed = new AtomicBoolean();
+		}
+
+		@Override
+		protected boolean isFinished() {
+			return receivedNodeHello.get() != null || receivedClosed.get();
+		}
+
+		@Override
+		protected void consumeNodeHello(NodeHello nodeHello) {
+			receivedNodeHello.set(nodeHello);
+		}
+
+		@Override
+		protected void consumeCloseConnectionDuplicateClientName(
+			CloseConnectionDuplicateClientName closeConnectionDuplicateClientName) {
+			receivedClosed.set(true);
+		}
+
 	}
 
 }
