@@ -81,6 +81,11 @@ class ClientGetCommandImpl implements ClientGetCommand {
 
 	@Override
 	public Future<Optional<Data>> uri(String uri) {
+		ClientGet clientGet = createClientGetCommand(uri);
+		return threadPool.submit(() -> new ClientGetReplySequence().send(clientGet).get());
+	}
+
+	private ClientGet createClientGetCommand(String uri) {
 		ClientGet clientGet = new ClientGet(uri, identifier, ReturnType.direct);
 		if (ignoreDataStore) {
 			clientGet.setIgnoreDataStore(true);
@@ -100,11 +105,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 		if (global) {
 			clientGet.setGlobal(true);
 		}
-		return threadPool.submit(() -> {
-			FcpReplySequence<Optional<Data>> replySequence =
-				new ClientGetReplySequence();
-			return replySequence.send(clientGet).get();
-		});
+		return clientGet;
 	}
 
 	private class ClientGetReplySequence extends FcpReplySequence<Optional<Data>> {
