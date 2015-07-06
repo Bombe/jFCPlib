@@ -15,14 +15,11 @@ import net.pterodactylus.fcp.ClientGet;
 import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
 import net.pterodactylus.fcp.FcpConnection;
-import net.pterodactylus.fcp.FcpKeyPair;
 import net.pterodactylus.fcp.FcpUtils.TempInputStream;
-import net.pterodactylus.fcp.GenerateSSK;
 import net.pterodactylus.fcp.GetFailed;
 import net.pterodactylus.fcp.NodeHello;
 import net.pterodactylus.fcp.Priority;
 import net.pterodactylus.fcp.ReturnType;
-import net.pterodactylus.fcp.SSKKeypair;
 
 /**
  * Default {@link FcpClient} implementation.
@@ -91,36 +88,7 @@ public class DefaultFcpClient implements FcpClient {
 
 	@Override
 	public GenerateKeypairCommand generateKeypair() {
-		return new GenerateKeypairCommandImpl();
-	}
-
-	private class GenerateKeypairCommandImpl implements GenerateKeypairCommand {
-
-		@Override
-		public Future<FcpKeyPair> execute() {
-			return threadPool.submit(() -> {
-				connect();
-				return new FcpReplySequence<FcpKeyPair>(threadPool, connect()) {
-					private AtomicReference<FcpKeyPair> keyPair = new AtomicReference<>();
-
-					@Override
-					protected boolean isFinished() {
-						return keyPair.get() != null;
-					}
-
-					@Override
-					protected FcpKeyPair getResult() {
-						return keyPair.get();
-					}
-
-					@Override
-					protected void consumeSSKKeypair(SSKKeypair sskKeypair) {
-						keyPair.set(new FcpKeyPair(sskKeypair.getRequestURI(), sskKeypair.getInsertURI()));
-					}
-				}.send(new GenerateSSK()).get();
-			});
-		}
-
+		return new GenerateKeypairCommandImpl(threadPool, this::connect);
 	}
 
 	@Override
