@@ -47,11 +47,14 @@ public class DefaultFcpClient implements FcpClient {
 		this.expectedVersion = expectedVersion;
 	}
 
-	private void connect() throws IOException {
-		if (fcpConnection.get() != null) {
-			return;
+	private FcpConnection connect() throws IOException {
+		FcpConnection fcpConnection = this.fcpConnection.get();
+		if (fcpConnection != null) {
+			return fcpConnection;
 		}
-		fcpConnection.compareAndSet(null, createConnection());
+		fcpConnection = createConnection();
+		this.fcpConnection.compareAndSet(null, fcpConnection);
+		return fcpConnection;
 	}
 
 	private FcpConnection createConnection() throws IOException {
@@ -97,7 +100,7 @@ public class DefaultFcpClient implements FcpClient {
 		public Future<FcpKeyPair> execute() {
 			return threadPool.submit(() -> {
 				connect();
-				return new FcpReplySequence<FcpKeyPair>(threadPool, fcpConnection.get()) {
+				return new FcpReplySequence<FcpKeyPair>(threadPool, connect()) {
 					private AtomicReference<FcpKeyPair> keyPair = new AtomicReference<>();
 
 					@Override
@@ -199,8 +202,7 @@ public class DefaultFcpClient implements FcpClient {
 				clientGet.setGlobal(true);
 			}
 			return threadPool.submit(() -> {
-				connect();
-				FcpReplySequence<Optional<Data>> replySequence = new FcpReplySequence<Optional<Data>>(threadPool, fcpConnection.get()) {
+				FcpReplySequence<Optional<Data>> replySequence = new FcpReplySequence<Optional<Data>>(threadPool, connect()) {
 					private final AtomicBoolean finished = new AtomicBoolean();
 					private final AtomicBoolean failed = new AtomicBoolean();
 
