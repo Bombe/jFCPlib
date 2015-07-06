@@ -6,9 +6,11 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.AllData;
 import net.pterodactylus.fcp.ClientGet;
+import net.pterodactylus.fcp.FcpMessage;
 import net.pterodactylus.fcp.FcpUtils.TempInputStream;
 import net.pterodactylus.fcp.GetFailed;
 import net.pterodactylus.fcp.Priority;
@@ -24,7 +26,6 @@ class ClientGetCommandImpl implements ClientGetCommand {
 	private final ExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
 
-	private String identifier;
 	private boolean ignoreDataStore;
 	private boolean dataStoreOnly;
 	private Long maxSize;
@@ -35,12 +36,6 @@ class ClientGetCommandImpl implements ClientGetCommand {
 	public ClientGetCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = threadPool;
 		this.connectionSupplier = connectionSupplier;
-	}
-
-	@Override
-	public ClientGetCommand identifier(String identifier) {
-		this.identifier = identifier;
-		return this;
 	}
 
 	@Override
@@ -86,6 +81,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 	}
 
 	private ClientGet createClientGetCommand(String uri) {
+		String identifier = new RandomIdentifierGenerator().generate();
 		ClientGet clientGet = new ClientGet(uri, identifier, ReturnType.direct);
 		if (ignoreDataStore) {
 			clientGet.setIgnoreDataStore(true);
@@ -110,10 +106,9 @@ class ClientGetCommandImpl implements ClientGetCommand {
 
 	private class ClientGetReplySequence extends FcpReplySequence<Optional<Data>> {
 
+		private final AtomicReference<String> identifier = new AtomicReference<>();
 		private final AtomicBoolean finished = new AtomicBoolean();
 		private final AtomicBoolean failed = new AtomicBoolean();
-
-		private final String identifier = ClientGetCommandImpl.this.identifier;
 
 		private String contentType;
 		private long dataLength;
@@ -150,7 +145,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 
 		@Override
 		protected void consumeAllData(AllData allData) {
-			if (allData.getIdentifier().equals(identifier)) {
+			if (allData.getIdentifier().equals(identifier.get())) {
 				synchronized (this) {
 					contentType = allData.getContentType();
 					dataLength = allData.getDataLength();
@@ -167,7 +162,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 
 		@Override
 		protected void consumeGetFailed(GetFailed getFailed) {
-			if (getFailed.getIdentifier().equals(identifier)) {
+			if (getFailed.getIdentifier().equals(identifier.get())) {
 				failed.set(true);
 			}
 		}
@@ -175,6 +170,12 @@ class ClientGetCommandImpl implements ClientGetCommand {
 		@Override
 		protected void consumeConnectionClosed(Throwable throwable) {
 			failed.set(true);
+		}
+
+		@Override
+		public Future<Optional<Data>> send(FcpMessage fcpMessage) throws IOException {
+			identifier.set(fcpMessage.getField("Identifier"));
+			return super.send(fcpMessage);
 		}
 
 	}

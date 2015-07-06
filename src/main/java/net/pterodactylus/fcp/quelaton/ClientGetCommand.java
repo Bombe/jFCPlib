@@ -13,7 +13,6 @@ import net.pterodactylus.fcp.Priority;
  */
 public interface ClientGetCommand {
 
-	ClientGetCommand identifier(String identifier);
 	ClientGetCommand ignoreDataStore();
 	ClientGetCommand dataStoreOnly();
 	ClientGetCommand maxSize(long maxSize);

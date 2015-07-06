@@ -19,6 +19,9 @@ import net.pterodactylus.fcp.fake.FakeTcpServer;
 import net.pterodactylus.fcp.quelaton.ClientGetCommand.Data;
 
 import com.google.common.io.ByteStreams;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.After;
 import org.junit.Test;
 
@@ -83,19 +86,14 @@ public class DefaultFcpClientTest {
 
 	@Test
 	public void clientGetCanDownloadData() throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
+		Future<Optional<Data>> dataFuture = fcpClient.clientGet().uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "ReturnType=direct", "URI=KSK@foo.txt"));
+		String identifier = extractIdentifier(lines);
 		fcpServer.writeLine(
 			"AllData",
-			"Identifier=test",
+			"Identifier=" + identifier,
 			"DataLength=6",
 			"StartupTime=1435610539000",
 			"CompletionTime=1435610540000",
@@ -109,18 +107,17 @@ public class DefaultFcpClientTest {
 		assertThat(ByteStreams.toByteArray(data.get().getInputStream()), is("Hello\n".getBytes(StandardCharsets.UTF_8)));
 	}
 
+	private String extractIdentifier(List<String> lines) {
+		return lines.stream().filter(s -> s.startsWith("Identifier=")).map(s -> s.substring(s.indexOf('=') + 1)).findFirst().orElse("");
+	}
+
 	@Test
 	public void clientGetDownloadsDataForCorrectIdentifier() throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
+		Future<Optional<Data>> dataFuture = fcpClient.clientGet().uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt"));
+		String identifier = extractIdentifier(lines);
 		fcpServer.writeLine(
 			"AllData",
 			"Identifier=not-test",
@@ -133,7 +130,7 @@ public class DefaultFcpClientTest {
 		);
 		fcpServer.writeLine(
 			"AllData",
-			"Identifier=test",
+			"Identifier=" + identifier,
 			"DataLength=6",
 			"StartupTime=1435610539000",
 			"CompletionTime=1435610540000",
@@ -149,19 +146,14 @@ public class DefaultFcpClientTest {
 
 	@Test
 	public void clientGetRecognizesGetFailed() throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
+		Future<Optional<Data>> dataFuture = fcpClient.clientGet().uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt"));
+		String identifier = extractIdentifier(lines);
 		fcpServer.writeLine(
 			"GetFailed",
-			"Identifier=test",
+			"Identifier=" + identifier,
 			"Code=3",
 			"EndMessage"
 		);
@@ -171,16 +163,11 @@ public class DefaultFcpClientTest {
 
 	@Test
 	public void clientGetRecognizesGetFailedForCorrectIdentifier() throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
+		Future<Optional<Data>> dataFuture = fcpClient.clientGet().uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt"));
+		String identifier = extractIdentifier(lines);
 		fcpServer.writeLine(
 			"GetFailed",
 			"Identifier=not-test",
@@ -189,7 +176,7 @@ public class DefaultFcpClientTest {
 		);
 		fcpServer.writeLine(
 			"GetFailed",
-			"Identifier=test",
+			"Identifier=" + identifier,
 			"Code=3",
 			"EndMessage"
 		);
@@ -199,16 +186,10 @@ public class DefaultFcpClientTest {
 
 	@Test
 	public void clientGetRecognizesConnectionClosed() throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Data>> dataFuture = fcpClient.clientGet().identifier("test").uri("KSK@foo.txt");
+		Future<Optional<Data>> dataFuture = fcpClient.clientGet().uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt"));
 		fcpServer.close();
 		Optional<Data> data = dataFuture.get();
 		assertThat(data.isPresent(), is(false));
@@ -216,92 +197,75 @@ public class DefaultFcpClientTest {
 
 	@Test
 	public void clientGetWithIgnoreDataStoreSettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
-		fcpClient.clientGet().ignoreDataStore().identifier("test").uri("KSK@foo.txt");
+		fcpClient.clientGet().ignoreDataStore().uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"IgnoreDS=true",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt", "IgnoreDS=true"));
 	}
 
 	@Test
 	public void clientGetWithDataStoreOnlySettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
-		fcpClient.clientGet().dataStoreOnly().identifier("test").uri("KSK@foo.txt");
+		fcpClient.clientGet().dataStoreOnly().uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"DSonly=true",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt", "DSonly=true"));
 	}
 
 	@Test
 	public void clientGetWithMaxSizeSettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
-		fcpClient.clientGet().maxSize(1048576).identifier("test").uri("KSK@foo.txt");
+		fcpClient.clientGet().maxSize(1048576).uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"MaxSize=1048576",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt", "MaxSize=1048576"));
 	}
 
 	@Test
 	public void clientGetWithPrioritySettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
-		fcpClient.clientGet().priority(Priority.interactive).identifier("test").uri("KSK@foo.txt");
+		fcpClient.clientGet().priority(Priority.interactive).uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"PriorityClass=1",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt", "PriorityClass=1"));
 	}
 
 	@Test
 	public void clientGetWithRealTimeSettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
-		fcpClient.clientGet().realTime().identifier("test").uri("KSK@foo.txt");
+		fcpClient.clientGet().realTime().uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"RealTimeFlag=true",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt", "RealTimeFlag=true"));
 	}
 
 	@Test
 	public void clientGetWithGlobalSettingSendsCorrectCommands() throws InterruptedException, ExecutionException, IOException {
-		fcpClient.clientGet().global().identifier("test").uri("KSK@foo.txt");
+		fcpClient.clientGet().global().uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, containsInAnyOrder(
-			"ClientGet",
-			"Identifier=test",
-			"ReturnType=direct",
-			"URI=KSK@foo.txt",
-			"Global=true",
-			"EndMessage"
-		));
+		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt", "Global=true"));
+	}
+
+	private Matcher<List<String>> matchesFcpMessage(String name, String... requiredLines) {
+		return new TypeSafeDiagnosingMatcher<List<String>>() {
+			@Override
+			protected boolean matchesSafely(List<String> item, Description mismatchDescription) {
+				if (!item.get(0).equals(name)) {
+					mismatchDescription.appendText("FCP message is named ").appendValue(item.get(0));
+					return false;
+				}
+				for (String requiredLine : requiredLines) {
+					if (item.indexOf(requiredLine) < 1) {
+						mismatchDescription.appendText("FCP message does not contain ").appendValue(requiredLine);
+						return false;
+					}
+				}
+				return true;
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("FCP message named ").appendValue(name);
+				description.appendValueList(", containing the lines", ", ", "", requiredLines);
+			}
+		};
 	}
 
 }
