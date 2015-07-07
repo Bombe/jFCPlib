@@ -263,7 +263,7 @@ public class DefaultFcpClientTest {
 			@Override
 			public void describeTo(Description description) {
 				description.appendText("FCP message named ").appendValue(name);
-				description.appendValueList(", containing the lines", ", ", "", requiredLines);
+				description.appendValueList(", containing the lines ", ", ", "", requiredLines);
 			}
 		};
 	}
