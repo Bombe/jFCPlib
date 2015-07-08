@@ -44,12 +44,17 @@
 	</repositories>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<plugin.compiler.version>3.3</plugin.compiler.version>
+		<plugin.source.version>2.4</plugin.source.version>
+		<plugin.javadoc.version>2.10.3</plugin.javadoc.version>
+		<plugin.jacoco.version>0.7.1.201405082137</plugin.jacoco.version>
 	</properties>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${plugin.compiler.version}</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -59,6 +64,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${plugin.javadoc.version}</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -71,6 +77,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>${plugin.source.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -83,7 +90,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.1.201405082137</version>
+				<version>${plugin.jacoco.version}</version>
 				<executions>
 					<execution>
 						<id>default-prepare-agent</id>
