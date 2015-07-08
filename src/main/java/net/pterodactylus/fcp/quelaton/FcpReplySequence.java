@@ -68,12 +68,7 @@ public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener 
 	protected abstract boolean isFinished();
 
 	public ListenableFuture<R> send(FcpMessage fcpMessage) throws IOException {
-		try {
 		fcpConnection.addFcpListener(this);
-
-		} catch (Throwable throwable) {
-			throwable.printStackTrace();
-		}
 		fcpConnection.sendMessage(fcpMessage);
 		return executorService.submit(() -> {
 			synchronized (syncObject) {
