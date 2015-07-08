@@ -1,9 +1,10 @@
 package net.pterodactylus.fcp.quelaton;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import net.pterodactylus.fcp.FcpKeyPair;
+import net.pterodactylus.fcp.Key;
 import net.pterodactylus.fcp.Priority;
 import net.pterodactylus.fcp.fake.FakeTcpServer;
 import net.pterodactylus.fcp.quelaton.ClientGetCommand.Data;
@@ -266,6 +268,99 @@ public class DefaultFcpClientTest {
 				description.appendValueList(", containing the lines ", ", ", "", requiredLines);
 			}
 		};
+	}
+
+	@Test
+	public void clientPutWithDirectDataSendsCorrectCommand()
+	throws IOException, ExecutionException, InterruptedException {
+		fcpClient.clientPut()
+			.from(new ByteArrayInputStream("Hello\n".getBytes()))
+			.length(6)
+			.key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("Hello"));
+		assertThat(lines, matchesFcpMessage("ClientPut", "UploadFrom=direct", "DataLength=6", "URI=KSK@foo.txt"));
+	}
+
+	@Test
+	public void clientPutWithDirectDataSucceedsOnCorrectIdentifier()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Key>> key = fcpClient.clientPut()
+			.from(new ByteArrayInputStream("Hello\n".getBytes()))
+			.length(6)
+			.key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("Hello"));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"PutFailed",
+			"Identifier=not-the-right-one",
+			"EndMessage"
+		);
+		fcpServer.writeLine(
+			"PutSuccessful",
+			"URI=KSK@foo.txt",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
+	}
+
+	@Test
+	public void clientPutWithDirectDataFailsOnCorrectIdentifier()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Key>> key = fcpClient.clientPut()
+			.from(new ByteArrayInputStream("Hello\n".getBytes()))
+			.length(6)
+			.key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("Hello"));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"PutSuccessful",
+			"Identifier=not-the-right-one",
+			"URI=KSK@foo.txt",
+			"EndMessage"
+		);
+		fcpServer.writeLine(
+			"PutFailed",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		assertThat(key.get().isPresent(), is(false));
+	}
+
+	@Test
+	public void clientPutWithRenamedDirectDataSendsCorrectCommand()
+	throws InterruptedException, ExecutionException, IOException {
+		fcpClient.clientPut()
+			.named("otherName.txt")
+			.from(new ByteArrayInputStream("Hello\n".getBytes()))
+			.length(6)
+			.key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("Hello"));
+		assertThat(lines, matchesFcpMessage("ClientPut", "TargetFilename=otherName.txt", "UploadFrom=direct",
+			"DataLength=6", "URI=KSK@foo.txt"));
+	}
+
+	@Test
+	public void clientPutWithRedirectSendsCorrectCommand()
+	throws IOException, ExecutionException, InterruptedException {
+		fcpClient.clientPut().redirectTo(new Key("KSK@bar.txt")).key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines,
+			matchesFcpMessage("ClientPut", "UploadFrom=redirect", "URI=KSK@foo.txt", "TargetURI=KSK@bar.txt"));
+	}
+
+	@Test
+	public void clientPutWithFileSendsCorrectCommand() throws InterruptedException, ExecutionException, IOException {
+		fcpClient.clientPut().from(new File("/tmp/data.txt")).key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines,
+			matchesFcpMessage("ClientPut", "UploadFrom=disk", "URI=KSK@foo.txt", "Filename=/tmp/data.txt"));
 	}
 
 }

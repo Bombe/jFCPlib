@@ -9,5 +9,6 @@ public interface FcpClient {
 
 	GenerateKeypairCommand generateKeypair();
 	ClientGetCommand clientGet();
+	ClientPutCommand clientPut();
 
 }
