@@ -2,9 +2,10 @@ package net.pterodactylus.fcp.quelaton;
 
 import java.io.InputStream;
 import java.util.Optional;
-import java.util.concurrent.Future;
 
 import net.pterodactylus.fcp.Priority;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Command that retrieves data from Freenet.
@@ -20,7 +21,7 @@ public interface ClientGetCommand {
 	ClientGetCommand realTime();
 	ClientGetCommand global();
 
-	Future<Optional<Data>> uri(String uri);
+	ListenableFuture<Optional<Data>> uri(String uri);
 
 	interface Data {
 

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -16,6 +15,10 @@ import net.pterodactylus.fcp.GetFailed;
 import net.pterodactylus.fcp.Priority;
 import net.pterodactylus.fcp.ReturnType;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+
 /**
  * Implementation of the {@link ClientGetCommand}.
  *
@@ -23,7 +26,7 @@ import net.pterodactylus.fcp.ReturnType;
  */
 class ClientGetCommandImpl implements ClientGetCommand {
 
-	private final ExecutorService threadPool;
+	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
 
 	private boolean ignoreDataStore;
@@ -34,7 +37,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 	private boolean global;
 
 	public ClientGetCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
-		this.threadPool = threadPool;
+		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
 	}
 
@@ -75,7 +78,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 	}
 
 	@Override
-	public Future<Optional<Data>> uri(String uri) {
+	public ListenableFuture<Optional<Data>> uri(String uri) {
 		ClientGet clientGet = createClientGetCommand(uri);
 		return threadPool.submit(() -> new ClientGetReplySequence().send(clientGet).get());
 	}
@@ -173,7 +176,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 		}
 
 		@Override
-		public Future<Optional<Data>> send(FcpMessage fcpMessage) throws IOException {
+		public ListenableFuture<Optional<Data>> send(FcpMessage fcpMessage) throws IOException {
 			identifier.set(fcpMessage.getField("Identifier"));
 			return super.send(fcpMessage);
 		}

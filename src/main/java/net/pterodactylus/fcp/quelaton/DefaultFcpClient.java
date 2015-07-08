@@ -12,6 +12,9 @@ import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.NodeHello;
 
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+
 /**
  * Default {@link FcpClient} implementation.
  *
@@ -19,7 +22,7 @@ import net.pterodactylus.fcp.NodeHello;
  */
 public class DefaultFcpClient implements FcpClient {
 
-	private final ExecutorService threadPool;
+	private final ListeningExecutorService threadPool;
 	private final String hostname;
 	private final int port;
 	private final AtomicReference<FcpConnection> fcpConnection = new AtomicReference<>();
@@ -28,7 +31,7 @@ public class DefaultFcpClient implements FcpClient {
 
 	public DefaultFcpClient(ExecutorService threadPool, String hostname, int port, Supplier<String> clientName,
 		Supplier<String> expectedVersion) {
-		this.threadPool = threadPool;
+		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.hostname = hostname;
 		this.port = port;
 		this.clientName = clientName;

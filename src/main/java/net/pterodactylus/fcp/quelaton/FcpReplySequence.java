@@ -2,7 +2,6 @@ package net.pterodactylus.fcp.quelaton;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 import net.pterodactylus.fcp.AllData;
@@ -46,6 +45,10 @@ import net.pterodactylus.fcp.URIGenerated;
 import net.pterodactylus.fcp.UnknownNodeIdentifier;
 import net.pterodactylus.fcp.UnknownPeerNoteType;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+
 /**
  * An FCP reply sequence enables you to conveniently wait for a specific set of FCP replies.
  *
@@ -54,17 +57,17 @@ import net.pterodactylus.fcp.UnknownPeerNoteType;
 public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener {
 
 	private final Object syncObject = new Object();
-	private final ExecutorService executorService;
+	private final ListeningExecutorService executorService;
 	private final FcpConnection fcpConnection;
 
 	public FcpReplySequence(ExecutorService executorService, FcpConnection fcpConnection) {
-		this.executorService = executorService;
+		this.executorService = MoreExecutors.listeningDecorator(executorService);
 		this.fcpConnection = fcpConnection;
 	}
 
 	protected abstract boolean isFinished();
 
-	public Future<R> send(FcpMessage fcpMessage) throws IOException {
+	public ListenableFuture<R> send(FcpMessage fcpMessage) throws IOException {
 		try {
 		fcpConnection.addFcpListener(this);
 
