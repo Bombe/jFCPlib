@@ -516,4 +516,41 @@ public class DefaultFcpClientTest {
 		));
 	}
 
+	@Test
+	public void clientPutSendsResponseEvenIfFileCanNotBeRead()
+	throws IOException, ExecutionException, InterruptedException {
+		File tempFile = createTempFile();
+		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"ProtocolError",
+			"Identifier=" + identifier,
+			"Code=25",
+			"EndMessage"
+		);
+		lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, matchesFcpMessage(
+			"TestDDARequest",
+			"Directory=" + tempFile.getParent(),
+			"WantReadDirectory=true",
+			"WantWriteDirectory=false",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"TestDDAReply",
+			"Directory=" + tempFile.getParent(),
+			"ReadFilename=" + tempFile + ".foo",
+			"EndMessage"
+		);
+		lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, matchesFcpMessage(
+			"TestDDAResponse",
+			"Directory=" + tempFile.getParent(),
+			"ReadContent=failed-to-read",
+			"EndMessage"
+		));
+	}
+
 }
