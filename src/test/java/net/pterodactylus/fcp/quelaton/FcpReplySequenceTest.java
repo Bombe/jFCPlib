@@ -69,9 +69,9 @@ public class FcpReplySequenceTest {
 	private final FcpMessage fcpMessage = new FcpMessage("Test");
 
 	@Test
-	public void canSendMessage() throws IOException {
+	public void canSendMessage() throws IOException, ExecutionException, InterruptedException {
 		FcpReplySequence replySequence = createBasicReplySequence();
-		replySequence.send(fcpMessage);
+		replySequence.send(fcpMessage).get();
 		verify(fcpConnection).sendMessage(fcpMessage);
 	}
 
