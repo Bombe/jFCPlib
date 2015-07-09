@@ -553,4 +553,33 @@ public class DefaultFcpClientTest {
 		));
 	}
 
+	@Test
+	public void clientPutDoesNotResendOriginalClientPutOnTestDDACompleteWithWrongDirectory()
+	throws IOException, ExecutionException, InterruptedException {
+		File tempFile = createTempFile();
+		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"TestDDAComplete",
+			"Directory=/some-other-directory",
+			"EndMessage"
+		);
+		fcpServer.writeLine(
+			"ProtocolError",
+			"Identifier=" + identifier,
+			"Code=25",
+			"EndMessage"
+		);
+		lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, matchesFcpMessage(
+			"TestDDARequest",
+			"Directory=" + tempFile.getParent(),
+			"WantReadDirectory=true",
+			"WantWriteDirectory=false",
+			"EndMessage"
+		));
+	}
+
 }
