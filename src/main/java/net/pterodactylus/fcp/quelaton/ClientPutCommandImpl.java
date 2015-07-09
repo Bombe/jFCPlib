@@ -182,7 +182,6 @@ class ClientPutCommandImpl implements ClientPutCommand {
 					String readContent = Files.readAllLines(new File(testDDAReply.getReadFilename()).toPath()).get(0);
 					sendMessage(new TestDDAResponse(directory.get(), readContent));
 				} catch (IOException e) {
-					e.printStackTrace();
 					sendMessage(new TestDDAResponse(directory.get(), "failed-to-read"));
 				}
 			}
