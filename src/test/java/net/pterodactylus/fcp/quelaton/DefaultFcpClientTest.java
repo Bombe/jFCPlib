@@ -457,4 +457,21 @@ public class DefaultFcpClientTest {
 		assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
 	}
 
+	@Test
+	public void clientPutAbortsOnProtocolErrorOtherThan25()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Key>> key = fcpClient.clientPut().from(new File("/tmp/data.txt")).key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"ProtocolError",
+			"Identifier=" + identifier,
+			"Code=1",
+			"EndMessage"
+		);
+		assertThat(key.get().isPresent(), is(false));
+	}
+
+
 }

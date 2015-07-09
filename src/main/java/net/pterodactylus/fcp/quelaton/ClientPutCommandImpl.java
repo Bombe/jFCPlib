@@ -166,8 +166,12 @@ class ClientPutCommandImpl implements ClientPutCommand {
 
 		@Override
 		protected void consumeProtocolError(ProtocolError protocolError) {
-			if (protocolError.getIdentifier().equals(identifier.get()) && (protocolError.getCode() == 25)) {
-				sendMessage(new TestDDARequest(directory.get(), true, false));
+			if (protocolError.getIdentifier().equals(identifier.get())) {
+				if (protocolError.getCode() == 25) {
+					sendMessage(new TestDDARequest(directory.get(), true, false));
+				} else {
+					putFinished.set(true);
+				}
 			}
 		}
 
