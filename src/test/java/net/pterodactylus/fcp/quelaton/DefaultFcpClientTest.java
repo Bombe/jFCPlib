@@ -435,4 +435,26 @@ public class DefaultFcpClientTest {
 		return tempFile;
 	}
 
+	@Test
+	public void clientPutDoesNotReactToProtocolErrorForDifferentIdentifier()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Key>> key = fcpClient.clientPut().from(new File("/tmp/data.txt")).key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"ProtocolError",
+			"Identifier=not-the-right-one",
+			"Code=25",
+			"EndMessage"
+		);
+		fcpServer.writeLine(
+			"PutSuccessful",
+			"Identifier=" + identifier,
+			"URI=KSK@foo.txt",
+			"EndMessage"
+		);
+		assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
+	}
+
 }
