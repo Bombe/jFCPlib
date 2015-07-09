@@ -21,6 +21,7 @@ import net.pterodactylus.fcp.fake.FakeTcpServer;
 import net.pterodactylus.fcp.quelaton.ClientGetCommand.Data;
 
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -378,6 +379,60 @@ public class DefaultFcpClientTest {
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		assertThat(lines,
 			matchesFcpMessage("ClientPut", "UploadFrom=disk", "URI=KSK@foo.txt", "Filename=/tmp/data.txt"));
+	}
+
+	@Test
+	public void clientPutWithFileCanCompleteTestDdaSequence()
+	throws IOException, ExecutionException, InterruptedException {
+		File tempFile = createTempFile();
+		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).key(new Key("KSK@foo.txt"));
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"ProtocolError",
+			"Identifier=" + identifier,
+			"Code=25",
+			"EndMessage"
+		);
+		lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, matchesFcpMessage(
+			"TestDDARequest",
+			"Directory=" + tempFile.getParent(),
+			"WantReadDirectory=true",
+			"WantWriteDirectory=false",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"TestDDAReply",
+			"Directory=" + tempFile.getParent(),
+			"ReadFilename=" + tempFile,
+			"EndMessage"
+		);
+		lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, matchesFcpMessage(
+			"TestDDAResponse",
+			"Directory=" + tempFile.getParent(),
+			"ReadContent=test-content",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"TestDDAComplete",
+			"Directory=" + tempFile.getParent(),
+			"ReadDirectoryAllowed=true",
+			"EndMessage"
+		);
+		lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines,
+			matchesFcpMessage("ClientPut", "UploadFrom=disk", "URI=KSK@foo.txt",
+				"Filename=" + new File(tempFile.getParent(), "test.dat")));
+	}
+
+	private File createTempFile() throws IOException {
+		File tempFile = File.createTempFile("test-dda-", ".dat");
+		tempFile.deleteOnExit();
+		Files.write("test-content", tempFile, StandardCharsets.UTF_8);
+		return tempFile;
 	}
 
 }

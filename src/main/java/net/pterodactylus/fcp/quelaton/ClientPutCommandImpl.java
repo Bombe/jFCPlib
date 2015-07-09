@@ -3,6 +3,7 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -13,8 +14,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import net.pterodactylus.fcp.ClientPut;
 import net.pterodactylus.fcp.FcpMessage;
 import net.pterodactylus.fcp.Key;
+import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.PutFailed;
 import net.pterodactylus.fcp.PutSuccessful;
+import net.pterodactylus.fcp.TestDDAComplete;
+import net.pterodactylus.fcp.TestDDAReply;
+import net.pterodactylus.fcp.TestDDARequest;
+import net.pterodactylus.fcp.TestDDAResponse;
 import net.pterodactylus.fcp.UploadFrom;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -112,7 +118,9 @@ class ClientPutCommandImpl implements ClientPutCommand {
 
 	private class ClientPutReplySequence extends FcpReplySequence<Optional<Key>> {
 
+		private final AtomicReference<FcpMessage> originalClientPut = new AtomicReference<>();
 		private final AtomicReference<String> identifier = new AtomicReference<>();
+		private final AtomicReference<String> directory = new AtomicReference<>();
 		private final AtomicReference<Key> finalKey = new AtomicReference<>();
 		private final AtomicBoolean putFinished = new AtomicBoolean();
 
@@ -132,7 +140,12 @@ class ClientPutCommandImpl implements ClientPutCommand {
 
 		@Override
 		public ListenableFuture<Optional<Key>> send(FcpMessage fcpMessage) throws IOException {
+			originalClientPut.set(fcpMessage);
 			identifier.set(fcpMessage.getField("Identifier"));
+			String filename = fcpMessage.getField("Filename");
+			if (filename != null) {
+				directory.set(new File(filename).getParent());
+			}
 			return super.send(fcpMessage);
 		}
 
@@ -152,9 +165,37 @@ class ClientPutCommandImpl implements ClientPutCommand {
 		}
 
 		@Override
+		protected void consumeProtocolError(ProtocolError protocolError) {
+			if (protocolError.getIdentifier().equals(identifier.get()) && (protocolError.getCode() == 25)) {
+				sendMessage(new TestDDARequest(directory.get(), true, false));
+			}
+		}
+
+		@Override
+		protected void consumeTestDDAReply(TestDDAReply testDDAReply) {
+			if (testDDAReply.getDirectory().equals(directory.get())) {
+				try {
+					String readContent = Files.readAllLines(new File(testDDAReply.getReadFilename()).toPath()).get(0);
+					sendMessage(new TestDDAResponse(directory.get(), readContent));
+				} catch (IOException e) {
+					e.printStackTrace();
+					sendMessage(new TestDDAResponse(directory.get(), "failed-to-read"));
+				}
+			}
+		}
+
+		@Override
+		protected void consumeTestDDAComplete(TestDDAComplete testDDAComplete) {
+			if (testDDAComplete.getDirectory().equals(directory.get())) {
+				sendMessage(originalClientPut.get());
+			}
+		}
+
+		@Override
 		protected void consumeConnectionClosed(Throwable throwable) {
 			putFinished.set(true);
 		}
+
 	}
 
 }
