@@ -132,6 +132,10 @@ public class FcpConnection implements Closeable {
 		this.port = port;
 	}
 
+	public synchronized boolean isClosed() {
+		return connectionHandler == null;
+	}
+
 	//
 	// LISTENER MANAGEMENT
 	//

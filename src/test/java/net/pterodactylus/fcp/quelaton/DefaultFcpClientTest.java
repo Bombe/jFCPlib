@@ -33,6 +33,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -256,6 +257,32 @@ public class DefaultFcpClientTest {
 		keyPair = fcpClient.generateKeypair().execute();
 		lines = fcpServer.collectUntil(is("EndMessage"));
 		identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"SSKKeypair",
+			"InsertURI=" + INSERT_URI + "",
+			"RequestURI=" + REQUEST_URI + "",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		keyPair.get();
+	}
+
+	@Test
+	public void defaultFcpClientCanReconnectAfterConnectionHasBeenClosed()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<FcpKeyPair> keyPair = fcpClient.generateKeypair().execute();
+		connectNode();
+		fcpServer.collectUntil(is("EndMessage"));
+		fcpServer.close();
+		try {
+			keyPair.get();
+			Assert.fail();
+		} catch (ExecutionException e) {
+		}
+		keyPair = fcpClient.generateKeypair().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
 		fcpServer.writeLine(
 			"SSKKeypair",
 			"InsertURI=" + INSERT_URI + "",

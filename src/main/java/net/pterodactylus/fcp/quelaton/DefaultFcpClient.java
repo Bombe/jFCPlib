@@ -33,11 +33,11 @@ public class DefaultFcpClient implements FcpClient {
 
 	private FcpConnection connect() throws IOException {
 		FcpConnection fcpConnection = this.fcpConnection.get();
-		if (fcpConnection != null) {
+		if ((fcpConnection != null) && !fcpConnection.isClosed()) {
 			return fcpConnection;
 		}
 		fcpConnection = createConnection();
-		this.fcpConnection.compareAndSet(null, fcpConnection);
+		this.fcpConnection.set(fcpConnection);
 		return fcpConnection;
 	}
 
