@@ -23,6 +23,7 @@ public class GetNodeCommandImpl implements GetNodeCommand {
 	private final ConnectionSupplier connectionSupplier;
 	private final AtomicBoolean giveOpennetRef = new AtomicBoolean(false);
 	private final AtomicBoolean includePrivate = new AtomicBoolean(false);
+	private final AtomicBoolean includeVolatile = new AtomicBoolean(false);
 
 	public GetNodeCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
@@ -42,9 +43,15 @@ public class GetNodeCommandImpl implements GetNodeCommand {
 	}
 
 	@Override
+	public GetNodeCommand includeVolatile() {
+		includeVolatile.set(true);
+		return this;
+	}
+
+	@Override
 	public ListenableFuture<NodeData> execute() {
 		GetNode getNode = new GetNode(new RandomIdentifierGenerator().generate(), giveOpennetRef.get(),
-			includePrivate.get(), false);
+			includePrivate.get(), includeVolatile.get());
 		return threadPool.submit(() -> new GetNodeReplySequence().send(getNode).get());
 	}
 

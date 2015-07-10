@@ -835,4 +835,34 @@ public class DefaultFcpClientTest {
 		assertThat(nodeData.get().getARK().getPrivateURI(), is("SSK@XdHMiRl"));
 	}
 
+	@Test
+	public void defaultFcpClientCanGetNodeInformationWithVolatileData()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<NodeData> nodeData = fcpClient.getNode().includeVolatile().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetNode",
+			"Identifier=" + identifier,
+			"GiveOpennetRef=false",
+			"WithPrivate=false",
+			"WithVolatile=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"NodeData",
+			"Identifier=" + identifier,
+			"opennet=false",
+			"ark.pubURI=SSK@3YEf.../ark",
+			"ark.number=78",
+			"auth.negTypes=2",
+			"version=Fred,0.7,1.0,1466",
+			"lastGoodVersion=Fred,0.7,1.0,1466",
+			"volatile.freeJavaMemory=205706528",
+			"EndMessage"
+		);
+		assertThat(nodeData.get().getVolatile("freeJavaMemory").toString(), is("205706528"));
+	}
+
 }

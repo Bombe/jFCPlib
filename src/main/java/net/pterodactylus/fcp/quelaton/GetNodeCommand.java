@@ -11,5 +11,6 @@ public interface GetNodeCommand extends Executable<NodeData> {
 
 	GetNodeCommand opennetRef();
 	GetNodeCommand includePrivate();
+	GetNodeCommand includeVolatile();
 
 }
