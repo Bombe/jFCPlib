@@ -2,6 +2,7 @@ package net.pterodactylus.fcp.quelaton;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.GetNode;
@@ -20,6 +21,7 @@ public class GetNodeCommandImpl implements GetNodeCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final AtomicBoolean giveOpennetRef = new AtomicBoolean(false);
 
 	public GetNodeCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
@@ -27,8 +29,14 @@ public class GetNodeCommandImpl implements GetNodeCommand {
 	}
 
 	@Override
+	public GetNodeCommand opennetRef() {
+		giveOpennetRef.set(true);
+		return this;
+	}
+
+	@Override
 	public ListenableFuture<NodeData> execute() {
-		GetNode getNode = new GetNode(new RandomIdentifierGenerator().generate(), false, false, false);
+		GetNode getNode = new GetNode(new RandomIdentifierGenerator().generate(), giveOpennetRef.get(), false, false);
 		return threadPool.submit(() -> new GetNodeReplySequence().send(getNode).get());
 	}
 

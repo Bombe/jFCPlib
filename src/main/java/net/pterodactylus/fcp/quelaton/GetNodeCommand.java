@@ -9,4 +9,6 @@ import net.pterodactylus.fcp.NodeData;
  */
 public interface GetNodeCommand extends Executable<NodeData> {
 
+	GetNodeCommand opennetRef();
+
 }

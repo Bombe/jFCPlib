@@ -776,4 +776,33 @@ public class DefaultFcpClientTest {
 		assertThat(nodeData.get(), notNullValue());
 	}
 
+	@Test
+	public void defaultFcpClientCanGetNodeInformationWithOpennetRef()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<NodeData> nodeData = fcpClient.getNode().opennetRef().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetNode",
+			"Identifier=" + identifier,
+			"GiveOpennetRef=true",
+			"WithPrivate=false",
+			"WithVolatile=false",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"NodeData",
+			"Identifier=" + identifier,
+			"opennet=true",
+			"ark.pubURI=SSK@3YEf.../ark",
+			"ark.number=78",
+			"auth.negTypes=2",
+			"version=Fred,0.7,1.0,1466",
+			"lastGoodVersion=Fred,0.7,1.0,1466",
+			"EndMessage"
+		);
+		assertThat(nodeData.get().getVersion().toString(), is("Fred,0.7,1.0,1466"));
+	}
+
 }
