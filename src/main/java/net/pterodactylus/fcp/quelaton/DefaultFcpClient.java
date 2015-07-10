@@ -74,6 +74,11 @@ public class DefaultFcpClient implements FcpClient {
 		return new ClientPutCommandImpl(threadPool, this::connect);
 	}
 
+	@Override
+	public ListPeersCommand listPeers() {
+		return new ListPeersCommandImpl(threadPool, this::connect);
+	}
+
 	private class ClientHelloReplySequence extends FcpReplySequence<Void> {
 
 		private final AtomicReference<NodeHello> receivedNodeHello;

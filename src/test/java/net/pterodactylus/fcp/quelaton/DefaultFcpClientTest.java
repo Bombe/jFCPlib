@@ -1,21 +1,26 @@
 package net.pterodactylus.fcp.quelaton;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import net.pterodactylus.fcp.FcpKeyPair;
 import net.pterodactylus.fcp.Key;
+import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.Priority;
 import net.pterodactylus.fcp.fake.FakeTcpServer;
 import net.pterodactylus.fcp.quelaton.ClientGetCommand.Data;
@@ -581,6 +586,40 @@ public class DefaultFcpClientTest {
 			"WantWriteDirectory=false",
 			"EndMessage"
 		));
+	}
+
+	@Test
+	public void clientCanListPeers() throws IOException, ExecutionException, InterruptedException {
+		Future<Collection<Peer>> peers = fcpClient.listPeers().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		assertThat(lines, matchesFcpMessage(
+			"ListPeers",
+			"WithVolatile=false",
+			"WithMetadata=false",
+			"EndMessage"
+		));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"identity=id1",
+			"EndMessage"
+		);
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"identity=id2",
+			"EndMessage"
+		);
+		fcpServer.writeLine(
+			"EndListPeers",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		assertThat(peers.get(), hasSize(2));
+		assertThat(peers.get().stream().map(Peer::getIdentity).collect(Collectors.toList()),
+			containsInAnyOrder("id1", "id2"));
 	}
 
 }
