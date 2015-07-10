@@ -27,15 +27,12 @@ public class DefaultFcpClient implements FcpClient {
 	private final int port;
 	private final AtomicReference<FcpConnection> fcpConnection = new AtomicReference<>();
 	private final Supplier<String> clientName;
-	private final Supplier<String> expectedVersion;
 
-	public DefaultFcpClient(ExecutorService threadPool, String hostname, int port, Supplier<String> clientName,
-		Supplier<String> expectedVersion) {
+	public DefaultFcpClient(ExecutorService threadPool, String hostname, int port, Supplier<String> clientName) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.hostname = hostname;
 		this.port = port;
 		this.clientName = clientName;
-		this.expectedVersion = expectedVersion;
 	}
 
 	private FcpConnection connect() throws IOException {
@@ -52,7 +49,7 @@ public class DefaultFcpClient implements FcpClient {
 		FcpConnection connection = new FcpConnection(hostname, port);
 		connection.connect();
 		FcpReplySequence<?> nodeHelloSequence = new ClientHelloReplySequence(connection);
-		ClientHello clientHello = new ClientHello(clientName.get(), expectedVersion.get());
+		ClientHello clientHello = new ClientHello(clientName.get(), "2.0");
 		try {
 			nodeHelloSequence.send(clientHello).get();
 		} catch (InterruptedException | ExecutionException e) {

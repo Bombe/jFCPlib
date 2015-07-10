@@ -48,7 +48,7 @@ public class DefaultFcpClientTest {
 
 	public DefaultFcpClientTest() throws IOException {
 		fcpServer = new FakeTcpServer(threadPool);
-		fcpClient = new DefaultFcpClient(threadPool, "localhost", fcpServer.getPort(), () -> "Test", () -> "2.0");
+		fcpClient = new DefaultFcpClient(threadPool, "localhost", fcpServer.getPort(), () -> "Test");
 	}
 
 	@After
