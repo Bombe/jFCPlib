@@ -126,9 +126,13 @@ public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener 
 	private <M extends BaseMessage> void consume(Consumer<M> consumer, M message,
 			String identifier) {
 		if (Objects.equals(message.getField(identifier), this.identifier.get())) {
-			consumer.accept(message);
-			notifySyncObject();
+			consumeAlways(consumer, message);
 		}
+	}
+
+	private <M extends BaseMessage> void consumeAlways(Consumer<M> consumer, M message) {
+		consumer.accept(message);
+		notifySyncObject();
 	}
 
 	private void consumeUnknown(FcpMessage fcpMessage) {
@@ -153,7 +157,7 @@ public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener 
 	@Override
 	public final void receivedCloseConnectionDuplicateClientName(FcpConnection fcpConnection,
 			CloseConnectionDuplicateClientName closeConnectionDuplicateClientName) {
-		consume(this::consumeCloseConnectionDuplicateClientName, closeConnectionDuplicateClientName);
+		consumeAlways(this::consumeCloseConnectionDuplicateClientName, closeConnectionDuplicateClientName);
 	}
 
 	protected void consumeCloseConnectionDuplicateClientName(CloseConnectionDuplicateClientName closeConnectionDuplicateClientName) { }
