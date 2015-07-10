@@ -109,7 +109,6 @@ class ClientGetCommandImpl implements ClientGetCommand {
 
 	private class ClientGetReplySequence extends FcpReplySequence<Optional<Data>> {
 
-		private final AtomicReference<String> identifier = new AtomicReference<>();
 		private final AtomicBoolean finished = new AtomicBoolean();
 		private final AtomicBoolean failed = new AtomicBoolean();
 
@@ -148,32 +147,22 @@ class ClientGetCommandImpl implements ClientGetCommand {
 
 		@Override
 		protected void consumeAllData(AllData allData) {
-			if (allData.getIdentifier().equals(identifier.get())) {
-				synchronized (this) {
-					contentType = allData.getContentType();
-					dataLength = allData.getDataLength();
-					try {
-						payload = new TempInputStream(allData.getPayloadInputStream(), dataLength);
-						finished.set(true);
-					} catch (IOException e) {
-						// TODO – logging
-						failed.set(true);
-					}
+			synchronized (this) {
+				contentType = allData.getContentType();
+				dataLength = allData.getDataLength();
+				try {
+					payload = new TempInputStream(allData.getPayloadInputStream(), dataLength);
+					finished.set(true);
+				} catch (IOException e) {
+					// TODO – logging
+					failed.set(true);
 				}
 			}
 		}
 
 		@Override
 		protected void consumeGetFailed(GetFailed getFailed) {
-			if (getFailed.getIdentifier().equals(identifier.get())) {
-				failed.set(true);
-			}
-		}
-
-		@Override
-		public ListenableFuture<Optional<Data>> send(FcpMessage fcpMessage) throws IOException {
-			identifier.set(fcpMessage.getField("Identifier"));
-			return super.send(fcpMessage);
+			failed.set(true);
 		}
 
 	}
