@@ -142,10 +142,8 @@ public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener 
 	}
 
 	private void consumeUnknown(FcpMessage fcpMessage) {
-		if (Objects.equals(fcpMessage.getField("Identifier"), identifier.get())) {
-			consumeUnknownMessage(fcpMessage);
-			notifySyncObject();
-		}
+		consumeUnknownMessage(fcpMessage);
+		notifySyncObject();
 	}
 
 	private void consumeClose(Throwable throwable) {
