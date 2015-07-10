@@ -805,4 +805,34 @@ public class DefaultFcpClientTest {
 		assertThat(nodeData.get().getVersion().toString(), is("Fred,0.7,1.0,1466"));
 	}
 
+	@Test
+	public void defaultFcpClientCanGetNodeInformationWithPrivateData()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<NodeData> nodeData = fcpClient.getNode().includePrivate().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetNode",
+			"Identifier=" + identifier,
+			"GiveOpennetRef=false",
+			"WithPrivate=true",
+			"WithVolatile=false",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"NodeData",
+			"Identifier=" + identifier,
+			"opennet=false",
+			"ark.pubURI=SSK@3YEf.../ark",
+			"ark.number=78",
+			"auth.negTypes=2",
+			"version=Fred,0.7,1.0,1466",
+			"lastGoodVersion=Fred,0.7,1.0,1466",
+			"ark.privURI=SSK@XdHMiRl",
+			"EndMessage"
+		);
+		assertThat(nodeData.get().getARK().getPrivateURI(), is("SSK@XdHMiRl"));
+	}
+
 }
