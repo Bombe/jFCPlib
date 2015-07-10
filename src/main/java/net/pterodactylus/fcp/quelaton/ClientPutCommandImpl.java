@@ -54,31 +54,31 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	}
 
 	@Override
-	public Keyed<Optional<Key>> redirectTo(String uri) {
+	public WithUri<Optional<Key>> redirectTo(String uri) {
 		this.redirectUri.set(Objects.requireNonNull(uri, "uri must not be null"));
 		return this::key;
 	}
 
 	@Override
-	public Keyed<Optional<Key>> from(File file) {
+	public WithUri<Optional<Key>> from(File file) {
 		this.file.set(Objects.requireNonNull(file, "file must not be null"));
 		return this::key;
 	}
 
 	@Override
-	public Lengthed<Keyed<Optional<Key>>> from(InputStream inputStream) {
+	public Lengthed<WithUri<Optional<Key>>> from(InputStream inputStream) {
 		payload.set(Objects.requireNonNull(inputStream, "inputStream must not be null"));
 		return this::length;
 	}
 
-	private Keyed<Optional<Key>> length(long length) {
+	private WithUri<Optional<Key>> length(long length) {
 		this.length.set(length);
 		return this::key;
 	}
 
-	private ListenableFuture<Optional<Key>> key(Key key) {
+	private ListenableFuture<Optional<Key>> key(String uri) {
 		String identifier = new RandomIdentifierGenerator().generate();
-		ClientPut clientPut = createClientPutCommand(key.getKey(), identifier);
+		ClientPut clientPut = createClientPutCommand(uri, identifier);
 		return threadPool.submit(() -> new ClientPutReplySequence().send(clientPut).get());
 	}
 

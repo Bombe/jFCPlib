@@ -1,18 +1,16 @@
 package net.pterodactylus.fcp.quelaton;
 
-import net.pterodactylus.fcp.Key;
-
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * The terminal operation of an FCP command, requiring a {@link Key}.
+ * The terminal operation of an FCP command, requiring a Freenet URI.
  *
  * @param <R>
  * 	The type of the command result
  * @author <a href="mailto:bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
-public interface Keyed<R> {
+public interface WithUri<R> {
 
-	ListenableFuture<R> key(Key key);
+	ListenableFuture<R> uri(String uri);
 
 }

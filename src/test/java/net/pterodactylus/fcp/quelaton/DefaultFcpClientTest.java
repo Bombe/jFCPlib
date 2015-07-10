@@ -294,7 +294,7 @@ public class DefaultFcpClientTest {
 		fcpClient.clientPut()
 			.from(new ByteArrayInputStream("Hello\n".getBytes()))
 			.length(6)
-			.key(new Key("KSK@foo.txt"));
+			.uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("Hello"));
 		assertThat(lines, matchesFcpMessage("ClientPut", "UploadFrom=direct", "DataLength=6", "URI=KSK@foo.txt"));
@@ -306,7 +306,7 @@ public class DefaultFcpClientTest {
 		Future<Optional<Key>> key = fcpClient.clientPut()
 			.from(new ByteArrayInputStream("Hello\n".getBytes()))
 			.length(6)
-			.key(new Key("KSK@foo.txt"));
+			.uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("Hello"));
 		String identifier = extractIdentifier(lines);
@@ -330,7 +330,7 @@ public class DefaultFcpClientTest {
 		Future<Optional<Key>> key = fcpClient.clientPut()
 			.from(new ByteArrayInputStream("Hello\n".getBytes()))
 			.length(6)
-			.key(new Key("KSK@foo.txt"));
+			.uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("Hello"));
 		String identifier = extractIdentifier(lines);
@@ -355,7 +355,7 @@ public class DefaultFcpClientTest {
 			.named("otherName.txt")
 			.from(new ByteArrayInputStream("Hello\n".getBytes()))
 			.length(6)
-			.key(new Key("KSK@foo.txt"));
+			.uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("Hello"));
 		assertThat(lines, matchesFcpMessage("ClientPut", "TargetFilename=otherName.txt", "UploadFrom=direct",
@@ -365,7 +365,7 @@ public class DefaultFcpClientTest {
 	@Test
 	public void clientPutWithRedirectSendsCorrectCommand()
 	throws IOException, ExecutionException, InterruptedException {
-		fcpClient.clientPut().redirectTo("KSK@bar.txt").key(new Key("KSK@foo.txt"));
+		fcpClient.clientPut().redirectTo("KSK@bar.txt").uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		assertThat(lines,
@@ -374,7 +374,7 @@ public class DefaultFcpClientTest {
 
 	@Test
 	public void clientPutWithFileSendsCorrectCommand() throws InterruptedException, ExecutionException, IOException {
-		fcpClient.clientPut().from(new File("/tmp/data.txt")).key(new Key("KSK@foo.txt"));
+		fcpClient.clientPut().from(new File("/tmp/data.txt")).uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		assertThat(lines,
@@ -385,7 +385,7 @@ public class DefaultFcpClientTest {
 	public void clientPutWithFileCanCompleteTestDdaSequence()
 	throws IOException, ExecutionException, InterruptedException {
 		File tempFile = createTempFile();
-		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).key(new Key("KSK@foo.txt"));
+		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		String identifier = extractIdentifier(lines);
@@ -438,7 +438,7 @@ public class DefaultFcpClientTest {
 	@Test
 	public void clientPutDoesNotReactToProtocolErrorForDifferentIdentifier()
 	throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Key>> key = fcpClient.clientPut().from(new File("/tmp/data.txt")).key(new Key("KSK@foo.txt"));
+		Future<Optional<Key>> key = fcpClient.clientPut().from(new File("/tmp/data.txt")).uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		String identifier = extractIdentifier(lines);
@@ -460,7 +460,7 @@ public class DefaultFcpClientTest {
 	@Test
 	public void clientPutAbortsOnProtocolErrorOtherThan25()
 	throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Key>> key = fcpClient.clientPut().from(new File("/tmp/data.txt")).key(new Key("KSK@foo.txt"));
+		Future<Optional<Key>> key = fcpClient.clientPut().from(new File("/tmp/data.txt")).uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		String identifier = extractIdentifier(lines);
@@ -477,7 +477,7 @@ public class DefaultFcpClientTest {
 	public void clientPutDoesNotReplyToWrongTestDdaReply() throws IOException, ExecutionException,
 	InterruptedException {
 		File tempFile = createTempFile();
-		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).key(new Key("KSK@foo.txt"));
+		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		String identifier = extractIdentifier(lines);
@@ -520,7 +520,7 @@ public class DefaultFcpClientTest {
 	public void clientPutSendsResponseEvenIfFileCanNotBeRead()
 	throws IOException, ExecutionException, InterruptedException {
 		File tempFile = createTempFile();
-		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).key(new Key("KSK@foo.txt"));
+		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		String identifier = extractIdentifier(lines);
@@ -557,7 +557,7 @@ public class DefaultFcpClientTest {
 	public void clientPutDoesNotResendOriginalClientPutOnTestDDACompleteWithWrongDirectory()
 	throws IOException, ExecutionException, InterruptedException {
 		File tempFile = createTempFile();
-		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).key(new Key("KSK@foo.txt"));
+		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		String identifier = extractIdentifier(lines);
