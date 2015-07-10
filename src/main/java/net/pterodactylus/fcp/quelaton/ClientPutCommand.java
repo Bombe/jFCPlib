@@ -16,6 +16,6 @@ public interface ClientPutCommand {
 	ClientPutCommand named(String targetFilename);
 	WithUri<Optional<Key>> redirectTo(String uri);
 	WithUri<Optional<Key>> from(File file);
-	Lengthed<WithUri<Optional<Key>>> from(InputStream inputStream);
+	WithLength<WithUri<Optional<Key>>> from(InputStream inputStream);
 
 }

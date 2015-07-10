@@ -7,7 +7,7 @@ package net.pterodactylus.fcp.quelaton;
  * 	The type of the next command part
  * @author <a href="mailto:bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
-public interface Lengthed<R> {
+public interface WithLength<R> {
 
 	R length(long length);
 

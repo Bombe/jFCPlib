@@ -66,7 +66,7 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	}
 
 	@Override
-	public Lengthed<WithUri<Optional<Key>>> from(InputStream inputStream) {
+	public WithLength<WithUri<Optional<Key>>> from(InputStream inputStream) {
 		payload.set(Objects.requireNonNull(inputStream, "inputStream must not be null"));
 		return this::length;
 	}
