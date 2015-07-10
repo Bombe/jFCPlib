@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -66,6 +67,7 @@ public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener 
 	private final FcpConnection fcpConnection;
 	private final Queue<FcpMessage> messages = new ConcurrentLinkedQueue<>();
 	private final AtomicReference<String> identifier = new AtomicReference<>();
+	private final AtomicReference<Throwable> connectionFailureReason = new AtomicReference<>();
 
 	public FcpReplySequence(ExecutorService executorService, FcpConnection fcpConnection) {
 		this.executorService = MoreExecutors.listeningDecorator(executorService);
@@ -84,16 +86,20 @@ public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener 
 		messages.add(fcpMessage);
 		return executorService.submit(() -> {
 			synchronized (syncObject) {
-				while (!isFinished() || !messages.isEmpty()) {
+				while ((connectionFailureReason.get() == null) && (!isFinished() || !messages.isEmpty())) {
 					while (messages.peek() != null) {
 						FcpMessage message = messages.poll();
 						fcpConnection.sendMessage(message);
 					}
-					if (isFinished()) {
+					if (isFinished() || (connectionFailureReason.get() != null)) {
 						continue;
 					}
 					syncObject.wait();
 				}
+			}
+			Throwable throwable = connectionFailureReason.get();
+			if (throwable != null) {
+				throw new ExecutionException(throwable);
 			}
 			return getResult();
 		});
@@ -143,7 +149,7 @@ public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener 
 	}
 
 	private void consumeClose(Throwable throwable) {
-		consumeConnectionClosed(throwable);
+		connectionFailureReason.set(throwable);
 		notifySyncObject();
 	}
 
@@ -422,7 +428,5 @@ public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener 
 	public final void connectionClosed(FcpConnection fcpConnection, Throwable throwable) {
 		consumeClose(throwable);
 	}
-
-	protected void consumeConnectionClosed(Throwable throwable) { }
 
 }

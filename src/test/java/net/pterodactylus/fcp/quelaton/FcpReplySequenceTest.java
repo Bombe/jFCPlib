@@ -1,7 +1,9 @@
 package net.pterodactylus.fcp.quelaton;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -354,12 +356,19 @@ public class FcpReplySequenceTest {
 
 	@Test
 	public void waitingForConnectionClosureWorks() throws IOException, ExecutionException, InterruptedException {
-		replySequence.setExpectedMessage("ConnectionClosed");
+		replySequence.setExpectedMessage("none");
 		Future<Boolean> result = replySequence.send(fcpMessage);
 		Throwable throwable = new Throwable();
 		replySequence.connectionClosed(fcpConnection, throwable);
-		assertThat(result.get(), is(true));
-		assertThat(replySequence.receivedThrowable.get(), is(throwable));
+		try {
+			result.get();
+		} catch (ExecutionException e) {
+			Throwable t = e;
+			while (t.getCause() != null) {
+				t = t.getCause();
+			}
+			assertThat(t, sameInstance(throwable));
+		}
 	}
 
 	@FunctionalInterface
@@ -373,7 +382,6 @@ public class FcpReplySequenceTest {
 
 		private final AtomicReference<String> gotMessage = new AtomicReference<>();
 		private final AtomicReference<String> expectedMessage = new AtomicReference<>();
-		private final AtomicReference<Throwable> receivedThrowable = new AtomicReference<>();
 
 		public TestFcpReplySequence(ExecutorService executorService, FcpConnection fcpConnection) {
 			super(executorService, fcpConnection);
@@ -582,12 +590,6 @@ public class FcpReplySequenceTest {
 		@Override
 		protected void consumeUnknownMessage(FcpMessage fcpMessage) {
 			gotMessage.set(fcpMessage.getName());
-		}
-
-		@Override
-		protected void consumeConnectionClosed(Throwable throwable) {
-			receivedThrowable.set(throwable);
-			gotMessage.set("ConnectionClosed");
 		}
 
 	}

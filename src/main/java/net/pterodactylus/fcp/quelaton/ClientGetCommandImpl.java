@@ -171,11 +171,6 @@ class ClientGetCommandImpl implements ClientGetCommand {
 		}
 
 		@Override
-		protected void consumeConnectionClosed(Throwable throwable) {
-			failed.set(true);
-		}
-
-		@Override
 		public ListenableFuture<Optional<Data>> send(FcpMessage fcpMessage) throws IOException {
 			identifier.set(fcpMessage.getField("Identifier"));
 			return super.send(fcpMessage);

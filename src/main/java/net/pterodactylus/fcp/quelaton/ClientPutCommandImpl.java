@@ -184,11 +184,6 @@ class ClientPutCommandImpl implements ClientPutCommand {
 			sendMessage(originalClientPut.get());
 		}
 
-		@Override
-		protected void consumeConnectionClosed(Throwable throwable) {
-			putFinished.set(true);
-		}
-
 	}
 
 }

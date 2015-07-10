@@ -78,6 +78,18 @@ public class DefaultFcpClientTest {
 		keyPairFuture.get();
 	}
 
+	@Test(expected = ExecutionException.class)
+	public void defaultFcpClientThrowsExceptionIfConnectionIsClosed()
+	throws IOException, ExecutionException, InterruptedException {
+		Logger.getAnonymousLogger().getParent().setLevel(Level.FINEST);
+		Logger.getAnonymousLogger().getParent().getHandlers()[0].setLevel(Level.FINEST);
+		Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
+		fcpServer.connect().get();
+		fcpServer.collectUntil(is("EndMessage"));
+		fcpServer.close();
+		keyPairFuture.get();
+	}
+
 	@Test
 	public void defaultFcpClientCanGenerateKeypair() throws ExecutionException, InterruptedException, IOException {
 		Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
@@ -221,15 +233,14 @@ public class DefaultFcpClientTest {
 		assertThat(data.isPresent(), is(false));
 	}
 
-	@Test
+	@Test(expected = ExecutionException.class)
 	public void clientGetRecognizesConnectionClosed() throws InterruptedException, ExecutionException, IOException {
 		Future<Optional<Data>> dataFuture = fcpClient.clientGet().uri("KSK@foo.txt");
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		assertThat(lines, matchesFcpMessage("ClientGet", "URI=KSK@foo.txt"));
 		fcpServer.close();
-		Optional<Data> data = dataFuture.get();
-		assertThat(data.isPresent(), is(false));
+		dataFuture.get();
 	}
 
 	@Test
