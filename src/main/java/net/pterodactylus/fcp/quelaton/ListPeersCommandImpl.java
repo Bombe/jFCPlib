@@ -23,6 +23,8 @@ public class ListPeersCommandImpl implements ListPeersCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final AtomicBoolean includeMetadata = new AtomicBoolean(false);
+	private final AtomicBoolean includeVolatile = new AtomicBoolean(false);
 
 	public ListPeersCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
@@ -30,9 +32,21 @@ public class ListPeersCommandImpl implements ListPeersCommand {
 	}
 
 	@Override
+	public ListPeersCommand includeMetadata() {
+		includeMetadata.set(true);
+		return this;
+	}
+
+	@Override
+	public ListPeersCommand includeVolatile() {
+		includeVolatile.set(true);
+		return this;
+	}
+
+	@Override
 	public Future<Collection<Peer>> execute() {
 		String identifier = new RandomIdentifierGenerator().generate();
-		ListPeers listPeers = new ListPeers(identifier);
+		ListPeers listPeers = new ListPeers(identifier, includeMetadata.get(), includeVolatile.get());
 		return threadPool.submit(() -> new ListPeersReplySequence().send(listPeers).get());
 	}
 

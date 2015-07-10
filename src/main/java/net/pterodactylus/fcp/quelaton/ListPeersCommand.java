@@ -12,6 +12,9 @@ import net.pterodactylus.fcp.Peer;
  */
 public interface ListPeersCommand {
 
+	ListPeersCommand includeMetadata();
+	ListPeersCommand includeVolatile();
+
 	Future<Collection<Peer>> execute();
 
 }
