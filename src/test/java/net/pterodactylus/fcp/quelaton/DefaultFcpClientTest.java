@@ -244,6 +244,33 @@ public class DefaultFcpClientTest {
 	}
 
 	@Test
+	public void defaultFcpClientReusesConnection() throws InterruptedException, ExecutionException, IOException {
+		Future<FcpKeyPair> keyPair = fcpClient.generateKeypair().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"SSKKeypair",
+			"InsertURI=" + INSERT_URI + "",
+			"RequestURI=" + REQUEST_URI + "",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		keyPair.get();
+		keyPair = fcpClient.generateKeypair().execute();
+		lines = fcpServer.collectUntil(is("EndMessage"));
+		identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"SSKKeypair",
+			"InsertURI=" + INSERT_URI + "",
+			"RequestURI=" + REQUEST_URI + "",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		keyPair.get();
+	}
+
+	@Test
 	public void clientGetWithIgnoreDataStoreSettingSendsCorrectCommands()
 	throws InterruptedException, ExecutionException, IOException {
 		fcpClient.clientGet().ignoreDataStore().uri("KSK@foo.txt");
