@@ -62,7 +62,6 @@ public class ClientHelloImpl {
 	private class ClientHelloReplySequence extends FcpReplySequence<Boolean> {
 
 		private final AtomicReference<NodeHello> receivedNodeHello = new AtomicReference<>();
-		private final AtomicBoolean receivedClosed = new AtomicBoolean();
 
 		public ClientHelloReplySequence(FcpConnection connection) {
 			super(ClientHelloImpl.this.threadPool, connection);
@@ -70,7 +69,7 @@ public class ClientHelloImpl {
 
 		@Override
 		protected boolean isFinished() {
-			return receivedNodeHello.get() != null || receivedClosed.get();
+			return receivedNodeHello.get() != null;
 		}
 
 		@Override
@@ -81,12 +80,6 @@ public class ClientHelloImpl {
 		@Override
 		protected void consumeNodeHello(NodeHello nodeHello) {
 			receivedNodeHello.set(nodeHello);
-		}
-
-		@Override
-		protected void consumeCloseConnectionDuplicateClientName(
-			CloseConnectionDuplicateClientName closeConnectionDuplicateClientName) {
-			receivedClosed.set(true);
 		}
 
 	}

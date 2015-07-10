@@ -127,9 +127,13 @@ public class FcpReplySequenceTest {
 		waitForASpecificMessage(replySequence::receivedNodeHello, NodeHello.class, NodeHello::new);
 	}
 
-	@Test
+	@Test(expected = ExecutionException.class)
 	public void waitingForConnectionClosedDuplicateClientNameWorks() throws IOException, ExecutionException, InterruptedException {
-		waitForASpecificMessage( replySequence::receivedCloseConnectionDuplicateClientName, CloseConnectionDuplicateClientName.class, CloseConnectionDuplicateClientName::new);
+		replySequence.setExpectedMessage("");
+		Future<Boolean> result = replySequence.send(fcpMessage);
+		replySequence.receivedCloseConnectionDuplicateClientName(fcpConnection,
+			new CloseConnectionDuplicateClientName(new FcpMessage("CloseConnectionDuplicateClientName")));
+		result.get();
 	}
 
 	@Test
@@ -404,12 +408,6 @@ public class FcpReplySequenceTest {
 		@Override
 		protected void consumeNodeHello(NodeHello nodeHello) {
 			gotMessage.set(nodeHello.getName());
-		}
-
-		@Override
-		protected void consumeCloseConnectionDuplicateClientName(
-			CloseConnectionDuplicateClientName closeConnectionDuplicateClientName) {
-			gotMessage.set(closeConnectionDuplicateClientName.getName());
 		}
 
 		@Override
