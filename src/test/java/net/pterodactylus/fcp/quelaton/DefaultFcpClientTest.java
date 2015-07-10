@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 import net.pterodactylus.fcp.FcpKeyPair;
 import net.pterodactylus.fcp.Key;
+import net.pterodactylus.fcp.NodeData;
 import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.Priority;
 import net.pterodactylus.fcp.fake.FakeTcpServer;
@@ -745,6 +747,33 @@ public class DefaultFcpClientTest {
 		assertThat(peers.get(), hasSize(2));
 		assertThat(peers.get().stream().map(peer -> peer.getVolatile("foo")).collect(Collectors.toList()),
 			containsInAnyOrder("bar1", "bar2"));
+	}
+
+	@Test
+	public void defaultFcpClientCanGetNodeInformation() throws InterruptedException, ExecutionException, IOException {
+		Future<NodeData> nodeData = fcpClient.getNode().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetNode",
+			"Identifier=" + identifier,
+			"GiveOpennetRef=false",
+			"WithPrivate=false",
+			"WithVolatile=false",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"NodeData",
+			"Identifier=" + identifier,
+			"ark.pubURI=SSK@3YEf.../ark",
+			"ark.number=78",
+			"auth.negTypes=2",
+			"version=Fred,0.7,1.0,1466",
+			"lastGoodVersion=Fred,0.7,1.0,1466",
+			"EndMessage"
+		);
+		assertThat(nodeData.get(), notNullValue());
 	}
 
 }

@@ -50,6 +50,11 @@ public class DefaultFcpClient implements FcpClient {
 	}
 
 	@Override
+	public GetNodeCommand getNode() {
+		return new GetNodeCommandImpl(threadPool, this::connect);
+	}
+
+	@Override
 	public GenerateKeypairCommand generateKeypair() {
 		return new GenerateKeypairCommandImpl(threadPool, this::connect);
 	}
