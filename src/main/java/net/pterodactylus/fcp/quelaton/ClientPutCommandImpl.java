@@ -168,6 +168,7 @@ class ClientPutCommandImpl implements ClientPutCommand {
 		protected void consumeProtocolError(ProtocolError protocolError) {
 			if (protocolError.getIdentifier().equals(identifier.get())) {
 				if (protocolError.getCode() == 25) {
+					setIdentifier(directory.get());
 					sendMessage(new TestDDARequest(directory.get(), true, false));
 				} else {
 					putFinished.set(true);
@@ -190,6 +191,7 @@ class ClientPutCommandImpl implements ClientPutCommand {
 		@Override
 		protected void consumeTestDDAComplete(TestDDAComplete testDDAComplete) {
 			if (testDDAComplete.getDirectory().equals(directory.get())) {
+				setIdentifier(originalClientPut.get().getField("Identifier"));
 				sendMessage(originalClientPut.get());
 			}
 		}

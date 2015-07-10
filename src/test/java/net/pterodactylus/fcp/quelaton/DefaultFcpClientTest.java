@@ -60,11 +60,12 @@ public class DefaultFcpClientTest {
 	public void defaultFcpClientCanGenerateKeypair() throws ExecutionException, InterruptedException, IOException {
 		Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
 		connectNode();
-		fcpServer.collectUntil(is("EndMessage"));
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
 		fcpServer.writeLine("SSKKeypair",
 			"InsertURI=" + INSERT_URI + "",
 			"RequestURI=" + REQUEST_URI + "",
-			"Identifier=My Identifier from GenerateSSK",
+			"Identifier=" + identifier,
 			"EndMessage");
 		FcpKeyPair keyPair = keyPairFuture.get();
 		assertThat(keyPair.getPublicKey(), is(REQUEST_URI));
