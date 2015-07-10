@@ -11,6 +11,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public interface WithUri<R> {
 
-	ListenableFuture<R> uri(String uri);
+	R uri(String uri);
 
 }

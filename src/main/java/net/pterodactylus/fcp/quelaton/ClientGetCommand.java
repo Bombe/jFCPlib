@@ -21,7 +21,7 @@ public interface ClientGetCommand {
 	ClientGetCommand realTime();
 	ClientGetCommand global();
 
-	ListenableFuture<Optional<Data>> uri(String uri);
+	Executable<Optional<Data>> uri(String uri);
 
 	interface Data {
 

@@ -9,6 +9,10 @@ import net.pterodactylus.fcp.FcpKeyPair;
 import net.pterodactylus.fcp.GenerateSSK;
 import net.pterodactylus.fcp.SSKKeypair;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+
 /**
  * Implementation of the {@link GenerateKeypairCommand}.
  *
@@ -16,16 +20,16 @@ import net.pterodactylus.fcp.SSKKeypair;
  */
 class GenerateKeypairCommandImpl implements GenerateKeypairCommand {
 
-	private final ExecutorService threadPool;
+	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
 
 	GenerateKeypairCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
-		this.threadPool = threadPool;
+		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
 	}
 
 	@Override
-	public Future<FcpKeyPair> execute() {
+	public ListenableFuture<FcpKeyPair> execute() {
 		return threadPool.submit(() -> new FcpKeyPairReplySequence().send(new GenerateSSK()).get());
 	}
 

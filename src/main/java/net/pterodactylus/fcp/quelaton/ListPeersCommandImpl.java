@@ -11,6 +11,7 @@ import net.pterodactylus.fcp.EndListPeers;
 import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.Peer;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -44,7 +45,7 @@ public class ListPeersCommandImpl implements ListPeersCommand {
 	}
 
 	@Override
-	public Future<Collection<Peer>> execute() {
+	public ListenableFuture<Collection<Peer>> execute() {
 		String identifier = new RandomIdentifierGenerator().generate();
 		ListPeers listPeers = new ListPeers(identifier, includeMetadata.get(), includeVolatile.get());
 		return threadPool.submit(() -> new ListPeersReplySequence().send(listPeers).get());

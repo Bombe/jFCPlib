@@ -10,11 +10,9 @@ import net.pterodactylus.fcp.Peer;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public interface ListPeersCommand {
+public interface ListPeersCommand extends Executable<Collection<Peer>> {
 
 	ListPeersCommand includeMetadata();
 	ListPeersCommand includeVolatile();
-
-	Future<Collection<Peer>> execute();
 
 }

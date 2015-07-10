@@ -78,9 +78,9 @@ class ClientGetCommandImpl implements ClientGetCommand {
 	}
 
 	@Override
-	public ListenableFuture<Optional<Data>> uri(String uri) {
+	public Executable<Optional<Data>> uri(String uri) {
 		ClientGet clientGet = createClientGetCommand(uri);
-		return threadPool.submit(() -> new ClientGetReplySequence().send(clientGet).get());
+		return () -> threadPool.submit(() -> new ClientGetReplySequence().send(clientGet).get());
 	}
 
 	private ClientGet createClientGetCommand(String uri) {

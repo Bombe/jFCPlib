@@ -9,8 +9,6 @@ import java.util.concurrent.Future;
  *
  * @author <a href="bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
-public interface GenerateKeypairCommand {
-
-	Future<FcpKeyPair> execute();
+public interface GenerateKeypairCommand extends Executable<FcpKeyPair> {
 
 }
