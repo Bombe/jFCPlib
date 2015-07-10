@@ -16,8 +16,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import net.pterodactylus.fcp.FcpKeyPair;
@@ -66,8 +64,6 @@ public class DefaultFcpClientTest {
 	@Test(expected = ExecutionException.class)
 	public void defaultFcpClientThrowsExceptionIfItCanNotConnect()
 	throws IOException, ExecutionException, InterruptedException {
-		Logger.getAnonymousLogger().getParent().setLevel(Level.FINEST);
-		Logger.getAnonymousLogger().getParent().getHandlers()[0].setLevel(Level.FINEST);
 		Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
 		fcpServer.connect().get();
 		fcpServer.collectUntil(is("EndMessage"));
@@ -81,8 +77,6 @@ public class DefaultFcpClientTest {
 	@Test(expected = ExecutionException.class)
 	public void defaultFcpClientThrowsExceptionIfConnectionIsClosed()
 	throws IOException, ExecutionException, InterruptedException {
-		Logger.getAnonymousLogger().getParent().setLevel(Level.FINEST);
-		Logger.getAnonymousLogger().getParent().getHandlers()[0].setLevel(Level.FINEST);
 		Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
 		fcpServer.connect().get();
 		fcpServer.collectUntil(is("EndMessage"));
