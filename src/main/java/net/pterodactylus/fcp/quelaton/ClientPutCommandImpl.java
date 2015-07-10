@@ -119,7 +119,6 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	private class ClientPutReplySequence extends FcpReplySequence<Optional<Key>> {
 
 		private final AtomicReference<FcpMessage> originalClientPut = new AtomicReference<>();
-		private final AtomicReference<String> identifier = new AtomicReference<>();
 		private final AtomicReference<String> directory = new AtomicReference<>();
 		private final AtomicReference<Key> finalKey = new AtomicReference<>();
 		private final AtomicBoolean putFinished = new AtomicBoolean();
@@ -141,7 +140,6 @@ class ClientPutCommandImpl implements ClientPutCommand {
 		@Override
 		public ListenableFuture<Optional<Key>> send(FcpMessage fcpMessage) throws IOException {
 			originalClientPut.set(fcpMessage);
-			identifier.set(fcpMessage.getField("Identifier"));
 			String filename = fcpMessage.getField("Filename");
 			if (filename != null) {
 				directory.set(new File(filename).getParent());
@@ -151,49 +149,39 @@ class ClientPutCommandImpl implements ClientPutCommand {
 
 		@Override
 		protected void consumePutSuccessful(PutSuccessful putSuccessful) {
-			if (putSuccessful.getIdentifier().equals(identifier.get())) {
-				finalKey.set(new Key(putSuccessful.getURI()));
-				putFinished.set(true);
-			}
+			finalKey.set(new Key(putSuccessful.getURI()));
+			putFinished.set(true);
 		}
 
 		@Override
 		protected void consumePutFailed(PutFailed putFailed) {
-			if (putFailed.getIdentifier().equals(identifier.get())) {
-				putFinished.set(true);
-			}
+			putFinished.set(true);
 		}
 
 		@Override
 		protected void consumeProtocolError(ProtocolError protocolError) {
-			if (protocolError.getIdentifier().equals(identifier.get())) {
-				if (protocolError.getCode() == 25) {
-					setIdentifier(directory.get());
-					sendMessage(new TestDDARequest(directory.get(), true, false));
-				} else {
-					putFinished.set(true);
-				}
+			if (protocolError.getCode() == 25) {
+				setIdentifier(directory.get());
+				sendMessage(new TestDDARequest(directory.get(), true, false));
+			} else {
+				putFinished.set(true);
 			}
 		}
 
 		@Override
 		protected void consumeTestDDAReply(TestDDAReply testDDAReply) {
-			if (testDDAReply.getDirectory().equals(directory.get())) {
-				try {
-					String readContent = Files.readAllLines(new File(testDDAReply.getReadFilename()).toPath()).get(0);
-					sendMessage(new TestDDAResponse(directory.get(), readContent));
-				} catch (IOException e) {
-					sendMessage(new TestDDAResponse(directory.get(), "failed-to-read"));
-				}
+			try {
+				String readContent = Files.readAllLines(new File(testDDAReply.getReadFilename()).toPath()).get(0);
+				sendMessage(new TestDDAResponse(directory.get(), readContent));
+			} catch (IOException e) {
+				sendMessage(new TestDDAResponse(directory.get(), "failed-to-read"));
 			}
 		}
 
 		@Override
 		protected void consumeTestDDAComplete(TestDDAComplete testDDAComplete) {
-			if (testDDAComplete.getDirectory().equals(directory.get())) {
-				setIdentifier(originalClientPut.get().getField("Identifier"));
-				sendMessage(originalClientPut.get());
-			}
+			setIdentifier(originalClientPut.get().getField("Identifier"));
+			sendMessage(originalClientPut.get());
 		}
 
 		@Override
