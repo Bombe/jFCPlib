@@ -14,7 +14,7 @@ import net.pterodactylus.fcp.Key;
 public interface ClientPutCommand {
 
 	ClientPutCommand named(String targetFilename);
-	Keyed<Optional<Key>> redirectTo(Key key);
+	Keyed<Optional<Key>> redirectTo(String uri);
 	Keyed<Optional<Key>> from(File file);
 	Lengthed<Keyed<Optional<Key>>> from(InputStream inputStream);
 

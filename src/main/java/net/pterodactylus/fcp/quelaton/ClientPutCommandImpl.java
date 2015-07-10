@@ -54,8 +54,8 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	}
 
 	@Override
-	public Keyed<Optional<Key>> redirectTo(Key key) {
-		this.redirectUri.set(Objects.requireNonNull(key, "key must not be null").getKey());
+	public Keyed<Optional<Key>> redirectTo(String uri) {
+		this.redirectUri.set(Objects.requireNonNull(uri, "uri must not be null"));
 		return this::key;
 	}
 

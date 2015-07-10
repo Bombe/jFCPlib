@@ -365,7 +365,7 @@ public class DefaultFcpClientTest {
 	@Test
 	public void clientPutWithRedirectSendsCorrectCommand()
 	throws IOException, ExecutionException, InterruptedException {
-		fcpClient.clientPut().redirectTo(new Key("KSK@bar.txt")).key(new Key("KSK@foo.txt"));
+		fcpClient.clientPut().redirectTo("KSK@bar.txt").key(new Key("KSK@foo.txt"));
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		assertThat(lines,
