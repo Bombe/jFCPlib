@@ -39,15 +39,14 @@ public class ClientHelloImpl {
 	}
 
 	private ListenableFuture<FcpConnection> execute() {
-		return threadPool.submit(() -> establishConnection());
+		return threadPool.submit(this::establishConnection);
 	}
 
 	private FcpConnection establishConnection() throws IOException {
 		FcpConnection connection = new FcpConnection(hostname, port);
 		connection.connect();
-		ClientHelloReplySequence nodeHelloSequence = new ClientHelloReplySequence(connection);
 		ClientHello clientHello = new ClientHello(clientName.get(), "2.0");
-		try {
+		try (ClientHelloReplySequence nodeHelloSequence = new ClientHelloReplySequence(connection)) {
 			if (nodeHelloSequence.send(clientHello).get()) {
 				return connection;
 			}

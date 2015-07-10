@@ -1,8 +1,8 @@
 package net.pterodactylus.fcp.quelaton;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.FcpKeyPair;
@@ -30,7 +30,13 @@ class GenerateKeypairCommandImpl implements GenerateKeypairCommand {
 
 	@Override
 	public ListenableFuture<FcpKeyPair> execute() {
-		return threadPool.submit(() -> new FcpKeyPairReplySequence().send(new GenerateSSK()).get());
+		return threadPool.submit(this::executeSequence);
+	}
+
+	private FcpKeyPair executeSequence() throws InterruptedException, ExecutionException, IOException {
+		try (FcpKeyPairReplySequence fcpKeyPairReplySequence = new FcpKeyPairReplySequence()) {
+			return fcpKeyPairReplySequence.send(new GenerateSSK()).get();
+		}
 	}
 
 	private class FcpKeyPairReplySequence extends FcpReplySequence<FcpKeyPair> {

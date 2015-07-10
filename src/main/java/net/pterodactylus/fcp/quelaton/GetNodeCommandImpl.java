@@ -1,6 +1,7 @@
 package net.pterodactylus.fcp.quelaton;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -50,9 +51,15 @@ public class GetNodeCommandImpl implements GetNodeCommand {
 
 	@Override
 	public ListenableFuture<NodeData> execute() {
+		return threadPool.submit(this::executeSequence);
+	}
+
+	private NodeData executeSequence() throws InterruptedException, ExecutionException, IOException {
 		GetNode getNode = new GetNode(new RandomIdentifierGenerator().generate(), giveOpennetRef.get(),
 			includePrivate.get(), includeVolatile.get());
-		return threadPool.submit(() -> new GetNodeReplySequence().send(getNode).get());
+		try (GetNodeReplySequence getNodeReplySequence = new GetNodeReplySequence()) {
+			return getNodeReplySequence.send(getNode).get();
+		}
 	}
 
 	private class GetNodeReplySequence extends FcpReplySequence<NodeData> {

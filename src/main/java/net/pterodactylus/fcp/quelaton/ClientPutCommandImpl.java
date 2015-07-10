@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -77,9 +78,15 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	}
 
 	private Executable<Optional<Key>> key(String uri) {
+		return () -> threadPool.submit(() -> execute(uri));
+	}
+
+	private Optional<Key> execute(String uri) throws InterruptedException, ExecutionException, IOException {
 		String identifier = new RandomIdentifierGenerator().generate();
 		ClientPut clientPut = createClientPutCommand(uri, identifier);
-		return () -> threadPool.submit(() -> new ClientPutReplySequence().send(clientPut).get());
+		try (ClientPutReplySequence clientPutReplySequence = new ClientPutReplySequence()) {
+			return clientPutReplySequence.send(clientPut).get();
+		}
 	}
 
 	private ClientPut createClientPutCommand(String uri, String identifier) {

@@ -3,8 +3,8 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.pterodactylus.fcp.EndListPeers;
@@ -46,9 +46,15 @@ public class ListPeersCommandImpl implements ListPeersCommand {
 
 	@Override
 	public ListenableFuture<Collection<Peer>> execute() {
+		return threadPool.submit(this::executeSequence);
+	}
+
+	private Collection<Peer> executeSequence() throws InterruptedException, ExecutionException, IOException {
 		String identifier = new RandomIdentifierGenerator().generate();
 		ListPeers listPeers = new ListPeers(identifier, includeMetadata.get(), includeVolatile.get());
-		return threadPool.submit(() -> new ListPeersReplySequence().send(listPeers).get());
+		try (ListPeersReplySequence listPeersReplySequence = new ListPeersReplySequence()) {
+			return listPeersReplySequence.send(listPeers).get();
+		}
 	}
 
 	private class ListPeersReplySequence extends FcpReplySequence<Collection<Peer>> {

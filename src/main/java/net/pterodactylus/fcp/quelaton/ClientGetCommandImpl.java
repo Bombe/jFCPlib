@@ -3,6 +3,8 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -79,8 +81,14 @@ class ClientGetCommandImpl implements ClientGetCommand {
 
 	@Override
 	public Executable<Optional<Data>> uri(String uri) {
+		return () -> threadPool.submit(() -> execute(uri));
+	}
+
+	private Optional<Data> execute(String uri) throws InterruptedException, ExecutionException, IOException {
 		ClientGet clientGet = createClientGetCommand(uri);
-		return () -> threadPool.submit(() -> new ClientGetReplySequence().send(clientGet).get());
+		try (ClientGetReplySequence clientGetReplySequence = new ClientGetReplySequence()) {
+			return clientGetReplySequence.send(clientGet).get();
+		}
 	}
 
 	private ClientGet createClientGetCommand(String uri) {
