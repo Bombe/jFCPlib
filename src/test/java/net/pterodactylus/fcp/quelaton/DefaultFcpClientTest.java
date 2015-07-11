@@ -998,4 +998,31 @@ public class DefaultFcpClientTest {
 		assertThat(peer.get().isPresent(), is(false));
 	}
 
+	@Test
+	public void defaultFcpClientCanAddPeerFromFile() throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.addPeer().withFile(new File("/tmp/ref.txt")).execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"AddPeer",
+			"Identifier=" + identifier,
+			"File=/tmp/ref.txt",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"identity=id1",
+			"opennet=false",
+			"ark.pubURI=SSK@3YEf.../ark",
+			"ark.number=78",
+			"auth.negTypes=2",
+			"version=Fred,0.7,1.0,1466",
+			"lastGoodVersion=Fred,0.7,1.0,1466",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+	}
+
 }
