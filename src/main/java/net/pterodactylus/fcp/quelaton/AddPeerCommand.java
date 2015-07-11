@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 
+import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
 
 /**
@@ -15,5 +16,6 @@ public interface AddPeerCommand {
 
 	Executable<Optional<Peer>> fromFile(File file);
 	Executable<Optional<Peer>> fromURL(URL url);
+	Executable<Optional<Peer>> fromNodeRef(NodeRef nodeRef);
 
 }

@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.AddPeer;
+import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.ProtocolError;
 
@@ -28,6 +29,7 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 	private final ConnectionSupplier connectionSupplier;
 	private final AtomicReference<File> file = new AtomicReference<>();
 	private final AtomicReference<URL> url = new AtomicReference<>();
+	private final AtomicReference<NodeRef> nodeRef = new AtomicReference<>();
 
 	public AddPeerCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
@@ -46,6 +48,12 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 		return this::execute;
 	}
 
+	@Override
+	public Executable<Optional<Peer>> fromNodeRef(NodeRef nodeRef) {
+		this.nodeRef.set(nodeRef);
+		return this::execute;
+	}
+
 	private ListenableFuture<Optional<Peer>> execute() {
 		return threadPool.submit(this::executeSequence);
 	}
@@ -56,6 +64,8 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), file.get().getPath());
 		} else if (url.get() != null) {
 			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), url.get());
+		} else {
+			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), nodeRef.get());
 		}
 		try (AddPeerSequence addPeerSequence = new AddPeerSequence()) {
 			return addPeerSequence.send(addPeer).get();

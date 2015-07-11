@@ -20,9 +20,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import net.pterodactylus.fcp.ARK;
+import net.pterodactylus.fcp.DSAGroup;
 import net.pterodactylus.fcp.FcpKeyPair;
 import net.pterodactylus.fcp.Key;
 import net.pterodactylus.fcp.NodeData;
+import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.Priority;
 import net.pterodactylus.fcp.fake.FakeTcpServer;
@@ -1036,6 +1039,52 @@ public class DefaultFcpClientTest {
 			"AddPeer",
 			"Identifier=" + identifier,
 			"URL=http://node.ref/",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"identity=id1",
+			"opennet=false",
+			"ark.pubURI=SSK@3YEf.../ark",
+			"ark.number=78",
+			"auth.negTypes=2",
+			"version=Fred,0.7,1.0,1466",
+			"lastGoodVersion=Fred,0.7,1.0,1466",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+	}
+
+	@Test
+	public void defaultFcpClientCanAddPeerFromNodeRef() throws InterruptedException, ExecutionException, IOException {
+		NodeRef nodeRef = new NodeRef();
+		nodeRef.setIdentity("id1");
+		nodeRef.setName("name");
+		nodeRef.setARK(new ARK("public", "1"));
+		nodeRef.setDSAGroup(new DSAGroup("base", "prime", "subprime"));
+		nodeRef.setNegotiationTypes(new int[] { 3, 5 });
+		nodeRef.setPhysicalUDP("1.2.3.4:5678");
+		nodeRef.setDSAPublicKey("dsa-public");
+		nodeRef.setSignature("sig");
+		Future<Optional<Peer>> peer = fcpClient.addPeer().fromNodeRef(nodeRef).execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"AddPeer",
+			"Identifier=" + identifier,
+			"identity=id1",
+			"myName=name",
+			"ark.pubURI=public",
+			"ark.number=1",
+			"dsaGroup.g=base",
+			"dsaGroup.p=prime",
+			"dsaGroup.q=subprime",
+			"dsaPubKey.y=dsa-public",
+			"physical.udp=1.2.3.4:5678",
+			"auth.negTypes=3;5",
+			"sig=sig",
 			"EndMessage"
 		));
 		fcpServer.writeLine(
