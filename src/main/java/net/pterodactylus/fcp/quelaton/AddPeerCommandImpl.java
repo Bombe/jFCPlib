@@ -19,7 +19,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * Default {@link AddPeerCommand} implementation based on {@link FcpReplySequence}.
+ * Default {@link AddPeerCommand} implementation based on {@link FcpDialog}.
  *
  * @author <a href="mailto:bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
@@ -72,7 +72,7 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 		}
 	}
 
-	private class AddPeerSequence extends FcpReplySequence<Optional<Peer>> {
+	private class AddPeerSequence extends FcpDialog<Optional<Peer>> {
 
 		private final AtomicBoolean finished = new AtomicBoolean();
 		private final AtomicReference<Peer> peer = new AtomicReference<>();

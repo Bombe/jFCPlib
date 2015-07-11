@@ -3,11 +3,9 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.ClientHello;
-import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.NodeHello;
 
@@ -16,7 +14,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * Internal <code>ClientHello</code> implementation based on {@link FcpReplySequence}.
+ * Internal <code>ClientHello</code> implementation based on {@link FcpDialog}.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
@@ -46,7 +44,7 @@ public class ClientHelloImpl {
 		FcpConnection connection = new FcpConnection(hostname, port);
 		connection.connect();
 		ClientHello clientHello = new ClientHello(clientName.get(), "2.0");
-		try (ClientHelloReplySequence nodeHelloSequence = new ClientHelloReplySequence(connection)) {
+		try (ClientHelloDialog nodeHelloSequence = new ClientHelloDialog(connection)) {
 			if (nodeHelloSequence.send(clientHello).get()) {
 				return connection;
 			}
@@ -58,11 +56,11 @@ public class ClientHelloImpl {
 		throw new IOException(String.format("Could not connect to %s:%d.", hostname, port));
 	}
 
-	private class ClientHelloReplySequence extends FcpReplySequence<Boolean> {
+	private class ClientHelloDialog extends FcpDialog<Boolean> {
 
 		private final AtomicReference<NodeHello> receivedNodeHello = new AtomicReference<>();
 
-		public ClientHelloReplySequence(FcpConnection connection) {
+		public ClientHelloDialog(FcpConnection connection) {
 			super(ClientHelloImpl.this.threadPool, connection);
 		}
 

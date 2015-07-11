@@ -34,16 +34,16 @@ class GenerateKeypairCommandImpl implements GenerateKeypairCommand {
 	}
 
 	private FcpKeyPair executeSequence() throws InterruptedException, ExecutionException, IOException {
-		try (FcpKeyPairReplySequence fcpKeyPairReplySequence = new FcpKeyPairReplySequence()) {
-			return fcpKeyPairReplySequence.send(new GenerateSSK()).get();
+		try (FcpKeyPairDialog fcpKeyPairDialog = new FcpKeyPairDialog()) {
+			return fcpKeyPairDialog.send(new GenerateSSK()).get();
 		}
 	}
 
-	private class FcpKeyPairReplySequence extends FcpReplySequence<FcpKeyPair> {
+	private class FcpKeyPairDialog extends FcpDialog<FcpKeyPair> {
 
 		private AtomicReference<FcpKeyPair> keyPair = new AtomicReference<>();
 
-		public FcpKeyPairReplySequence() throws IOException {
+		public FcpKeyPairDialog() throws IOException {
 			super(GenerateKeypairCommandImpl.this.threadPool, GenerateKeypairCommandImpl.this.connectionSupplier.get());
 		}
 

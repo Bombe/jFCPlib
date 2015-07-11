@@ -61,7 +61,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  *
  * @author <a href="bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
-public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener {
+public abstract class FcpDialog<R> implements AutoCloseable, FcpListener {
 
 	private final Object syncObject = new Object();
 	private final ListeningExecutorService executorService;
@@ -71,7 +71,7 @@ public abstract class FcpReplySequence<R> implements AutoCloseable, FcpListener 
 	private final AtomicBoolean connectionClosed = new AtomicBoolean();
 	private final AtomicReference<Throwable> connectionFailureReason = new AtomicReference<>();
 
-	public FcpReplySequence(ExecutorService executorService, FcpConnection fcpConnection) {
+	public FcpDialog(ExecutorService executorService, FcpConnection fcpConnection) {
 		this.executorService = MoreExecutors.listeningDecorator(executorService);
 		this.fcpConnection = fcpConnection;
 	}

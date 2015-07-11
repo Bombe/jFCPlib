@@ -14,7 +14,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * Default {@link GetNodeCommandImpl} implementation based on {@link FcpReplySequence}.
+ * Default {@link GetNodeCommandImpl} implementation based on {@link FcpDialog}.
  *
  * @author <a href="mailto:bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
@@ -57,16 +57,16 @@ public class GetNodeCommandImpl implements GetNodeCommand {
 	private NodeData executeSequence() throws InterruptedException, ExecutionException, IOException {
 		GetNode getNode = new GetNode(new RandomIdentifierGenerator().generate(), giveOpennetRef.get(),
 			includePrivate.get(), includeVolatile.get());
-		try (GetNodeReplySequence getNodeReplySequence = new GetNodeReplySequence()) {
-			return getNodeReplySequence.send(getNode).get();
+		try (GetNodeDialog getNodeDialog = new GetNodeDialog()) {
+			return getNodeDialog.send(getNode).get();
 		}
 	}
 
-	private class GetNodeReplySequence extends FcpReplySequence<NodeData> {
+	private class GetNodeDialog extends FcpDialog<NodeData> {
 
 		private final AtomicReference<NodeData> nodeData = new AtomicReference<>();
 
-		public GetNodeReplySequence() throws IOException {
+		public GetNodeDialog() throws IOException {
 			super(threadPool, connectionSupplier.get());
 		}
 

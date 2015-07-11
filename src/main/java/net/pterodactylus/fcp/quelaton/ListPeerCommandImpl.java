@@ -14,7 +14,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
- * Default {@link ListPeerCommand} implementation based on {@link FcpReplySequence}.
+ * Default {@link ListPeerCommand} implementation based on {@link FcpDialog}.
  *
  * @author <a href="mailto:bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
@@ -58,7 +58,7 @@ public class ListPeerCommandImpl implements ListPeerCommand {
 		}
 	}
 
-	private class ListPeerSequence extends FcpReplySequence<Peer> {
+	private class ListPeerSequence extends FcpDialog<Peer> {
 
 		private final AtomicBoolean finished = new AtomicBoolean();
 		private final AtomicReference<Peer> peer = new AtomicReference<>();

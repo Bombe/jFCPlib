@@ -29,7 +29,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * Default {@link ClientPutCommand} implemented based on {@link FcpReplySequence}.
+ * Default {@link ClientPutCommand} implemented based on {@link FcpDialog}.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
@@ -84,8 +84,8 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	private Optional<Key> execute(String uri) throws InterruptedException, ExecutionException, IOException {
 		String identifier = new RandomIdentifierGenerator().generate();
 		ClientPut clientPut = createClientPutCommand(uri, identifier);
-		try (ClientPutReplySequence clientPutReplySequence = new ClientPutReplySequence()) {
-			return clientPutReplySequence.send(clientPut).get();
+		try (ClientPutDialog clientPutDialog = new ClientPutDialog()) {
+			return clientPutDialog.send(clientPut).get();
 		}
 	}
 
@@ -123,14 +123,14 @@ class ClientPutCommandImpl implements ClientPutCommand {
 		return clientPut;
 	}
 
-	private class ClientPutReplySequence extends FcpReplySequence<Optional<Key>> {
+	private class ClientPutDialog extends FcpDialog<Optional<Key>> {
 
 		private final AtomicReference<FcpMessage> originalClientPut = new AtomicReference<>();
 		private final AtomicReference<String> directory = new AtomicReference<>();
 		private final AtomicReference<Key> finalKey = new AtomicReference<>();
 		private final AtomicBoolean putFinished = new AtomicBoolean();
 
-		public ClientPutReplySequence() throws IOException {
+		public ClientPutDialog() throws IOException {
 			super(ClientPutCommandImpl.this.threadPool, ClientPutCommandImpl.this.connectionSupplier.get());
 		}
 

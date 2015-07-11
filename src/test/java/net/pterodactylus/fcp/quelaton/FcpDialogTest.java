@@ -1,7 +1,6 @@
 package net.pterodactylus.fcp.quelaton;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.Mockito.mock;
@@ -59,26 +58,26 @@ import net.pterodactylus.fcp.UnknownPeerNoteType;
 import org.junit.Test;
 
 /**
- * Unit test for {@link FcpReplySequence}.
+ * Unit test for {@link FcpDialog}.
  *
  * @author <a href="bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
-public class FcpReplySequenceTest {
+public class FcpDialogTest {
 
 	private final FcpConnection fcpConnection = mock(FcpConnection.class);
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-	private final TestFcpReplySequence replySequence = new TestFcpReplySequence(executorService, fcpConnection);
+	private final TestFcpDialog dialog = new TestFcpDialog(executorService, fcpConnection);
 	private final FcpMessage fcpMessage = new FcpMessage("Test");
 
 	@Test
 	public void canSendMessage() throws IOException, ExecutionException, InterruptedException {
-		FcpReplySequence replySequence = createBasicReplySequence();
-		replySequence.send(fcpMessage).get();
+		FcpDialog dialog = createBasicDialog();
+		dialog.send(fcpMessage).get();
 		verify(fcpConnection).sendMessage(fcpMessage);
 	}
 
-	private FcpReplySequence createBasicReplySequence() {
-		return new FcpReplySequence(executorService, fcpConnection) {
+	private FcpDialog createBasicDialog() {
+		return new FcpDialog(executorService, fcpConnection) {
 				@Override
 				protected boolean isFinished() {
 					return true;
@@ -88,17 +87,17 @@ public class FcpReplySequenceTest {
 
 	@Test
 	public void sendingAMessageRegistersTheWaiterAsFcpListener() throws IOException {
-		FcpReplySequence replySequence = createBasicReplySequence();
-		replySequence.send(fcpMessage);
-		verify(fcpConnection).addFcpListener(replySequence);
+		FcpDialog dialog = createBasicDialog();
+		dialog.send(fcpMessage);
+		verify(fcpConnection).addFcpListener(dialog);
 	}
 
 	@Test
 	public void closingTheReplyWaiterRemovesTheFcpListener() throws IOException {
-		FcpReplySequence replySequence = createBasicReplySequence();
-		replySequence.send(fcpMessage);
-		replySequence.close();
-		verify(fcpConnection).removeFcpListener(replySequence);
+		FcpDialog dialog = createBasicDialog();
+		dialog.send(fcpMessage);
+		dialog.close();
+		verify(fcpConnection).removeFcpListener(dialog);
 	}
 
 	private <M extends BaseMessage> void waitForASpecificMessage(MessageReceiver<M> messageReceiver, Class<M> messageClass, MessageCreator<M> messageCreator) throws IOException, InterruptedException, ExecutionException {
@@ -106,8 +105,8 @@ public class FcpReplySequenceTest {
 	}
 
 	private <M extends BaseMessage> void waitForASpecificMessage(MessageReceiver<M> messageReceiver, M message) throws IOException, InterruptedException, ExecutionException {
-		replySequence.setExpectedMessage(message.getName());
-		Future<Boolean> result = replySequence.send(fcpMessage);
+		dialog.setExpectedMessage(message.getName());
+		Future<Boolean> result = dialog.send(fcpMessage);
 		messageReceiver.receiveMessage(fcpConnection, message);
 		assertThat(result.get(), is(true));
 	}
@@ -124,51 +123,51 @@ public class FcpReplySequenceTest {
 
 	@Test
 	public void waitingForNodeHelloWorks() throws IOException, ExecutionException, InterruptedException {
-		waitForASpecificMessage(replySequence::receivedNodeHello, NodeHello.class, NodeHello::new);
+		waitForASpecificMessage(dialog::receivedNodeHello, NodeHello.class, NodeHello::new);
 	}
 
 	@Test(expected = ExecutionException.class)
 	public void waitingForConnectionClosedDuplicateClientNameWorks() throws IOException, ExecutionException, InterruptedException {
-		replySequence.setExpectedMessage("");
-		Future<Boolean> result = replySequence.send(fcpMessage);
-		replySequence.receivedCloseConnectionDuplicateClientName(fcpConnection,
+		dialog.setExpectedMessage("");
+		Future<Boolean> result = dialog.send(fcpMessage);
+		dialog.receivedCloseConnectionDuplicateClientName(fcpConnection,
 			new CloseConnectionDuplicateClientName(new FcpMessage("CloseConnectionDuplicateClientName")));
 		result.get();
 	}
 
 	@Test
 	public void waitingForSSKKeypairWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedSSKKeypair, SSKKeypair.class, SSKKeypair::new);
+		waitForASpecificMessage(dialog::receivedSSKKeypair, SSKKeypair.class, SSKKeypair::new);
 	}
 
 	@Test
 	public void waitForPeerWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPeer, Peer.class, Peer::new);
+		waitForASpecificMessage(dialog::receivedPeer, Peer.class, Peer::new);
 	}
 
 	@Test
 	public void waitForEndListPeersWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedEndListPeers, EndListPeers.class, EndListPeers::new);
+		waitForASpecificMessage(dialog::receivedEndListPeers, EndListPeers.class, EndListPeers::new);
 	}
 
 	@Test
 	public void waitForPeerNoteWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPeerNote, PeerNote.class, PeerNote::new);
+		waitForASpecificMessage(dialog::receivedPeerNote, PeerNote.class, PeerNote::new);
 	}
 
 	@Test
 	public void waitForEndListPeerNotesWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedEndListPeerNotes, EndListPeerNotes.class, EndListPeerNotes::new);
+		waitForASpecificMessage(dialog::receivedEndListPeerNotes, EndListPeerNotes.class, EndListPeerNotes::new);
 	}
 
 	@Test
 	public void waitForPeerRemovedWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPeerRemoved, PeerRemoved.class, PeerRemoved::new);
+		waitForASpecificMessage(dialog::receivedPeerRemoved, PeerRemoved.class, PeerRemoved::new);
 	}
 
 	@Test
 	public void waitForNodeDataWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedNodeData, new NodeData(
+		waitForASpecificMessage(dialog::receivedNodeData, new NodeData(
 			new FcpMessage("NodeData").put("ark.pubURI", "")
 					.put("ark.number", "0")
 					.put("auth.negTypes", "")
@@ -178,155 +177,155 @@ public class FcpReplySequenceTest {
 
 	@Test
 	public void waitForTestDDAReplyWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedTestDDAReply, TestDDAReply.class, TestDDAReply::new);
+		waitForASpecificMessage(dialog::receivedTestDDAReply, TestDDAReply.class, TestDDAReply::new);
 	}
 
 	@Test
 	public void waitForTestDDACompleteWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedTestDDAComplete, TestDDAComplete.class, TestDDAComplete::new);
+		waitForASpecificMessage(dialog::receivedTestDDAComplete, TestDDAComplete.class, TestDDAComplete::new);
 	}
 
 	@Test
 	public void waitForPersistentGetWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPersistentGet, PersistentGet.class, PersistentGet::new);
+		waitForASpecificMessage(dialog::receivedPersistentGet, PersistentGet.class, PersistentGet::new);
 	}
 
 	@Test
 	public void waitForPersistentPutWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPersistentPut, PersistentPut.class, PersistentPut::new);
+		waitForASpecificMessage(dialog::receivedPersistentPut, PersistentPut.class, PersistentPut::new);
 	}
 
 	@Test
 	public void waitForEndListPersistentRequestsWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedEndListPersistentRequests, EndListPersistentRequests.class, EndListPersistentRequests::new);
+		waitForASpecificMessage(dialog::receivedEndListPersistentRequests, EndListPersistentRequests.class, EndListPersistentRequests::new);
 	}
 
 	@Test
 	public void waitForURIGeneratedWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedURIGenerated, URIGenerated.class, URIGenerated::new);
+		waitForASpecificMessage(dialog::receivedURIGenerated, URIGenerated.class, URIGenerated::new);
 	}
 
 	@Test
 	public void waitForDataFoundWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedDataFound, DataFound.class, DataFound::new);
+		waitForASpecificMessage(dialog::receivedDataFound, DataFound.class, DataFound::new);
 	}
 
 	@Test
 	public void waitForAllDataWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedAllData, new AllData(new FcpMessage("AllData"), null));
+		waitForASpecificMessage(dialog::receivedAllData, new AllData(new FcpMessage("AllData"), null));
 	}
 
 	@Test
 	public void waitForSimpleProgressWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedSimpleProgress, SimpleProgress.class, SimpleProgress::new);
+		waitForASpecificMessage(dialog::receivedSimpleProgress, SimpleProgress.class, SimpleProgress::new);
 	}
 
 	@Test
 	public void waitForStartedCompressionWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedStartedCompression, StartedCompression.class, StartedCompression::new);
+		waitForASpecificMessage(dialog::receivedStartedCompression, StartedCompression.class, StartedCompression::new);
 	}
 
 	@Test
 	public void waitForFinishedCompressionWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedFinishedCompression, FinishedCompression.class, FinishedCompression::new);
+		waitForASpecificMessage(dialog::receivedFinishedCompression, FinishedCompression.class, FinishedCompression::new);
 	}
 
 	@Test
 	public void waitForUnknownPeerNoteTypeWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedUnknownPeerNoteType, UnknownPeerNoteType.class, UnknownPeerNoteType::new);
+		waitForASpecificMessage(dialog::receivedUnknownPeerNoteType, UnknownPeerNoteType.class, UnknownPeerNoteType::new);
 	}
 
 	@Test
 	public void waitForUnknownNodeIdentifierWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedUnknownNodeIdentifier, UnknownNodeIdentifier.class, UnknownNodeIdentifier::new);
+		waitForASpecificMessage(dialog::receivedUnknownNodeIdentifier, UnknownNodeIdentifier.class, UnknownNodeIdentifier::new);
 	}
 
 	@Test
 	public void waitForConfigDataWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedConfigData, ConfigData.class, ConfigData::new);
+		waitForASpecificMessage(dialog::receivedConfigData, ConfigData.class, ConfigData::new);
 	}
 
 	@Test
 	public void waitForGetFailedWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedGetFailed, GetFailed.class, GetFailed::new);
+		waitForASpecificMessage(dialog::receivedGetFailed, GetFailed.class, GetFailed::new);
 	}
 
 	@Test
 	public void waitForPutFailedWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPutFailed, PutFailed.class, PutFailed::new);
+		waitForASpecificMessage(dialog::receivedPutFailed, PutFailed.class, PutFailed::new);
 	}
 
 	@Test
 	public void waitForIdentifierCollisionWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedIdentifierCollision, IdentifierCollision.class, IdentifierCollision::new);
+		waitForASpecificMessage(dialog::receivedIdentifierCollision, IdentifierCollision.class, IdentifierCollision::new);
 	}
 
 	@Test
 	public void waitForPersistentPutDirWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPersistentPutDir, PersistentPutDir.class, PersistentPutDir::new);
+		waitForASpecificMessage(dialog::receivedPersistentPutDir, PersistentPutDir.class, PersistentPutDir::new);
 	}
 
 	@Test
 	public void waitForPersistentRequestRemovedWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPersistentRequestRemoved, PersistentRequestRemoved.class, PersistentRequestRemoved::new);
+		waitForASpecificMessage(dialog::receivedPersistentRequestRemoved, PersistentRequestRemoved.class, PersistentRequestRemoved::new);
 	}
 
 	@Test
 	public void waitForSubscribedUSKUpdateWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedSubscribedUSKUpdate, SubscribedUSKUpdate.class, SubscribedUSKUpdate::new);
+		waitForASpecificMessage(dialog::receivedSubscribedUSKUpdate, SubscribedUSKUpdate.class, SubscribedUSKUpdate::new);
 	}
 
 	@Test
 	public void waitForPluginInfoWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPluginInfo, PluginInfo.class, PluginInfo::new);
+		waitForASpecificMessage(dialog::receivedPluginInfo, PluginInfo.class, PluginInfo::new);
 	}
 
 	@Test
 	public void waitForFCPPluginReply() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedFCPPluginReply, new FCPPluginReply(new FcpMessage("FCPPluginReply"), null));
+		waitForASpecificMessage(dialog::receivedFCPPluginReply, new FCPPluginReply(new FcpMessage("FCPPluginReply"), null));
 	}
 
 	@Test
 	public void waitForPersistentRequestModifiedWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPersistentRequestModified, PersistentRequestModified.class, PersistentRequestModified::new);
+		waitForASpecificMessage(dialog::receivedPersistentRequestModified, PersistentRequestModified.class, PersistentRequestModified::new);
 	}
 
 	@Test
 	public void waitForPutSuccessfulWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPutSuccessful, PutSuccessful.class, PutSuccessful::new);
+		waitForASpecificMessage(dialog::receivedPutSuccessful, PutSuccessful.class, PutSuccessful::new);
 	}
 
 	@Test
 	public void waitForPutFetchableWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedPutFetchable, PutFetchable.class, PutFetchable::new);
+		waitForASpecificMessage(dialog::receivedPutFetchable, PutFetchable.class, PutFetchable::new);
 	}
 
 	@Test
 	public void waitForSentFeedWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedSentFeed, SentFeed.class, SentFeed::new);
+		waitForASpecificMessage(dialog::receivedSentFeed, SentFeed.class, SentFeed::new);
 	}
 
 	@Test
 	public void waitForReceivedBookmarkFeedWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedBookmarkFeed, ReceivedBookmarkFeed.class, ReceivedBookmarkFeed::new);
+		waitForASpecificMessage(dialog::receivedBookmarkFeed, ReceivedBookmarkFeed.class, ReceivedBookmarkFeed::new);
 	}
 
 	@Test
 	public void waitForProtocolErrorWorks() throws InterruptedException, ExecutionException, IOException {
-		waitForASpecificMessage(replySequence::receivedProtocolError, ProtocolError.class, ProtocolError::new);
+		waitForASpecificMessage(dialog::receivedProtocolError, ProtocolError.class, ProtocolError::new);
 	}
 
 	@Test
 	public void waitForUnknownMessageWorks() throws IOException, ExecutionException, InterruptedException {
-		replySequence.setExpectedMessage("SomeFcpMessage");
-		Future<Boolean> result = replySequence.send(fcpMessage);
-		replySequence.receivedMessage(fcpConnection, new FcpMessage("SomeFcpMessage"));
+		dialog.setExpectedMessage("SomeFcpMessage");
+		Future<Boolean> result = dialog.send(fcpMessage);
+		dialog.receivedMessage(fcpConnection, new FcpMessage("SomeFcpMessage"));
 		assertThat(result.get(), is(true));
 	}
 
 	@Test
 	public void waitingForMultipleMessagesWorks() throws IOException, ExecutionException, InterruptedException {
-		TestFcpReplySequence replySequence = new TestFcpReplySequence(executorService, fcpConnection) {
+		TestFcpDialog testFcpDialog = new TestFcpDialog(executorService, fcpConnection) {
 			private final AtomicBoolean gotPutFailed = new AtomicBoolean();
 			private final AtomicBoolean gotGetFailed = new AtomicBoolean();
 
@@ -350,20 +349,20 @@ public class FcpReplySequenceTest {
 				gotGetFailed.set(true);
 			}
 		};
-		Future<?> result = replySequence.send(fcpMessage);
+		Future<?> result = testFcpDialog.send(fcpMessage);
 		assertThat(result.isDone(), is(false));
-		replySequence.receivedGetFailed(fcpConnection, new GetFailed(new FcpMessage("GetFailed")));
+		testFcpDialog.receivedGetFailed(fcpConnection, new GetFailed(new FcpMessage("GetFailed")));
 		assertThat(result.isDone(), is(false));
-		replySequence.receivedPutFailed(fcpConnection, new PutFailed(new FcpMessage("PutFailed")));
+		testFcpDialog.receivedPutFailed(fcpConnection, new PutFailed(new FcpMessage("PutFailed")));
 		assertThat(result.get(), is(true));
 	}
 
 	@Test
 	public void waitingForConnectionClosureWorks() throws IOException, ExecutionException, InterruptedException {
-		replySequence.setExpectedMessage("none");
-		Future<Boolean> result = replySequence.send(fcpMessage);
+		dialog.setExpectedMessage("none");
+		Future<Boolean> result = dialog.send(fcpMessage);
 		Throwable throwable = new Throwable();
-		replySequence.connectionClosed(fcpConnection, throwable);
+		dialog.connectionClosed(fcpConnection, throwable);
 		try {
 			result.get();
 		} catch (ExecutionException e) {
@@ -382,12 +381,12 @@ public class FcpReplySequenceTest {
 
 	}
 
-	private static class TestFcpReplySequence extends FcpReplySequence<Boolean> {
+	private static class TestFcpDialog extends FcpDialog<Boolean> {
 
 		private final AtomicReference<String> gotMessage = new AtomicReference<>();
 		private final AtomicReference<String> expectedMessage = new AtomicReference<>();
 
-		public TestFcpReplySequence(ExecutorService executorService, FcpConnection fcpConnection) {
+		public TestFcpDialog(ExecutorService executorService, FcpConnection fcpConnection) {
 			super(executorService, fcpConnection);
 		}
 

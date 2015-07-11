@@ -3,21 +3,17 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.AllData;
 import net.pterodactylus.fcp.ClientGet;
-import net.pterodactylus.fcp.FcpMessage;
 import net.pterodactylus.fcp.FcpUtils.TempInputStream;
 import net.pterodactylus.fcp.GetFailed;
 import net.pterodactylus.fcp.Priority;
 import net.pterodactylus.fcp.ReturnType;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -86,8 +82,8 @@ class ClientGetCommandImpl implements ClientGetCommand {
 
 	private Optional<Data> execute(String uri) throws InterruptedException, ExecutionException, IOException {
 		ClientGet clientGet = createClientGetCommand(uri);
-		try (ClientGetReplySequence clientGetReplySequence = new ClientGetReplySequence()) {
-			return clientGetReplySequence.send(clientGet).get();
+		try (ClientGetDialog clientGetDialog = new ClientGetDialog()) {
+			return clientGetDialog.send(clientGet).get();
 		}
 	}
 
@@ -115,7 +111,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 		return clientGet;
 	}
 
-	private class ClientGetReplySequence extends FcpReplySequence<Optional<Data>> {
+	private class ClientGetDialog extends FcpDialog<Optional<Data>> {
 
 		private final AtomicBoolean finished = new AtomicBoolean();
 		private final AtomicBoolean failed = new AtomicBoolean();
@@ -124,7 +120,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 		private long dataLength;
 		private InputStream payload;
 
-		public ClientGetReplySequence() throws IOException {
+		public ClientGetDialog() throws IOException {
 			super(ClientGetCommandImpl.this.threadPool, ClientGetCommandImpl.this.connectionSupplier.get());
 		}
 

@@ -16,7 +16,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * Default {@link ListPeersCommand} implementation based on {@link FcpReplySequence}.
+ * Default {@link ListPeersCommand} implementation based on {@link FcpDialog}.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
@@ -52,17 +52,17 @@ public class ListPeersCommandImpl implements ListPeersCommand {
 	private Collection<Peer> executeSequence() throws InterruptedException, ExecutionException, IOException {
 		String identifier = new RandomIdentifierGenerator().generate();
 		ListPeers listPeers = new ListPeers(identifier, includeMetadata.get(), includeVolatile.get());
-		try (ListPeersReplySequence listPeersReplySequence = new ListPeersReplySequence()) {
-			return listPeersReplySequence.send(listPeers).get();
+		try (ListPeersDialog listPeersDialog = new ListPeersDialog()) {
+			return listPeersDialog.send(listPeers).get();
 		}
 	}
 
-	private class ListPeersReplySequence extends FcpReplySequence<Collection<Peer>> {
+	private class ListPeersDialog extends FcpDialog<Collection<Peer>> {
 
 		private final Collection<Peer> peers = new HashSet<>();
 		private final AtomicBoolean finished = new AtomicBoolean(false);
 
-		public ListPeersReplySequence() throws IOException {
+		public ListPeersDialog() throws IOException {
 			super(threadPool, connectionSupplier.get());
 		}
 
