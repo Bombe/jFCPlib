@@ -46,6 +46,11 @@ public class AddPeer extends FcpMessage {
 		setField("File", file);
 	}
 
+	public AddPeer(String identifier, String file) {
+		this(file);
+		setField("Identifier", identifier);
+	}
+
 	/**
 	 * Creates a new “AddPeer” request that reads the noderef of the peer from
 	 * the given URL.
