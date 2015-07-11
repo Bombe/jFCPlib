@@ -1001,7 +1001,7 @@ public class DefaultFcpClientTest {
 
 	@Test
 	public void defaultFcpClientCanAddPeerFromFile() throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Peer>> peer = fcpClient.addPeer().withFile(new File("/tmp/ref.txt")).execute();
+		Future<Optional<Peer>> peer = fcpClient.addPeer().fromFile(new File("/tmp/ref.txt")).execute();
 		connectNode();
 		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
 		String identifier = extractIdentifier(lines);

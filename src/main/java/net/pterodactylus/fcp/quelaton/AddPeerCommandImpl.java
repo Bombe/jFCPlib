@@ -35,7 +35,7 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 	}
 
 	@Override
-	public Executable<Optional<Peer>> withFile(File file) {
+	public Executable<Optional<Peer>> fromFile(File file) {
 		this.file.set(file);
 		return this::execute;
 	}

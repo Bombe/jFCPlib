@@ -1,5 +1,6 @@
 package net.pterodactylus.fcp.quelaton;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 
@@ -10,8 +11,9 @@ import net.pterodactylus.fcp.Peer;
  *
  * @author <a href="mailto:bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
-public interface AddPeerCommand extends WithFile<Executable<Optional<Peer>>> {
+public interface AddPeerCommand {
 
+	Executable<Optional<Peer>> fromFile(File file);
 	Executable<Optional<Peer>> fromURL(URL url);
 
 }
