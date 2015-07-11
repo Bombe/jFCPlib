@@ -53,12 +53,12 @@ public class DefaultFcpClientTest {
 		"SSK@wtbgd2loNcJCXvtQVOftl2tuWBomDQHfqS6ytpPRhfw,7SHH53gletBVb9JD7nBsyClbLQsBubDPEIcwg908r7Y,AQACAAE/";
 
 	private static int threadCounter = 0;
-	private final ExecutorService threadPool =
-		Executors.newCachedThreadPool(r -> new Thread(r, "Test-Thread-" + threadCounter++));
 	private final FakeTcpServer fcpServer;
 	private final DefaultFcpClient fcpClient;
 
 	public DefaultFcpClientTest() throws IOException {
+		ExecutorService threadPool =
+			Executors.newCachedThreadPool(r -> new Thread(r, "Test-Thread-" + threadCounter++));
 		fcpServer = new FakeTcpServer(threadPool);
 		fcpClient = new DefaultFcpClient(threadPool, "localhost", fcpServer.getPort(), () -> "Test");
 	}
