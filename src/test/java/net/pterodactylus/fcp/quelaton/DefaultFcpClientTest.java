@@ -892,4 +892,110 @@ public class DefaultFcpClientTest {
 		assertThat(nodeData.get().getVolatile("freeJavaMemory").toString(), is("205706528"));
 	}
 
+	@Test
+	public void defaultFcpClientCanListSinglePeerByIdentity()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.listPeer().byIdentity("id1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ListPeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id1",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"identity=id1",
+			"opennet=false",
+			"ark.pubURI=SSK@3YEf.../ark",
+			"ark.number=78",
+			"auth.negTypes=2",
+			"version=Fred,0.7,1.0,1466",
+			"lastGoodVersion=Fred,0.7,1.0,1466",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+	}
+
+	@Test
+	public void defaultFcpClientCanListSinglePeerByHostAndPort()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.listPeer().byHostAndPort("host.free.net", 12345).execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ListPeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=host.free.net:12345",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"identity=id1",
+			"opennet=false",
+			"ark.pubURI=SSK@3YEf.../ark",
+			"ark.number=78",
+			"auth.negTypes=2",
+			"version=Fred,0.7,1.0,1466",
+			"lastGoodVersion=Fred,0.7,1.0,1466",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+	}
+
+	@Test
+	public void defaultFcpClientCanListSinglePeerByName()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.listPeer().byName("FriendNode").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ListPeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=FriendNode",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"identity=id1",
+			"opennet=false",
+			"ark.pubURI=SSK@3YEf.../ark",
+			"ark.number=78",
+			"auth.negTypes=2",
+			"version=Fred,0.7,1.0,1466",
+			"lastGoodVersion=Fred,0.7,1.0,1466",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+	}
+
+	@Test
+	public void defaultFcpClientRecognizesUnknownNodeIdentifiers()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.listPeer().byIdentity("id2").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ListPeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id2",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"UnknownNodeIdentifier",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id2",
+			"EndMessage"
+		);
+		assertThat(peer.get().isPresent(), is(false));
+	}
+
 }

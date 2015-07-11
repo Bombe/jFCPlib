@@ -12,6 +12,7 @@ public interface FcpClient {
 	ClientGetCommand clientGet();
 	ClientPutCommand clientPut();
 
+	ListPeerCommand listPeer();
 	ListPeersCommand listPeers();
 
 }
