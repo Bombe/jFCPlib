@@ -2,6 +2,7 @@ package net.pterodactylus.fcp.quelaton;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -26,6 +27,7 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
 	private final AtomicReference<File> file = new AtomicReference<>();
+	private final AtomicReference<URL> url = new AtomicReference<>();
 
 	public AddPeerCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
@@ -38,6 +40,12 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 		return this::execute;
 	}
 
+	@Override
+	public Executable<Optional<Peer>> fromURL(URL url) {
+		this.url.set(url);
+		return this::execute;
+	}
+
 	private ListenableFuture<Optional<Peer>> execute() {
 		return threadPool.submit(this::executeSequence);
 	}
@@ -46,6 +54,8 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 		AddPeer addPeer = null;
 		if (file.get() != null) {
 			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), file.get().getPath());
+		} else if (url.get() != null) {
+			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), url.get());
 		}
 		try (AddPeerSequence addPeerSequence = new AddPeerSequence()) {
 			return addPeerSequence.send(addPeer).get();

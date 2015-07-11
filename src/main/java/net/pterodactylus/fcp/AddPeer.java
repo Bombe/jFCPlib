@@ -63,6 +63,11 @@ public class AddPeer extends FcpMessage {
 		setField("URL", String.valueOf(url));
 	}
 
+	public AddPeer(String identifier, URL url) {
+		this(url);
+		setField("Identifier", identifier);
+	}
+
 	/**
 	 * Creates a new “AddPeer” request that adds the peer given by the noderef.
 	 *

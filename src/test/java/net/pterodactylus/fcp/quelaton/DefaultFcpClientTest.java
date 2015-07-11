@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
@@ -1008,6 +1009,33 @@ public class DefaultFcpClientTest {
 			"AddPeer",
 			"Identifier=" + identifier,
 			"File=/tmp/ref.txt",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"identity=id1",
+			"opennet=false",
+			"ark.pubURI=SSK@3YEf.../ark",
+			"ark.number=78",
+			"auth.negTypes=2",
+			"version=Fred,0.7,1.0,1466",
+			"lastGoodVersion=Fred,0.7,1.0,1466",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+	}
+
+	@Test
+	public void defaultFcpClientCanAddPeerFromURL() throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.addPeer().fromURL(new URL("http://node.ref/")).execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"AddPeer",
+			"Identifier=" + identifier,
+			"URL=http://node.ref/",
 			"EndMessage"
 		));
 		fcpServer.writeLine(
