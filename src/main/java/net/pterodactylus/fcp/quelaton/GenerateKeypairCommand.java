@@ -2,8 +2,6 @@ package net.pterodactylus.fcp.quelaton;
 
 import net.pterodactylus.fcp.FcpKeyPair;
 
-import java.util.concurrent.Future;
-
 /**
  * Command to generate an SSK key pair.
  *

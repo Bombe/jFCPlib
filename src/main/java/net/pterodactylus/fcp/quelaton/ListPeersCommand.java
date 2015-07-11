@@ -1,7 +1,6 @@
 package net.pterodactylus.fcp.quelaton;
 
 import java.util.Collection;
-import java.util.concurrent.Future;
 
 import net.pterodactylus.fcp.Peer;
 

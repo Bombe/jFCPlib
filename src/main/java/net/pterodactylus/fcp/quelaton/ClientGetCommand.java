@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import net.pterodactylus.fcp.Priority;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 /**
  * Command that retrieves data from Freenet.
  *
