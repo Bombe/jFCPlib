@@ -4,13 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import net.pterodactylus.fcp.ClientPut;
 import net.pterodactylus.fcp.FcpMessage;
@@ -22,6 +25,7 @@ import net.pterodactylus.fcp.TestDDAComplete;
 import net.pterodactylus.fcp.TestDDAReply;
 import net.pterodactylus.fcp.TestDDARequest;
 import net.pterodactylus.fcp.TestDDAResponse;
+import net.pterodactylus.fcp.URIGenerated;
 import net.pterodactylus.fcp.UploadFrom;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -42,10 +46,17 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	private final AtomicReference<InputStream> payload = new AtomicReference<>();
 	private final AtomicLong length = new AtomicLong();
 	private final AtomicReference<String> targetFilename = new AtomicReference<>();
+	private final List<Consumer<String>> keyGenerateds = new CopyOnWriteArrayList<>();
 
 	public ClientPutCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+	}
+
+	@Override
+	public ClientPutCommand onKeyGenerated(Consumer<String> keyGenerated) {
+		keyGenerateds.add(keyGenerated);
+		return this;
 	}
 
 	@Override
@@ -152,6 +163,13 @@ class ClientPutCommandImpl implements ClientPutCommand {
 				directory.set(new File(filename).getParent());
 			}
 			return super.send(fcpMessage);
+		}
+
+		@Override
+		protected void consumeURIGenerated(URIGenerated uriGenerated) {
+			for (Consumer<String> keyGenerated : keyGenerateds) {
+				keyGenerated.accept(uriGenerated.getURI());
+			}
 		}
 
 		@Override

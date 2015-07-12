@@ -3,6 +3,7 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import net.pterodactylus.fcp.Key;
 
@@ -13,6 +14,7 @@ import net.pterodactylus.fcp.Key;
  */
 public interface ClientPutCommand {
 
+	ClientPutCommand onKeyGenerated(Consumer<String> keyGenerated);
 	ClientPutCommand named(String targetFilename);
 	WithUri<Executable<Optional<Key>>> redirectTo(String uri);
 	WithUri<Executable<Optional<Key>>> from(File file);

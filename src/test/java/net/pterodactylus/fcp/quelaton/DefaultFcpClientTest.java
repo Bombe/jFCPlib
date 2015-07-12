@@ -1,6 +1,7 @@
 package net.pterodactylus.fcp.quelaton;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -14,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -672,6 +674,35 @@ public class DefaultFcpClientTest {
 			"WantWriteDirectory=false",
 			"EndMessage"
 		));
+	}
+
+	@Test
+	public void clientPutSendsNotificationsForGeneratedKeys()
+	throws InterruptedException, ExecutionException, IOException {
+		List<String> generatedKeys = new CopyOnWriteArrayList<>();
+		Future<Optional<Key>> key = fcpClient.clientPut()
+			.onKeyGenerated(generatedKeys::add)
+			.from(new ByteArrayInputStream("Hello\n".getBytes()))
+			.length(6)
+			.uri("KSK@foo.txt")
+			.execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("Hello"));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"URIGenerated",
+			"Identifier="+identifier,
+			"URI=KSK@foo.txt",
+			"EndMessage"
+		);
+		fcpServer.writeLine(
+			"PutSuccessful",
+			"URI=KSK@foo.txt",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
+		assertThat(generatedKeys, contains("KSK@foo.txt"));
 	}
 
 	@Test
