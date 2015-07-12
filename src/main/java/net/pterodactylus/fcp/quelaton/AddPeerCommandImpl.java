@@ -59,7 +59,7 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 	}
 
 	private Optional<Peer> executeSequence() throws IOException, ExecutionException, InterruptedException {
-		AddPeer addPeer = null;
+		AddPeer addPeer;
 		if (file.get() != null) {
 			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), file.get().getPath());
 		} else if (url.get() != null) {
