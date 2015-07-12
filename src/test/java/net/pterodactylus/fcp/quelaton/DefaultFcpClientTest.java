@@ -893,7 +893,7 @@ public class DefaultFcpClientTest {
 			"volatile.freeJavaMemory=205706528",
 			"EndMessage"
 		);
-		assertThat(nodeData.get().getVolatile("freeJavaMemory").toString(), is("205706528"));
+		assertThat(nodeData.get().getVolatile("freeJavaMemory"), is("205706528"));
 	}
 
 	@Test
@@ -921,7 +921,7 @@ public class DefaultFcpClientTest {
 			"lastGoodVersion=Fred,0.7,1.0,1466",
 			"EndMessage"
 		);
-		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+		assertThat(peer.get().get().getIdentity(), is("id1"));
 	}
 
 	@Test
@@ -949,7 +949,7 @@ public class DefaultFcpClientTest {
 			"lastGoodVersion=Fred,0.7,1.0,1466",
 			"EndMessage"
 		);
-		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+		assertThat(peer.get().get().getIdentity(), is("id1"));
 	}
 
 	@Test
@@ -977,7 +977,7 @@ public class DefaultFcpClientTest {
 			"lastGoodVersion=Fred,0.7,1.0,1466",
 			"EndMessage"
 		);
-		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+		assertThat(peer.get().get().getIdentity(), is("id1"));
 	}
 
 	@Test
@@ -1026,7 +1026,7 @@ public class DefaultFcpClientTest {
 			"lastGoodVersion=Fred,0.7,1.0,1466",
 			"EndMessage"
 		);
-		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+		assertThat(peer.get().get().getIdentity(), is("id1"));
 	}
 
 	@Test
@@ -1053,7 +1053,7 @@ public class DefaultFcpClientTest {
 			"lastGoodVersion=Fred,0.7,1.0,1466",
 			"EndMessage"
 		);
-		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+		assertThat(peer.get().get().getIdentity(), is("id1"));
 	}
 
 	@Test
@@ -1099,7 +1099,7 @@ public class DefaultFcpClientTest {
 			"lastGoodVersion=Fred,0.7,1.0,1466",
 			"EndMessage"
 		);
-		assertThat(peer.get().get().getIdentity().toString(), is("id1"));
+		assertThat(peer.get().get().getIdentity(), is("id1"));
 	}
 
 }
