@@ -38,4 +38,9 @@ public class ListPeerNotes extends FcpMessage {
 		setField("NodeIdentifier", nodeIdentifier);
 	}
 
+	public ListPeerNotes(String identifier, String nodeIdentifier) {
+		this(nodeIdentifier);
+		setField("Identifier", identifier);
+	}
+
 }
