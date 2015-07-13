@@ -50,6 +50,12 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 		return this::execute;
 	}
 
+	@Override
+	public Executable<Optional<Peer>> byIdentity(String nodeIdentity) {
+		nodeIdentifier.set(nodeIdentity);
+		return this::execute;
+	}
+
 	private ListenableFuture<Optional<Peer>> execute() {
 		return threadPool.submit(this::executeSequence);
 	}

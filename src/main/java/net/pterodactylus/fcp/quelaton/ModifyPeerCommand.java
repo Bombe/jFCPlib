@@ -15,5 +15,6 @@ public interface ModifyPeerCommand {
 	ModifyPeerCommand disable();
 
 	Executable<Optional<Peer>> byName(String name);
+	Executable<Optional<Peer>> byIdentity(String nodeIdentity);
 
 }
