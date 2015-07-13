@@ -26,6 +26,7 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 	private final ConnectionSupplier connectionSupplier;
 	private final AtomicReference<String> nodeIdentifier = new AtomicReference<>();
 	private final AtomicReference<Boolean> enabled = new AtomicReference<>();
+	private final AtomicReference<Boolean> allowLocalAddresses = new AtomicReference<>();
 
 	public ModifyPeerCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
@@ -41,6 +42,12 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 	@Override
 	public ModifyPeerCommand disable() {
 		enabled.set(false);
+		return this;
+	}
+
+	@Override
+	public ModifyPeerCommand allowLocalAddresses() {
+		allowLocalAddresses.set(true);
 		return this;
 	}
 
@@ -69,6 +76,7 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 	private Optional<Peer> executeSequence() throws IOException, ExecutionException, InterruptedException {
 		ModifyPeer modifyPeer = new ModifyPeer(new RandomIdentifierGenerator().generate(), nodeIdentifier.get());
 		Optional.ofNullable(enabled.get()).ifPresent(enabled -> modifyPeer.setEnabled(enabled));
+		Optional.ofNullable(allowLocalAddresses.get()).ifPresent(allowed -> modifyPeer.setAllowLocalAddresses(allowed));
 		try (ModifyPeerDialog modifyPeerDialog = new ModifyPeerDialog()) {
 			return modifyPeerDialog.send(modifyPeer).get();
 		}

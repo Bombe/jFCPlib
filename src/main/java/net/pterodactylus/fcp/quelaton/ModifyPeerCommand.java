@@ -13,6 +13,7 @@ public interface ModifyPeerCommand {
 
 	ModifyPeerCommand enable();
 	ModifyPeerCommand disable();
+	ModifyPeerCommand allowLocalAddresses();
 
 	Executable<Optional<Peer>> byName(String name);
 	Executable<Optional<Peer>> byIdentity(String nodeIdentity);

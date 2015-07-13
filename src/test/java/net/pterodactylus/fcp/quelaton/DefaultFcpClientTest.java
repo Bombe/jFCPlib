@@ -5,7 +5,9 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -1325,6 +1327,31 @@ public class DefaultFcpClientTest {
 			"IsDisabled=false",
 			"EndMessage"
 		));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"identity=id1",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity(), is("id1"));
+	}
+
+	@Test
+	public void defaultFcpClientCanAllowLocalAddressesOfPeer()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.modifyPeer().allowLocalAddresses().byIdentity("id1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ModifyPeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id1",
+			"AllowLocalAddresses=true",
+			"EndMessage"
+		));
+		assertThat(lines, not(contains(startsWith("IsDisabled="))));
 		fcpServer.writeLine(
 			"Peer",
 			"Identifier=" + identifier,
