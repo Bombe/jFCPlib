@@ -692,7 +692,7 @@ public class DefaultFcpClientTest {
 		String identifier = extractIdentifier(lines);
 		fcpServer.writeLine(
 			"URIGenerated",
-			"Identifier="+identifier,
+			"Identifier=" + identifier,
 			"URI=KSK@foo.txt",
 			"EndMessage"
 		);
