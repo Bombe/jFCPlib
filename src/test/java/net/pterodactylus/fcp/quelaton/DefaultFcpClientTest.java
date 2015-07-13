@@ -1338,6 +1338,29 @@ public class DefaultFcpClientTest {
 	}
 
 	@Test
+	public void defaultFcpClientCanNotModifyPeerOfUnknownNode()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.modifyPeer().enable().byIdentity("id1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ModifyPeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id1",
+			"IsDisabled=false",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"UnknownNodeIdentifier",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id1",
+			"EndMessage"
+		);
+		assertThat(peer.get().isPresent(), is(false));
+	}
+
+	@Test
 	public void defaultFcpClientCanAllowLocalAddressesOfPeer()
 	throws InterruptedException, ExecutionException, IOException {
 		Future<Optional<Peer>> peer = fcpClient.modifyPeer().allowLocalAddresses().byIdentity("id1").execute();
