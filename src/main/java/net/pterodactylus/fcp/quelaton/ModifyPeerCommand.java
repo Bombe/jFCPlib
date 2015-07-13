@@ -16,5 +16,6 @@ public interface ModifyPeerCommand {
 
 	Executable<Optional<Peer>> byName(String name);
 	Executable<Optional<Peer>> byIdentity(String nodeIdentity);
+	Executable<Optional<Peer>> byHostAndPort(String host, int port);
 
 }

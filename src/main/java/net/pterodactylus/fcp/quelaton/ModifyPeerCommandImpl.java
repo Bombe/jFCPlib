@@ -56,6 +56,12 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 		return this::execute;
 	}
 
+	@Override
+	public Executable<Optional<Peer>> byHostAndPort(String host, int port) {
+		nodeIdentifier.set(String.format("%s:%d", host, port));
+		return this::execute;
+	}
+
 	private ListenableFuture<Optional<Peer>> execute() {
 		return threadPool.submit(this::executeSequence);
 	}
