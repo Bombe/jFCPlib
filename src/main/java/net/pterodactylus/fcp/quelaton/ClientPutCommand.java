@@ -16,8 +16,20 @@ public interface ClientPutCommand {
 
 	ClientPutCommand onKeyGenerated(Consumer<String> keyGenerated);
 	ClientPutCommand named(String targetFilename);
-	WithUri<Executable<Optional<Key>>> redirectTo(String uri);
-	WithUri<Executable<Optional<Key>>> from(File file);
-	WithLength<WithUri<Executable<Optional<Key>>>> from(InputStream inputStream);
+	WithUri redirectTo(String uri);
+	WithUri from(File file);
+	WithLength from(InputStream inputStream);
+
+	interface WithLength {
+
+		WithUri length(long length);
+
+	}
+
+	interface WithUri {
+
+		Executable<Optional<Key>> uri(String uri);
+
+	}
 
 }

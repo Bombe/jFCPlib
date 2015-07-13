@@ -66,24 +66,24 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	}
 
 	@Override
-	public WithUri<Executable<Optional<Key>>> redirectTo(String uri) {
+	public WithUri redirectTo(String uri) {
 		this.redirectUri.set(Objects.requireNonNull(uri, "uri must not be null"));
 		return this::key;
 	}
 
 	@Override
-	public WithUri<Executable<Optional<Key>>> from(File file) {
+	public WithUri from(File file) {
 		this.file.set(Objects.requireNonNull(file, "file must not be null"));
 		return this::key;
 	}
 
 	@Override
-	public WithLength<WithUri<Executable<Optional<Key>>>> from(InputStream inputStream) {
+	public WithLength from(InputStream inputStream) {
 		payload.set(Objects.requireNonNull(inputStream, "inputStream must not be null"));
 		return this::length;
 	}
 
-	private WithUri<Executable<Optional<Key>>> length(long length) {
+	private WithUri length(long length) {
 		this.length.set(length);
 		return this::key;
 	}
