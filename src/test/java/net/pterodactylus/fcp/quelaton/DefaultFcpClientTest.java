@@ -1265,4 +1265,27 @@ public class DefaultFcpClientTest {
 		assertThat(peer.get().get().getIdentity(), is("id1"));
 	}
 
+	@Test
+	public void defaultFcpClientCanDisablePeerByName() throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.modifyPeer().disable().byName("Friend1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ModifyPeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"IsDisabled=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"identity=id1",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity(), is("id1"));
+	}
+
 }

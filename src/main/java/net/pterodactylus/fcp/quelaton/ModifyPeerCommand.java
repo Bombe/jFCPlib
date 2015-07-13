@@ -12,6 +12,8 @@ import net.pterodactylus.fcp.Peer;
 public interface ModifyPeerCommand {
 
 	ModifyPeerCommand enable();
+	ModifyPeerCommand disable();
+
 	Executable<Optional<Peer>> byName(String name);
 
 }
