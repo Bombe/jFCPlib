@@ -1387,4 +1387,30 @@ public class DefaultFcpClientTest {
 		assertThat(peer.get().get().getIdentity(), is("id1"));
 	}
 
+	@Test
+	public void defaultFcpClientCanSetBurstOnlyForPeer()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.modifyPeer().setBurstOnly().byIdentity("id1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ModifyPeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id1",
+			"IsBurstOnly=true",
+			"EndMessage"
+		));
+		assertThat(lines, not(contains(startsWith("AllowLocalAddresses="))));
+		assertThat(lines, not(contains(startsWith("IsDisabled="))));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"identity=id1",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity(), is("id1"));
+	}
+
 }
