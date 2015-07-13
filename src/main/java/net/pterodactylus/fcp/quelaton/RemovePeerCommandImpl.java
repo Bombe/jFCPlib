@@ -36,6 +36,12 @@ public class RemovePeerCommandImpl implements RemovePeerCommand {
 		return this::execute;
 	}
 
+	@Override
+	public Executable<Boolean> byIdentity(String nodeIdentity) {
+		nodeIdentifier.set(nodeIdentity);
+		return this::execute;
+	}
+
 	private ListenableFuture<Boolean> execute() {
 		return threadPool.submit(this::executeDialog);
 	}

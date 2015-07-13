@@ -8,5 +8,6 @@ package net.pterodactylus.fcp.quelaton;
 public interface RemovePeerCommand {
 
 	Executable<Boolean> byName(String name);
+	Executable<Boolean> byIdentity(String nodeIdentity);
 
 }
