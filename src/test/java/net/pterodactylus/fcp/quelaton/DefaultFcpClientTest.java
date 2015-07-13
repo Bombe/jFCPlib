@@ -29,6 +29,7 @@ import net.pterodactylus.fcp.Key;
 import net.pterodactylus.fcp.NodeData;
 import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
+import net.pterodactylus.fcp.PeerNote;
 import net.pterodactylus.fcp.Priority;
 import net.pterodactylus.fcp.fake.FakeTcpServer;
 import net.pterodactylus.fcp.quelaton.ClientGetCommand.Data;
@@ -1131,6 +1132,114 @@ public class DefaultFcpClientTest {
 			"EndMessage"
 		);
 		assertThat(peer.get().get().getIdentity(), is("id1"));
+	}
+
+	@Test
+	public void listPeerNotesCanGetPeerNotesByNodeName() throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byName("Friend1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ListPeerNotes",
+			"NodeIdentifier=Friend1",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"PeerNote",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"NoteText=RXhhbXBsZSBUZXh0Lg==",
+			"PeerNoteType=1",
+			"EndMessage"
+		);
+		fcpServer.writeLine(
+			"EndListPeerNotes",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		assertThat(peerNote.get().get().getNoteText(), is("RXhhbXBsZSBUZXh0Lg=="));
+		assertThat(peerNote.get().get().getPeerNoteType(), is(1));
+	}
+
+	@Test
+	public void listPeerNotesReturnsEmptyOptionalWhenNodeIdenfierUnknown()
+	throws InterruptedException, ExecutionException,
+	IOException {
+		Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byName("Friend1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ListPeerNotes",
+			"NodeIdentifier=Friend1",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"UnknownNodeIdentifier",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"EndMessage"
+		);
+		assertThat(peerNote.get().isPresent(), is(false));
+	}
+
+	@Test
+	public void listPeerNotesCanGetPeerNotesByNodeIdentifier()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byIdentity("id1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ListPeerNotes",
+			"NodeIdentifier=id1",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"PeerNote",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id1",
+			"NoteText=RXhhbXBsZSBUZXh0Lg==",
+			"PeerNoteType=1",
+			"EndMessage"
+		);
+		fcpServer.writeLine(
+			"EndListPeerNotes",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		assertThat(peerNote.get().get().getNoteText(), is("RXhhbXBsZSBUZXh0Lg=="));
+		assertThat(peerNote.get().get().getPeerNoteType(), is(1));
+	}
+
+	@Test
+	public void listPeerNotesCanGetPeerNotesByHostNameAndPortNumber()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byHostAndPort("1.2.3.4", 5678).execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ListPeerNotes",
+			"NodeIdentifier=1.2.3.4:5678",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"PeerNote",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id1",
+			"NoteText=RXhhbXBsZSBUZXh0Lg==",
+			"PeerNoteType=1",
+			"EndMessage"
+		);
+		fcpServer.writeLine(
+			"EndListPeerNotes",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		assertThat(peerNote.get().get().getNoteText(), is("RXhhbXBsZSBUZXh0Lg=="));
+		assertThat(peerNote.get().get().getPeerNoteType(), is(1));
 	}
 
 }

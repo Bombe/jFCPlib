@@ -15,5 +15,6 @@ public interface FcpClient {
 	ListPeerCommand listPeer();
 	ListPeersCommand listPeers();
 	AddPeerCommand addPeer();
+	ListPeerNotesCommand listPeerNotes();
 
 }
