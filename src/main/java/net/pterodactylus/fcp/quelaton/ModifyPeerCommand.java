@@ -19,6 +19,7 @@ public interface ModifyPeerCommand {
 	ModifyPeerCommand clearBurstOnly();
 	ModifyPeerCommand setListenOnly();
 	ModifyPeerCommand clearListenOnly();
+	ModifyPeerCommand ignoreSource();
 
 	Executable<Optional<Peer>> byName(String name);
 	Executable<Optional<Peer>> byIdentity(String nodeIdentity);

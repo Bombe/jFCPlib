@@ -29,6 +29,7 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 	private final AtomicReference<Boolean> allowLocalAddresses = new AtomicReference<>();
 	private final AtomicReference<Boolean> burstOnly = new AtomicReference<>();
 	private final AtomicReference<Boolean> listenOnly = new AtomicReference<>();
+	private final AtomicReference<Boolean> ignoreSource = new AtomicReference<>();
 
 	public ModifyPeerCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
@@ -84,6 +85,12 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 	}
 
 	@Override
+	public ModifyPeerCommand ignoreSource() {
+		ignoreSource.set(true);
+		return this;
+	}
+
+	@Override
 	public Executable<Optional<Peer>> byName(String name) {
 		nodeIdentifier.set(name);
 		return this::execute;
@@ -111,6 +118,7 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 		Optional.ofNullable(allowLocalAddresses.get()).ifPresent(allowed -> modifyPeer.setAllowLocalAddresses(allowed));
 		Optional.ofNullable(burstOnly.get()).ifPresent(burstOnly -> modifyPeer.setBurstOnly(burstOnly));
 		Optional.ofNullable(listenOnly.get()).ifPresent(listenOnly -> modifyPeer.setListenOnly(listenOnly));
+		Optional.ofNullable(ignoreSource.get()).ifPresent(ignoreSource -> modifyPeer.setIgnoreSource(ignoreSource));
 		try (ModifyPeerDialog modifyPeerDialog = new ModifyPeerDialog()) {
 			return modifyPeerDialog.send(modifyPeer).get();
 		}
