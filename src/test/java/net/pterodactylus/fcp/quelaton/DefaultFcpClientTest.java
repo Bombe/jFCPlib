@@ -1242,4 +1242,27 @@ public class DefaultFcpClientTest {
 		assertThat(peerNote.get().get().getPeerNoteType(), is(1));
 	}
 
+	@Test
+	public void defaultFcpClientCanEnablePeerByName() throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.modifyPeer().enable().byName("Friend1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ModifyPeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"IsDisabled=false",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"identity=id1",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity(), is("id1"));
+	}
+
 }

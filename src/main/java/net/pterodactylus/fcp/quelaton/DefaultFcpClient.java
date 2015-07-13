@@ -1,12 +1,14 @@
 package net.pterodactylus.fcp.quelaton;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.FcpConnection;
+import net.pterodactylus.fcp.Peer;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -82,6 +84,11 @@ public class DefaultFcpClient implements FcpClient {
 	@Override
 	public AddPeerCommand addPeer() {
 		return new AddPeerCommandImpl(threadPool, this::connect);
+	}
+
+	@Override
+	public ModifyPeerCommand modifyPeer() {
+		return new ModifyPeerCommandImpl(threadPool, this::connect);
 	}
 
 	@Override
