@@ -52,6 +52,12 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 	}
 
 	@Override
+	public ModifyPeerCommand disallowLocalAddresses() {
+		allowLocalAddresses.set(false);
+		return this;
+	}
+
+	@Override
 	public Executable<Optional<Peer>> byName(String name) {
 		nodeIdentifier.set(name);
 		return this::execute;

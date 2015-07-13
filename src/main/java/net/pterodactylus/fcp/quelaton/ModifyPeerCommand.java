@@ -14,6 +14,7 @@ public interface ModifyPeerCommand {
 	ModifyPeerCommand enable();
 	ModifyPeerCommand disable();
 	ModifyPeerCommand allowLocalAddresses();
+	ModifyPeerCommand disallowLocalAddresses();
 
 	Executable<Optional<Peer>> byName(String name);
 	Executable<Optional<Peer>> byIdentity(String nodeIdentity);
