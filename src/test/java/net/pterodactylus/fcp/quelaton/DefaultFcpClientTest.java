@@ -1521,4 +1521,32 @@ public class DefaultFcpClientTest {
 		assertThat(peer.get().get().getIdentity(), is("id1"));
 	}
 
+	@Test
+	public void defaultFcpClientCanUseSourceForPeer()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Optional<Peer>> peer = fcpClient.modifyPeer().useSource().byIdentity("id1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ModifyPeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id1",
+			"IgnoreSourcePort=false",
+			"EndMessage"
+		));
+		assertThat(lines, not(contains(startsWith("AllowLocalAddresses="))));
+		assertThat(lines, not(contains(startsWith("IsDisabled="))));
+		assertThat(lines, not(contains(startsWith("IsBurstOnly="))));
+		assertThat(lines, not(contains(startsWith("IsListenOnly="))));
+		fcpServer.writeLine(
+			"Peer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"identity=id1",
+			"EndMessage"
+		);
+		assertThat(peer.get().get().getIdentity(), is("id1"));
+	}
+
 }
