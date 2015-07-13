@@ -1594,6 +1594,27 @@ public class DefaultFcpClientTest {
 	}
 
 	@Test
+	public void defaultFcpClientCanNotRemovePeerByInvalidName()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Boolean> peer = fcpClient.removePeer().byName("NotFriend1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"RemovePeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=NotFriend1",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"UnknownNodeIdentifier",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		assertThat(peer.get(), is(false));
+	}
+
+	@Test
 	public void defaultFcpClientCanRemovePeerByIdentity() throws InterruptedException, ExecutionException, IOException {
 		Future<Boolean> peer = fcpClient.removePeer().byIdentity("id1").execute();
 		connectNode();
