@@ -44,8 +44,8 @@ public class ClientHelloImpl {
 		FcpConnection connection = new FcpConnection(hostname, port);
 		connection.connect();
 		ClientHello clientHello = new ClientHello(clientName.get(), "2.0");
-		try (ClientHelloDialog nodeHelloSequence = new ClientHelloDialog(connection)) {
-			if (nodeHelloSequence.send(clientHello).get()) {
+		try (ClientHelloDialog clientHelloDialog = new ClientHelloDialog(connection)) {
+			if (clientHelloDialog.send(clientHello).get()) {
 				return connection;
 			}
 		} catch (InterruptedException | ExecutionException e) {

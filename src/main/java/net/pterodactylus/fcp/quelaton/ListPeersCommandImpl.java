@@ -46,10 +46,10 @@ public class ListPeersCommandImpl implements ListPeersCommand {
 
 	@Override
 	public ListenableFuture<Collection<Peer>> execute() {
-		return threadPool.submit(this::executeSequence);
+		return threadPool.submit(this::executeDialog);
 	}
 
-	private Collection<Peer> executeSequence() throws InterruptedException, ExecutionException, IOException {
+	private Collection<Peer> executeDialog() throws InterruptedException, ExecutionException, IOException {
 		String identifier = new RandomIdentifierGenerator().generate();
 		ListPeers listPeers = new ListPeers(identifier, includeMetadata.get(), includeVolatile.get());
 		try (ListPeersDialog listPeersDialog = new ListPeersDialog()) {

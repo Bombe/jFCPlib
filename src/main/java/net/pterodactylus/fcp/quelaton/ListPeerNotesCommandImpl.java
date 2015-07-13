@@ -51,10 +51,10 @@ public class ListPeerNotesCommandImpl implements ListPeerNotesCommand {
 	}
 
 	private ListenableFuture<Optional<PeerNote>> execute() {
-		return threadPool.submit(this::executeSequence);
+		return threadPool.submit(this::executeDialog);
 	}
 
-	private Optional<PeerNote> executeSequence() throws IOException, ExecutionException, InterruptedException {
+	private Optional<PeerNote> executeDialog() throws IOException, ExecutionException, InterruptedException {
 		ListPeerNotes listPeerNotes =
 			new ListPeerNotes(new RandomIdentifierGenerator().generate(), nodeIdentifier.get());
 		try (ListPeerNotesDialog listPeerNotesDialog = new ListPeerNotesDialog()) {

@@ -57,7 +57,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * An FCP reply sequence enables you to conveniently wait for a specific set of FCP replies.
+ * An FCP dialog enables you to conveniently wait for a specific set of FCP replies.
  *
  * @author <a href="bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */

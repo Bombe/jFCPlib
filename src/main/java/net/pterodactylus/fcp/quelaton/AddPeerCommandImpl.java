@@ -55,10 +55,10 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 	}
 
 	private ListenableFuture<Optional<Peer>> execute() {
-		return threadPool.submit(this::executeSequence);
+		return threadPool.submit(this::executeDialog);
 	}
 
-	private Optional<Peer> executeSequence() throws IOException, ExecutionException, InterruptedException {
+	private Optional<Peer> executeDialog() throws IOException, ExecutionException, InterruptedException {
 		AddPeer addPeer;
 		if (file.get() != null) {
 			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), file.get().getPath());
@@ -67,17 +67,17 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 		} else {
 			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), nodeRef.get());
 		}
-		try (AddPeerSequence addPeerSequence = new AddPeerSequence()) {
-			return addPeerSequence.send(addPeer).get();
+		try (AddPeerDialog addPeerDialog = new AddPeerDialog()) {
+			return addPeerDialog.send(addPeer).get();
 		}
 	}
 
-	private class AddPeerSequence extends FcpDialog<Optional<Peer>> {
+	private class AddPeerDialog extends FcpDialog<Optional<Peer>> {
 
 		private final AtomicBoolean finished = new AtomicBoolean();
 		private final AtomicReference<Peer> peer = new AtomicReference<>();
 
-		public AddPeerSequence() throws IOException {
+		public AddPeerDialog() throws IOException {
 			super(threadPool, connectionSupplier.get());
 		}
 

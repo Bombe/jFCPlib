@@ -115,10 +115,10 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 	}
 
 	private ListenableFuture<Optional<Peer>> execute() {
-		return threadPool.submit(this::executeSequence);
+		return threadPool.submit(this::executeDialog);
 	}
 
-	private Optional<Peer> executeSequence() throws IOException, ExecutionException, InterruptedException {
+	private Optional<Peer> executeDialog() throws IOException, ExecutionException, InterruptedException {
 		ModifyPeer modifyPeer = new ModifyPeer(new RandomIdentifierGenerator().generate(), nodeIdentifier.get());
 		Optional.ofNullable(enabled.get()).ifPresent(enabled -> modifyPeer.setEnabled(enabled));
 		Optional.ofNullable(allowLocalAddresses.get()).ifPresent(allowed -> modifyPeer.setAllowLocalAddresses(allowed));

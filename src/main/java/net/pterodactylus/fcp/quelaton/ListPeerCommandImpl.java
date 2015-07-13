@@ -48,22 +48,22 @@ public class ListPeerCommandImpl implements ListPeerCommand {
 	}
 
 	private ListenableFuture<Optional<Peer>> execute() {
-		return threadPool.submit(this::executeSequence);
+		return threadPool.submit(this::executeDialog);
 	}
 
-	private Optional<Peer> executeSequence() throws IOException, ExecutionException, InterruptedException {
+	private Optional<Peer> executeDialog() throws IOException, ExecutionException, InterruptedException {
 		ListPeer listPeer = new ListPeer(new RandomIdentifierGenerator().generate(), nodeIdentifier.get());
-		try (ListPeerSequence listPeerSequence = new ListPeerSequence()) {
-			return Optional.ofNullable(listPeerSequence.send(listPeer).get());
+		try (ListPeerDialog listPeerDialog = new ListPeerDialog()) {
+			return Optional.ofNullable(listPeerDialog.send(listPeer).get());
 		}
 	}
 
-	private class ListPeerSequence extends FcpDialog<Peer> {
+	private class ListPeerDialog extends FcpDialog<Peer> {
 
 		private final AtomicBoolean finished = new AtomicBoolean();
 		private final AtomicReference<Peer> peer = new AtomicReference<>();
 
-		public ListPeerSequence() throws IOException {
+		public ListPeerDialog() throws IOException {
 			super(threadPool, connectionSupplier.get());
 		}
 

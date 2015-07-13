@@ -51,10 +51,10 @@ public class GetNodeCommandImpl implements GetNodeCommand {
 
 	@Override
 	public ListenableFuture<NodeData> execute() {
-		return threadPool.submit(this::executeSequence);
+		return threadPool.submit(this::executeDialog);
 	}
 
-	private NodeData executeSequence() throws InterruptedException, ExecutionException, IOException {
+	private NodeData executeDialog() throws InterruptedException, ExecutionException, IOException {
 		GetNode getNode = new GetNode(new RandomIdentifierGenerator().generate(), giveOpennetRef.get(),
 			includePrivate.get(), includeVolatile.get());
 		try (GetNodeDialog getNodeDialog = new GetNodeDialog()) {

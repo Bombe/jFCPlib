@@ -30,10 +30,10 @@ class GenerateKeypairCommandImpl implements GenerateKeypairCommand {
 
 	@Override
 	public ListenableFuture<FcpKeyPair> execute() {
-		return threadPool.submit(this::executeSequence);
+		return threadPool.submit(this::executeDialog);
 	}
 
-	private FcpKeyPair executeSequence() throws InterruptedException, ExecutionException, IOException {
+	private FcpKeyPair executeDialog() throws InterruptedException, ExecutionException, IOException {
 		try (FcpKeyPairDialog fcpKeyPairDialog = new FcpKeyPairDialog()) {
 			return fcpKeyPairDialog.send(new GenerateSSK()).get();
 		}
