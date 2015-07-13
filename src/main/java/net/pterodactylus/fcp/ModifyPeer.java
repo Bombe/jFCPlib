@@ -36,14 +36,34 @@ public class ModifyPeer extends FcpMessage {
 		super("ModifyPeer");
 		setField("NodeIdentifier", nodeIdentifier);
 		if (allowLocalAddresses != null) {
-			setField("AllowLocalAddresses", String.valueOf(allowLocalAddresses));
+			setAllowLocalAddresses(allowLocalAddresses);
 		}
 		if (disabled != null) {
-			setField("IsDisabled", String.valueOf(disabled));
+			setEnabled(!disabled);
 		}
 		if (listenOnly != null) {
-			setField("IsListenOnly", String.valueOf(listenOnly));
+			setListenOnly(listenOnly);
 		}
+	}
+
+	public void setAllowLocalAddresses(boolean allowLocalAddresses) {
+		setField("AllowLocalAddresses", String.valueOf(allowLocalAddresses));
+	}
+
+	public void setEnabled(boolean enabled) {
+		setField("IsDisabled", String.valueOf(!enabled));
+	}
+
+	public void setListenOnly(boolean listenOnly) {
+		setField("IsListenOnly", String.valueOf(listenOnly));
+	}
+
+	public void setBurstOnly(boolean burstOnly) {
+		setField("IsBurstOnly", String.valueOf(burstOnly));
+	}
+
+	public void setIgnoreSource(boolean ignoreSource) {
+		setField("IgnoreSourcePort", String.valueOf(ignoreSource));
 	}
 
 }
