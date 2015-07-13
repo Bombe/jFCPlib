@@ -1614,4 +1614,26 @@ public class DefaultFcpClientTest {
 		assertThat(peer.get(), is(true));
 	}
 
+	@Test
+	public void defaultFcpClientCanRemovePeerByHostAndPort()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Boolean> peer = fcpClient.removePeer().byHostAndPort("1.2.3.4", 5678).execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"RemovePeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=1.2.3.4:5678",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"PeerRemoved",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"EndMessage"
+		);
+		assertThat(peer.get(), is(true));
+	}
+
 }

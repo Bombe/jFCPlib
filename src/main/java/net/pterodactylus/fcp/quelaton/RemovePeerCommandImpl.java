@@ -42,6 +42,12 @@ public class RemovePeerCommandImpl implements RemovePeerCommand {
 		return this::execute;
 	}
 
+	@Override
+	public Executable<Boolean> byHostAndPort(String host, int port) {
+		nodeIdentifier.set(String.format("%s:%d", host, port));
+		return this::execute;
+	}
+
 	private ListenableFuture<Boolean> execute() {
 		return threadPool.submit(this::executeDialog);
 	}

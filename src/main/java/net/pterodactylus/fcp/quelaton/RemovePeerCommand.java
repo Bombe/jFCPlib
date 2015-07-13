@@ -9,5 +9,6 @@ public interface RemovePeerCommand {
 
 	Executable<Boolean> byName(String name);
 	Executable<Boolean> byIdentity(String nodeIdentity);
+	Executable<Boolean> byHostAndPort(String host, int port);
 
 }
