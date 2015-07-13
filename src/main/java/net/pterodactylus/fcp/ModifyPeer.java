@@ -25,20 +25,13 @@ package net.pterodactylus.fcp;
  */
 public class ModifyPeer extends FcpMessage {
 
-	/**
-	 * Creates a new “ModifyPeer” request. All Boolean parameters may be null
-	 * to not influence the current setting.
-	 *
-	 * @param nodeIdentifier
-	 *            The identifier of the node, i.e. name, identity, or IP
-	 *            address and port
-	 * @param allowLocalAddresses
-	 *            Whether to allow local addresses from this node
-	 * @param disabled
-	 *            Whether the node is disabled
-	 * @param listenOnly
-	 *            Whether your node should not try to connect the node
-	 */
+	public ModifyPeer(String identifier, String nodeIdentifier) {
+		super("ModifyPeer");
+		setField("Identifier", identifier);
+		setField("NodeIdentifier", nodeIdentifier);
+	}
+
+	@Deprecated
 	public ModifyPeer(String nodeIdentifier, Boolean allowLocalAddresses, Boolean disabled, Boolean listenOnly) {
 		super("ModifyPeer");
 		setField("NodeIdentifier", nodeIdentifier);
