@@ -1572,4 +1572,25 @@ public class DefaultFcpClientTest {
 		assertThat(peer.get().get().getIdentity(), is("id1"));
 	}
 
+	@Test
+	public void defaultFcpClientCanRemovePeerByName() throws InterruptedException, ExecutionException, IOException {
+		Future<Boolean> peer = fcpClient.removePeer().byName("Friend1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"RemovePeer",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"PeerRemoved",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"EndMessage"
+		);
+		assertThat(peer.get(), is(true));
+	}
+
 }

@@ -92,6 +92,11 @@ public class DefaultFcpClient implements FcpClient {
 	}
 
 	@Override
+	public RemovePeerCommand removePeer() {
+		return new RemovePeerCommandImpl(threadPool, this::connect);
+	}
+
+	@Override
 	public ListPeerNotesCommand listPeerNotes() {
 		return new ListPeerNotesCommandImpl(threadPool, this::connect);
 	}
