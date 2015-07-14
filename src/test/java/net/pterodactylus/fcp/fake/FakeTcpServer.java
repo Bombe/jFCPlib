@@ -3,7 +3,6 @@ package net.pterodactylus.fcp.fake;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
@@ -53,7 +52,10 @@ public class FakeTcpServer implements AutoCloseable {
 
 	@Override
 	public void close() throws IOException {
-		clientSocket.get().close();
+		TextSocket textSocket = clientSocket.get();
+		if (textSocket != null) {
+			textSocket.close();
+		}
 	}
 
 }
