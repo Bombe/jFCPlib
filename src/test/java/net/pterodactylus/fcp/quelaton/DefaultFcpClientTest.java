@@ -1832,4 +1832,26 @@ public class DefaultFcpClientTest {
 		assertThat(configData.get().getDefault("foo"), is("bar"));
 	}
 
+	@Test
+	public void defaultFcpClientCanGetConfigWithSortOrder()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<ConfigData> configData = fcpClient.getConfig().withSortOrder().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetConfig",
+			"Identifier=" + identifier,
+			"WithSortOrder=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"ConfigData",
+			"Identifier=" + identifier,
+			"sortOrder.foo=17",
+			"EndMessage"
+		);
+		assertThat(configData.get().getSortOrder("foo"), is(17));
+	}
+
 }
