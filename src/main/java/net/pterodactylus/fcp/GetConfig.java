@@ -33,6 +33,11 @@ public class GetConfig extends FcpMessage {
 		super("GetConfig");
 	}
 
+	public GetConfig(String identifer) {
+		this();
+		setField("Identifier", identifer);
+	}
+
 	/**
 	 * Sets whether the {@link ConfigData} result message shall include the
 	 * current values.
