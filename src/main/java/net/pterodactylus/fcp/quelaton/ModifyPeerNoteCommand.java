@@ -11,5 +11,6 @@ public interface ModifyPeerNoteCommand {
 
 	Executable<Boolean> byName(String name);
 	Executable<Boolean> byIdentifier(String identifier);
+	Executable<Boolean> byHostAndPort(String host, int port);
 
 }
