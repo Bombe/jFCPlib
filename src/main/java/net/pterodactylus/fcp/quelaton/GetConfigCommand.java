@@ -14,5 +14,6 @@ public interface GetConfigCommand extends Executable<ConfigData> {
 	GetConfigCommand withSortOrder();
 	GetConfigCommand withExpertFlag();
 	GetConfigCommand withForceWriteFlag();
+	GetConfigCommand withShortDescription();
 
 }

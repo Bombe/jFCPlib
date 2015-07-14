@@ -1898,4 +1898,26 @@ public class DefaultFcpClientTest {
 		assertThat(configData.get().getForceWriteFlag("foo"), is(true));
 	}
 
+	@Test
+	public void defaultFcpClientCanGetConfigWithShortDescription()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<ConfigData> configData = fcpClient.getConfig().withShortDescription().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetConfig",
+			"Identifier=" + identifier,
+			"WithShortDescription=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"ConfigData",
+			"Identifier=" + identifier,
+			"shortDescription.foo=bar",
+			"EndMessage"
+		);
+		assertThat(configData.get().getShortDescription("foo"), is("bar"));
+	}
+
 }
