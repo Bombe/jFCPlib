@@ -1942,4 +1942,26 @@ public class DefaultFcpClientTest {
 		assertThat(configData.get().getLongDescription("foo"), is("bar"));
 	}
 
+	@Test
+	public void defaultFcpClientCanGetConfigWithDataTypes()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<ConfigData> configData = fcpClient.getConfig().withDataTypes().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetConfig",
+			"Identifier=" + identifier,
+			"WithDataTypes=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"ConfigData",
+			"Identifier=" + identifier,
+			"dataType.foo=number",
+			"EndMessage"
+		);
+		assertThat(configData.get().getDataType("foo"), is("number"));
+	}
+
 }
