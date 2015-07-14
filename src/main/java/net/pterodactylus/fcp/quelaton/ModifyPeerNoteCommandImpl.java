@@ -49,6 +49,12 @@ public class ModifyPeerNoteCommandImpl implements ModifyPeerNoteCommand {
 		return this::execute;
 	}
 
+	@Override
+	public Executable<Boolean> byIdentifier(String identifier) {
+		nodeIdentifier.set(identifier);
+		return this::execute;
+	}
+
 	private ListenableFuture<Boolean> execute() {
 		if (darknetComment.get() == null) {
 			return Futures.immediateFuture(false);

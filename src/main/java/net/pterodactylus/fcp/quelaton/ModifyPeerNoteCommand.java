@@ -10,5 +10,6 @@ public interface ModifyPeerNoteCommand {
 	ModifyPeerNoteCommand darknetComment(String text);
 
 	Executable<Boolean> byName(String name);
+	Executable<Boolean> byIdentifier(String identifier);
 
 }

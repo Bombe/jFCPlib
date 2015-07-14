@@ -1714,4 +1714,30 @@ public class DefaultFcpClientTest {
 		assertThat(noteUpdated.get(), is(false));
 	}
 
+	@Test
+	public void defaultFcpClientCanModifyPeerNoteByIdentifier()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Boolean> noteUpdated = fcpClient.modifyPeerNote().darknetComment("foo").byIdentifier("id1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ModifyPeerNote",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id1",
+			"PeerNoteType=1",
+			"NoteText=Zm9v",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"PeerNote",
+			"Identifier=" + identifier,
+			"NodeIdentifier=id1",
+			"NoteText=Zm9v",
+			"PeerNoteType=1",
+			"EndMessage"
+		);
+		assertThat(noteUpdated.get(), is(true));
+	}
+
 }
