@@ -1876,4 +1876,26 @@ public class DefaultFcpClientTest {
 		assertThat(configData.get().getExpertFlag("foo"), is(true));
 	}
 
+	@Test
+	public void defaultFcpClientCanGetConfigWithForceWriteFlag()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<ConfigData> configData = fcpClient.getConfig().withForceWriteFlag().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetConfig",
+			"Identifier=" + identifier,
+			"WithForceWriteFlag=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"ConfigData",
+			"Identifier=" + identifier,
+			"forceWriteFlag.foo=true",
+			"EndMessage"
+		);
+		assertThat(configData.get().getForceWriteFlag("foo"), is(true));
+	}
+
 }

@@ -26,6 +26,7 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 	private final AtomicBoolean withDefaults = new AtomicBoolean();
 	private final AtomicBoolean withSortOrder = new AtomicBoolean();
 	private final AtomicBoolean withExpertFlag = new AtomicBoolean();
+	private final AtomicBoolean withForceWriteFlag = new AtomicBoolean();
 
 	public GetConfigCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
@@ -57,6 +58,12 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 	}
 
 	@Override
+	public GetConfigCommand withForceWriteFlag() {
+		withForceWriteFlag.set(true);
+		return this;
+	}
+
+	@Override
 	public ListenableFuture<ConfigData> execute() {
 		return threadPool.submit(this::executeDialog);
 	}
@@ -67,6 +74,7 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 		getConfig.setWithDefaults(withDefaults.get());
 		getConfig.setWithSortOrder(withSortOrder.get());
 		getConfig.setWithExpertFlag(withExpertFlag.get());
+		getConfig.setWithForceWriteFlag(withForceWriteFlag.get());
 		try (GetConfigDialog getConfigDialog = new GetConfigDialog()) {
 			return getConfigDialog.send(getConfig).get();
 		}
