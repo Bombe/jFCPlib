@@ -1788,4 +1788,26 @@ public class DefaultFcpClientTest {
 		assertThat(configData.get(), notNullValue());
 	}
 
+	@Test
+	public void defaultFcpClientCanGetConfigWithCurrent()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<ConfigData> configData = fcpClient.getConfig().withCurrent().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetConfig",
+			"Identifier=" + identifier,
+			"WithCurrent=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"ConfigData",
+			"Identifier=" + identifier,
+			"current.foo=bar",
+			"EndMessage"
+		);
+		assertThat(configData.get().getCurrent("foo"), is("bar"));
+	}
+
 }

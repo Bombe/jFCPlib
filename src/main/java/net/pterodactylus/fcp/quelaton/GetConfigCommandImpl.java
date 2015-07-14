@@ -3,6 +3,7 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.ConfigData;
@@ -21,10 +22,17 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final AtomicBoolean withCurrent = new AtomicBoolean();
 
 	public GetConfigCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+	}
+
+	@Override
+	public GetConfigCommand withCurrent() {
+		withCurrent.set(true);
+		return this;
 	}
 
 	@Override
@@ -34,6 +42,7 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 
 	private ConfigData executeDialog() throws IOException, ExecutionException, InterruptedException {
 		GetConfig getConfig = new GetConfig(new RandomIdentifierGenerator().generate());
+		getConfig.setWithCurrent(withCurrent.get());
 		try (GetConfigDialog getConfigDialog = new GetConfigDialog()) {
 			return getConfigDialog.send(getConfig).get();
 		}
