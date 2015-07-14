@@ -1854,4 +1854,26 @@ public class DefaultFcpClientTest {
 		assertThat(configData.get().getSortOrder("foo"), is(17));
 	}
 
+	@Test
+	public void defaultFcpClientCanGetConfigWithExpertFlag()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<ConfigData> configData = fcpClient.getConfig().withExpertFlag().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetConfig",
+			"Identifier=" + identifier,
+			"WithExpertFlag=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"ConfigData",
+			"Identifier=" + identifier,
+			"expertFlag.foo=true",
+			"EndMessage"
+		);
+		assertThat(configData.get().getExpertFlag("foo"), is(true));
+	}
+
 }
