@@ -23,6 +23,7 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
 	private final AtomicBoolean withCurrent = new AtomicBoolean();
+	private final AtomicBoolean withDefaults = new AtomicBoolean();
 
 	public GetConfigCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
@@ -36,6 +37,12 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 	}
 
 	@Override
+	public GetConfigCommand withDefaults() {
+		withDefaults.set(true);
+		return this;
+	}
+
+	@Override
 	public ListenableFuture<ConfigData> execute() {
 		return threadPool.submit(this::executeDialog);
 	}
@@ -43,6 +50,7 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 	private ConfigData executeDialog() throws IOException, ExecutionException, InterruptedException {
 		GetConfig getConfig = new GetConfig(new RandomIdentifierGenerator().generate());
 		getConfig.setWithCurrent(withCurrent.get());
+		getConfig.setWithDefaults(withDefaults.get());
 		try (GetConfigDialog getConfigDialog = new GetConfigDialog()) {
 			return getConfigDialog.send(getConfig).get();
 		}

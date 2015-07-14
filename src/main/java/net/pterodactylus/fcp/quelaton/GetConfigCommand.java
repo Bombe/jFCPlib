@@ -10,5 +10,6 @@ import net.pterodactylus.fcp.ConfigData;
 public interface GetConfigCommand extends Executable<ConfigData> {
 
 	GetConfigCommand withCurrent();
+	GetConfigCommand withDefaults();
 
 }

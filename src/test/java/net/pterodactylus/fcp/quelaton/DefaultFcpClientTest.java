@@ -1810,4 +1810,26 @@ public class DefaultFcpClientTest {
 		assertThat(configData.get().getCurrent("foo"), is("bar"));
 	}
 
+	@Test
+	public void defaultFcpClientCanGetConfigWithDefaults()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<ConfigData> configData = fcpClient.getConfig().withDefaults().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetConfig",
+			"Identifier=" + identifier,
+			"WithDefaults=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"ConfigData",
+			"Identifier=" + identifier,
+			"default.foo=bar",
+			"EndMessage"
+		);
+		assertThat(configData.get().getDefault("foo"), is("bar"));
+	}
+
 }
