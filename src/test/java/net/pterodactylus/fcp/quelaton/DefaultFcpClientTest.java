@@ -25,6 +25,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import net.pterodactylus.fcp.ARK;
+import net.pterodactylus.fcp.ConfigData;
 import net.pterodactylus.fcp.DSAGroup;
 import net.pterodactylus.fcp.FcpKeyPair;
 import net.pterodactylus.fcp.Key;
@@ -1765,6 +1766,26 @@ public class DefaultFcpClientTest {
 			"EndMessage"
 		);
 		assertThat(noteUpdated.get(), is(true));
+	}
+
+	@Test
+	public void defaultFcpClientCanGetConfigWithoutDetails()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<ConfigData> configData = fcpClient.getConfig().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetConfig",
+			"Identifier=" + identifier,
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"ConfigData",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		assertThat(configData.get(), notNullValue());
 	}
 
 }
