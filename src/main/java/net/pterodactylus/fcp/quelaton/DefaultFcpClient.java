@@ -101,5 +101,10 @@ public class DefaultFcpClient implements FcpClient {
 		return new ListPeerNotesCommandImpl(threadPool, this::connect);
 	}
 
+	@Override
+	public ModifyPeerNoteCommand modifyPeerNote() {
+		return new ModifyPeerNoteCommandImpl(threadPool, this::connect);
+	}
+
 }
 

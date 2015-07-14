@@ -1657,4 +1657,61 @@ public class DefaultFcpClientTest {
 		assertThat(peer.get(), is(true));
 	}
 
+	@Test
+	public void defaultFcpClientCanModifyPeerNoteByName()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Boolean> noteUpdated = fcpClient.modifyPeerNote().darknetComment("foo").byName("Friend1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ModifyPeerNote",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"PeerNoteType=1",
+			"NoteText=Zm9v",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"PeerNote",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"NoteText=Zm9v",
+			"PeerNoteType=1",
+			"EndMessage"
+		);
+		assertThat(noteUpdated.get(), is(true));
+	}
+
+	@Test
+	public void defaultFcpClientKnowsPeerNoteWasNotModifiedOnUnknownNodeIdentifier()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Boolean> noteUpdated = fcpClient.modifyPeerNote().darknetComment("foo").byName("Friend1").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ModifyPeerNote",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"PeerNoteType=1",
+			"NoteText=Zm9v",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"UnknownNodeIdentifier",
+			"Identifier=" + identifier,
+			"NodeIdentifier=Friend1",
+			"EndMessage"
+		);
+		assertThat(noteUpdated.get(), is(false));
+	}
+
+	@Test
+	public void defaultFcpClientFailsToModifyPeerNoteWithoutPeerNote()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<Boolean> noteUpdated = fcpClient.modifyPeerNote().byName("Friend1").execute();
+		assertThat(noteUpdated.get(), is(false));
+	}
+
 }

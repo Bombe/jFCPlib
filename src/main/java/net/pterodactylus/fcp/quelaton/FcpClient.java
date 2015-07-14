@@ -19,5 +19,6 @@ public interface FcpClient {
 	RemovePeerCommand removePeer();
 
 	ListPeerNotesCommand listPeerNotes();
+	ModifyPeerNoteCommand modifyPeerNote();
 
 }
