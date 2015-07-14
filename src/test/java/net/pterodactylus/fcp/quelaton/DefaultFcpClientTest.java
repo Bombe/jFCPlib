@@ -1920,4 +1920,26 @@ public class DefaultFcpClientTest {
 		assertThat(configData.get().getShortDescription("foo"), is("bar"));
 	}
 
+	@Test
+	public void defaultFcpClientCanGetConfigWithLongDescription()
+	throws InterruptedException, ExecutionException, IOException {
+		Future<ConfigData> configData = fcpClient.getConfig().withLongDescription().execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"GetConfig",
+			"Identifier=" + identifier,
+			"WithLongDescription=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"ConfigData",
+			"Identifier=" + identifier,
+			"longDescription.foo=bar",
+			"EndMessage"
+		);
+		assertThat(configData.get().getLongDescription("foo"), is("bar"));
+	}
+
 }
