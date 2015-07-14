@@ -40,7 +40,7 @@ public class ModifyPeerNote extends FcpMessage {
 	 *            {@link PeerNote#TYPE_PRIVATE_PEER_NOTE} at the moment
 	 */
 	public ModifyPeerNote(String nodeIdentifier, String noteText, int peerNoteType) {
-		super("ModifyPeer");
+		super("ModifyPeerNote");
 		setField("NodeIdentifier", nodeIdentifier);
 		setField("NoteText", noteText);
 		setField("PeerNoteType", String.valueOf(peerNoteType));
