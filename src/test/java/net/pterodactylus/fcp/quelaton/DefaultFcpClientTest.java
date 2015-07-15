@@ -1964,4 +1964,25 @@ public class DefaultFcpClientTest {
 		assertThat(configData.get().getDataType("foo"), is("number"));
 	}
 
+	@Test
+	public void defaultFcpClientCanModifyConfigData() throws InterruptedException, ExecutionException, IOException {
+		Future<ConfigData> newConfigData = fcpClient.modifyConfig().set("foo.bar").to("baz").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"ModifyConfig",
+			"Identifier=" + identifier,
+			"foo.bar=baz",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"ConfigData",
+			"Identifier=" + identifier,
+			"current.foo.bar=baz",
+			"EndMessage"
+		);
+		assertThat(newConfigData.get().getCurrent("foo.bar"), is("baz"));
+	}
+
 }

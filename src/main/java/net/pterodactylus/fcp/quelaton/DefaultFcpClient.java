@@ -60,6 +60,11 @@ public class DefaultFcpClient implements FcpClient {
 	}
 
 	@Override
+	public ModifyConfigCommand modifyConfig() {
+		return new ModifyConfigCommandImpl(threadPool, this::connect);
+	}
+
+	@Override
 	public GenerateKeypairCommand generateKeypair() {
 		return new GenerateKeypairCommandImpl(threadPool, this::connect);
 	}

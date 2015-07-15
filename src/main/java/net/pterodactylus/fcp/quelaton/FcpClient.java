@@ -9,6 +9,7 @@ public interface FcpClient {
 
 	GetNodeCommand getNode();
 	GetConfigCommand getConfig();
+	ModifyConfigCommand modifyConfig();
 
 	GenerateKeypairCommand generateKeypair();
 	ClientGetCommand clientGet();
