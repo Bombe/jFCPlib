@@ -58,13 +58,13 @@ public class DefaultFcpClientTest {
 	private static final String REQUEST_URI =
 		"SSK@wtbgd2loNcJCXvtQVOftl2tuWBomDQHfqS6ytpPRhfw,7SHH53gletBVb9JD7nBsyClbLQsBubDPEIcwg908r7Y,AQACAAE/";
 
-	private static int threadCounter = 0;
+	private int threadCounter = 0;
+	private final ExecutorService threadPool =
+		Executors.newCachedThreadPool(r -> new Thread(r, "Test-Thread-" + threadCounter++));
 	private final FakeTcpServer fcpServer;
 	private final DefaultFcpClient fcpClient;
 
 	public DefaultFcpClientTest() throws IOException {
-		ExecutorService threadPool =
-			Executors.newCachedThreadPool(r -> new Thread(r, "Test-Thread-" + threadCounter++));
 		fcpServer = new FakeTcpServer(threadPool);
 		fcpClient = new DefaultFcpClient(threadPool, "localhost", fcpServer.getPort(), () -> "Test");
 	}
@@ -72,6 +72,7 @@ public class DefaultFcpClientTest {
 	@After
 	public void tearDown() throws IOException {
 		fcpServer.close();
+		threadPool.shutdown();
 	}
 
 	@Test(expected = ExecutionException.class)
