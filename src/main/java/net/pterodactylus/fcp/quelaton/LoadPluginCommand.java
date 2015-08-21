@@ -14,5 +14,6 @@ public interface LoadPluginCommand {
 	LoadPluginCommand addToConfig();
 	Executable<Optional<PluginInfo>> officialFromFreenet(String pluginIdentifier);
 	Executable<Optional<PluginInfo>> officialFromHttps(String pluginIdentifier);
+	Executable<Optional<PluginInfo>> fromFile(String filename);
 
 }

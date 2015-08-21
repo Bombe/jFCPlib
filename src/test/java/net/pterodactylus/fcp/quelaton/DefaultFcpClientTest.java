@@ -2093,6 +2093,39 @@ public class DefaultFcpClientTest {
 	}
 
 	@Test
+	public void defaultFcpClientCanLoadPluginFromFile() throws ExecutionException, InterruptedException,
+	IOException {
+		Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFile("/path/to/plugin.jar").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"LoadPlugin",
+			"Identifier=" + identifier,
+			"PluginURL=/path/to/plugin.jar",
+			"URLType=file",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"PluginInfo",
+			"Identifier=" + identifier,
+			"PluginName=superPlugin",
+			"IsTalkable=true",
+			"LongVersion=1.2.3",
+			"Version=42",
+			"OriginUri=superPlugin",
+			"Started=true",
+			"EndMessage"
+		);
+		assertThat(pluginInfo.get().get().getPluginName(), is("superPlugin"));
+		assertThat(pluginInfo.get().get().getOriginalURI(), is("superPlugin"));
+		assertThat(pluginInfo.get().get().isTalkable(), is(true));
+		assertThat(pluginInfo.get().get().getVersion(), is("42"));
+		assertThat(pluginInfo.get().get().getLongVersion(), is("1.2.3"));
+		assertThat(pluginInfo.get().get().isStarted(), is(true));
+	}
+
+	@Test
 	public void failedLoadingPluginIsRecognized() throws ExecutionException, InterruptedException,
 	IOException {
 		Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
