@@ -70,7 +70,7 @@ public class PluginInfo extends BaseMessage implements Identifiable {
 	 *         otherwise
 	 */
 	public boolean isStarted() {
-		return Boolean.valueOf("Started");
+		return Boolean.valueOf(getField("Started"));
 	}
 
 }
