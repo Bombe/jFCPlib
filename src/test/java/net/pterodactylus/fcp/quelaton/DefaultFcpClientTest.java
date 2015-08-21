@@ -2126,19 +2126,21 @@ public class DefaultFcpClientTest {
 				public void failedLoad() throws ExecutionException, InterruptedException, IOException {
 					Future<Optional<PluginInfo>> pluginInfo =
 						fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
-					connectNode();
-					List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-					String identifier = extractIdentifier(lines);
-					fcpServer.writeLine(
-						"ProtocolError",
-						"Identifier=" + identifier,
-						"EndMessage"
-					);
+					connectAndAssert(() -> matchesFcpMessage("LoadPlugin", "EndMessage"));
+					replyWithProtocolError();
 					assertThat(pluginInfo.get().isPresent(), is(false));
 				}
 
 			}
 
+		}
+
+		private void replyWithProtocolError() throws IOException {
+			fcpServer.writeLine(
+				"ProtocolError",
+				"Identifier=" + identifier,
+				"EndMessage"
+			);
 		}
 
 		public class ReloadPlugin {
@@ -2258,6 +2260,16 @@ public class DefaultFcpClientTest {
 				connectAndAssert(() -> allOf(matchGetPluginInfoMessage(), hasItem("Detailed=true")));
 				replyWithPluginInfo();
 				verifyPluginInfo(pluginInfo);
+			}
+
+			@Test
+			public void protocolErrorIsRecognizedAsFailure()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo =
+					fcpClient.getPluginInfo().detailed().plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> allOf(matchGetPluginInfoMessage(), hasItem("Detailed=true")));
+				replyWithProtocolError();
+				assertThat(pluginInfo.get(), is(Optional.empty()));
 			}
 
 			private Matcher<List<String>> matchGetPluginInfoMessage() {
