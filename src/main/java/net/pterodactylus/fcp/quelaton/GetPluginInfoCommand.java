@@ -11,6 +11,7 @@ import net.pterodactylus.fcp.PluginInfo;
  */
 public interface GetPluginInfoCommand {
 
+	GetPluginInfoCommand detailed();
 	Executable<Optional<PluginInfo>> plugin(String pluginName);
 
 }

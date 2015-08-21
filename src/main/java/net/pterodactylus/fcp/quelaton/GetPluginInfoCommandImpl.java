@@ -33,6 +33,12 @@ public class GetPluginInfoCommandImpl implements GetPluginInfoCommand {
 	}
 
 	@Override
+	public GetPluginInfoCommand detailed() {
+		getPluginInfo.setDetailed(true);
+		return this;
+	}
+
+	@Override
 	public Executable<Optional<PluginInfo>> plugin(String pluginName) {
 		getPluginInfo.setPluginName(pluginName);
 		return this::execute;

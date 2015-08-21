@@ -2250,6 +2250,16 @@ public class DefaultFcpClientTest {
 				verifyPluginInfo(pluginInfo);
 			}
 
+			@Test
+			public void gettingPluginInfoWithDetailsWorks()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo =
+					fcpClient.getPluginInfo().detailed().plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> allOf(matchGetPluginInfoMessage(), hasItem("Detailed=true")));
+				replyWithPluginInfo();
+				verifyPluginInfo(pluginInfo);
+			}
+
 			private Matcher<List<String>> matchGetPluginInfoMessage() {
 				return matchesFcpMessage(
 					"GetPluginInfo",
