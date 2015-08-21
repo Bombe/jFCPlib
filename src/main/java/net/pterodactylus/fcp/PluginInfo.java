@@ -73,4 +73,15 @@ public class PluginInfo extends BaseMessage implements Identifiable {
 		return Boolean.valueOf(getField("Started"));
 	}
 
+	public boolean isTalkable() {
+		return Boolean.valueOf(getField("IsTalkable"));
+	}
+
+	public String getVersion() {
+		return getField("Version");
+	}
+
+	public String getLongVersion() {
+		return getField("LongVersion");
+	}
 }
