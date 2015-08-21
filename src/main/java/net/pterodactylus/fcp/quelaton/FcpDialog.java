@@ -36,6 +36,7 @@ import net.pterodactylus.fcp.PersistentPutDir;
 import net.pterodactylus.fcp.PersistentRequestModified;
 import net.pterodactylus.fcp.PersistentRequestRemoved;
 import net.pterodactylus.fcp.PluginInfo;
+import net.pterodactylus.fcp.PluginRemoved;
 import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.PutFailed;
 import net.pterodactylus.fcp.PutFetchable;
@@ -367,6 +368,13 @@ public abstract class FcpDialog<R> implements AutoCloseable, FcpListener {
 	}
 
 	protected void consumePluginInfo(PluginInfo pluginInfo) { }
+
+	@Override
+	public final void receivedPluginRemoved(FcpConnection fcpConnection, PluginRemoved pluginRemoved) {
+		consume(this::consumePluginRemoved, pluginRemoved);
+	}
+
+	protected void consumePluginRemoved(PluginRemoved pluginRemoved) { }
 
 	@Override
 	public final void receivedFCPPluginReply(FcpConnection fcpConnection, FCPPluginReply fcpPluginReply) {

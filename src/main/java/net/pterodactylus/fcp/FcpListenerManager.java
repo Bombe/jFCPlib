@@ -466,6 +466,12 @@ public class FcpListenerManager {
 		}
 	}
 
+	public void fireReceivedPluginRemoved(PluginRemoved pluginRemoved) {
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPluginRemoved(getSource(), pluginRemoved);
+		}
+	}
+
 	/**
 	 * Notifies all listeners that an “FCPPluginReply” message was received.
 	 *

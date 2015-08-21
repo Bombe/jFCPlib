@@ -1995,6 +1995,8 @@ public class DefaultFcpClientTest {
 
 	public class PluginCommands {
 
+		private static final String CLASS_NAME = "foo.plugin.Plugin";
+
 		private List<String> lines;
 		private String identifier;
 
@@ -2141,8 +2143,6 @@ public class DefaultFcpClientTest {
 
 		public class ReloadPlugin {
 
-			private static final String CLASS_NAME = "foo.plugin.Plugin";
-
 			@Test
 			public void reloadingPluginWorks() throws InterruptedException, ExecutionException, IOException {
 				Future<Optional<PluginInfo>> pluginInfo = fcpClient.reloadPlugin().plugin(CLASS_NAME).execute();
@@ -2184,6 +2184,36 @@ public class DefaultFcpClientTest {
 			private Matcher<List<String>> matchReloadPluginMessage() {
 				return matchesFcpMessage(
 					"ReloadPlugin",
+					"Identifier=" + identifier,
+					"PluginName=" + CLASS_NAME,
+					"EndMessage"
+				);
+			}
+
+		}
+
+		public class RemovePlugin {
+
+			@Test
+			public void removingPluginWorks() throws InterruptedException, ExecutionException, IOException {
+				Future<Boolean> pluginRemoved = fcpClient.removePlugin().plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> matchPluginRemovedMessage());
+				replyWithPluginRemoved();
+				assertThat(pluginRemoved.get(), is(true));
+			}
+
+			private void replyWithPluginRemoved() throws IOException {
+				fcpServer.writeLine(
+					"PluginRemoved",
+					"Identifier=" + identifier,
+					"PluginName=" + CLASS_NAME,
+					"EndMessage"
+				);
+			}
+
+			private Matcher<List<String>> matchPluginRemovedMessage() {
+				return matchesFcpMessage(
+					"RemovePlugin",
 					"Identifier=" + identifier,
 					"PluginName=" + CLASS_NAME,
 					"EndMessage"

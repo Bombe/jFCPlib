@@ -301,6 +301,8 @@ public class FcpConnection implements Closeable {
 			}
 		} else if ("PluginInfo".equals(messageName)) {
 			fcpListenerManager.fireReceivedPluginInfo(new PluginInfo(fcpMessage));
+		} else if ("PluginRemoved".equals(messageName)) {
+			fcpListenerManager.fireReceivedPluginRemoved(new PluginRemoved(fcpMessage));
 		} else if ("NodeData".equals(messageName)) {
 			fcpListenerManager.fireReceivedNodeData(new NodeData(fcpMessage));
 		} else if ("TestDDAReply".equals(messageName)) {
