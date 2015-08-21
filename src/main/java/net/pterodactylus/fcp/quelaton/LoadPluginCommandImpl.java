@@ -63,6 +63,13 @@ public class LoadPluginCommandImpl implements LoadPluginCommand {
 		return this::execute;
 	}
 
+	@Override
+	public Executable<Optional<PluginInfo>> fromUrl(String url) {
+		loadPlugin.setUrlType(UrlType.URL);
+		loadPlugin.setPluginUrl(url);
+		return this::execute;
+	}
+
 	private ListenableFuture<Optional<PluginInfo>> execute() {
 		return threadPool.submit(this::executeDialog);
 	}

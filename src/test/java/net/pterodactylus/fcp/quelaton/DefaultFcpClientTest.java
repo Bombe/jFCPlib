@@ -2069,6 +2069,24 @@ public class DefaultFcpClientTest {
 		}
 
 		@Test
+		public void fromUrl() throws ExecutionException, InterruptedException, IOException {
+			Future<Optional<PluginInfo>> pluginInfo =
+				fcpClient.loadPlugin().fromUrl("http://server.com/plugin.jar").execute();
+			connectNode();
+			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+			String identifier = extractIdentifier(lines);
+			assertThat(lines, matchesFcpMessage(
+				"LoadPlugin",
+				"Identifier=" + identifier,
+				"PluginURL=http://server.com/plugin.jar",
+				"URLType=url",
+				"EndMessage"
+			));
+			replyWithPluginInfo(identifier);
+			verifyPluginInfo(pluginInfo);
+		}
+
+		@Test
 		public void failedLoad() throws ExecutionException, InterruptedException, IOException {
 			Future<Optional<PluginInfo>> pluginInfo =
 				fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
