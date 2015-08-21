@@ -2013,7 +2013,7 @@ public class DefaultFcpClientTest {
 					fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
 				connectAndAssert(() -> createMatcherForOfficialSource("freenet"));
 				assertThat(lines, not(contains(startsWith("Store="))));
-				replyWithPluginInfo(identifier);
+				replyWithPluginInfo();
 				verifyPluginInfo(pluginInfo);
 			}
 
@@ -2023,7 +2023,7 @@ public class DefaultFcpClientTest {
 					fcpClient.loadPlugin().addToConfig().officialFromFreenet("superPlugin").execute();
 				connectAndAssert(() -> createMatcherForOfficialSource("freenet"));
 				assertThat(lines, hasItem("Store=true"));
-				replyWithPluginInfo(identifier);
+				replyWithPluginInfo();
 				verifyPluginInfo(pluginInfo);
 			}
 
@@ -2032,7 +2032,7 @@ public class DefaultFcpClientTest {
 				Future<Optional<PluginInfo>> pluginInfo =
 					fcpClient.loadPlugin().officialFromHttps("superPlugin").execute();
 				connectAndAssert(() -> createMatcherForOfficialSource("https"));
-				replyWithPluginInfo(identifier);
+				replyWithPluginInfo();
 				verifyPluginInfo(pluginInfo);
 			}
 
@@ -2059,7 +2059,7 @@ public class DefaultFcpClientTest {
 			public void fromFile() throws ExecutionException, InterruptedException, IOException {
 				Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFile(FILE_PATH).execute();
 				connectAndAssert(() -> createMatcher("file", FILE_PATH));
-				replyWithPluginInfo(identifier);
+				replyWithPluginInfo();
 				verifyPluginInfo(pluginInfo);
 			}
 
@@ -2067,7 +2067,7 @@ public class DefaultFcpClientTest {
 			public void fromUrl() throws ExecutionException, InterruptedException, IOException {
 				Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromUrl(URL).execute();
 				connectAndAssert(() -> createMatcher("url", URL));
-				replyWithPluginInfo(identifier);
+				replyWithPluginInfo();
 				verifyPluginInfo(pluginInfo);
 			}
 
@@ -2075,7 +2075,7 @@ public class DefaultFcpClientTest {
 			public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
 				Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFreenet(KEY).execute();
 				connectAndAssert(() -> createMatcher("freenet", KEY));
-				replyWithPluginInfo(identifier);
+				replyWithPluginInfo();
 				verifyPluginInfo(pluginInfo);
 			}
 
@@ -2110,7 +2110,7 @@ public class DefaultFcpClientTest {
 
 		}
 
-		private void replyWithPluginInfo(String identifier) throws IOException {
+		private void replyWithPluginInfo() throws IOException {
 			fcpServer.writeLine(
 				"PluginInfo",
 				"Identifier=" + identifier,
