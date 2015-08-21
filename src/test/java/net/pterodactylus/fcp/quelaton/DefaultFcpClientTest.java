@@ -2161,6 +2161,16 @@ public class DefaultFcpClientTest {
 				verifyPluginInfo(pluginInfo);
 			}
 
+			@Test
+			public void reloadingPluginWithPurgeWorks()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo =
+					fcpClient.reloadPlugin().purge().plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> allOf(matchReloadPluginMessage(), hasItem("Purge=true")));
+				replyWithPluginInfo();
+				verifyPluginInfo(pluginInfo);
+			}
+
 			private Matcher<List<String>> matchReloadPluginMessage() {
 				return matchesFcpMessage(
 					"ReloadPlugin",
