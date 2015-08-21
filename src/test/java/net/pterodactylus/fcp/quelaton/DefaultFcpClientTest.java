@@ -1,6 +1,7 @@
 package net.pterodactylus.fcp.quelaton;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
@@ -2145,14 +2146,28 @@ public class DefaultFcpClientTest {
 			@Test
 			public void reloadingPluginWorks() throws InterruptedException, ExecutionException, IOException {
 				Future<Optional<PluginInfo>> pluginInfo = fcpClient.reloadPlugin().plugin(CLASS_NAME).execute();
-				connectAndAssert(() -> matchesFcpMessage(
+				connectAndAssert(() -> matchReloadPluginMessage());
+				replyWithPluginInfo();
+				verifyPluginInfo(pluginInfo);
+			}
+
+			@Test
+			public void reloadingPluginWithMaxWaitTimeWorks()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo =
+					fcpClient.reloadPlugin().waitFor(1234).plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> allOf(matchReloadPluginMessage(), hasItem("MaxWaitTime=1234")));
+				replyWithPluginInfo();
+				verifyPluginInfo(pluginInfo);
+			}
+
+			private Matcher<List<String>> matchReloadPluginMessage() {
+				return matchesFcpMessage(
 					"ReloadPlugin",
 					"Identifier=" + identifier,
 					"PluginName=" + CLASS_NAME,
 					"EndMessage"
-				));
-				replyWithPluginInfo();
-				verifyPluginInfo(pluginInfo);
+				);
 			}
 
 		}

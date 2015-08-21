@@ -33,6 +33,12 @@ public class ReloadPluginCommandImpl implements ReloadPluginCommand {
 	}
 
 	@Override
+	public ReloadPluginCommand waitFor(int milliseconds) {
+		reloadPlugin.setMaxWaitTime(milliseconds);
+		return this;
+	}
+
+	@Override
 	public Executable<Optional<PluginInfo>> plugin(String pluginClassName) {
 		reloadPlugin.setPluginName(pluginClassName);
 		return this::execute;

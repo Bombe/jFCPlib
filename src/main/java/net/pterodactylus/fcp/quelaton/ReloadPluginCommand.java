@@ -11,6 +11,7 @@ import net.pterodactylus.fcp.PluginInfo;
  */
 public interface ReloadPluginCommand {
 
+	ReloadPluginCommand waitFor(int milliseconds);
 	Executable<Optional<PluginInfo>> plugin(String pluginClassName);
 
 }
