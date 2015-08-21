@@ -119,5 +119,10 @@ public class DefaultFcpClient implements FcpClient {
 		return new LoadPluginCommandImpl(threadPool, this::connect);
 	}
 
+	@Override
+	public ReloadPluginCommand reloadPlugin() {
+		return new ReloadPluginCommandImpl(threadPool, this::connect);
+	}
+
 }
 

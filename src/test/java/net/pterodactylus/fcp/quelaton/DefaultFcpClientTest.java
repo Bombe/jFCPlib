@@ -2136,4 +2136,57 @@ public class DefaultFcpClientTest {
 
 	}
 
+	public class ReloadPlugin {
+
+		private static final String CLASS_NAME = "foo.plugin.Plugin";
+		private List<String> lines;
+		private String identifier;
+
+		private void connectAndAssert(Supplier<Matcher<List<String>>> requestMatcher)
+		throws InterruptedException, ExecutionException, IOException {
+			connectNode();
+			lines = fcpServer.collectUntil(is("EndMessage"));
+			identifier = extractIdentifier(lines);
+			assertThat(lines, requestMatcher.get());
+		}
+
+		@Test
+		public void reloadingPluginWorks() throws InterruptedException, ExecutionException, IOException {
+			Future<Optional<PluginInfo>> pluginInfo = fcpClient.reloadPlugin().plugin(CLASS_NAME).execute();
+			connectAndAssert(() -> matchesFcpMessage(
+				"ReloadPlugin",
+				"Identifier=" + identifier,
+				"PluginName=" + CLASS_NAME,
+				"EndMessage"
+			));
+			replyWithPluginInfo();
+			verifyPluginInfo(pluginInfo);
+		}
+
+		private void replyWithPluginInfo() throws IOException {
+			fcpServer.writeLine(
+				"PluginInfo",
+				"Identifier=" + identifier,
+				"PluginName=superPlugin",
+				"IsTalkable=true",
+				"LongVersion=1.2.3",
+				"Version=42",
+				"OriginUri=superPlugin",
+				"Started=true",
+				"EndMessage"
+			);
+		}
+
+		private void verifyPluginInfo(Future<Optional<PluginInfo>> pluginInfo)
+		throws InterruptedException, ExecutionException {
+			assertThat(pluginInfo.get().get().getPluginName(), is("superPlugin"));
+			assertThat(pluginInfo.get().get().getOriginalURI(), is("superPlugin"));
+			assertThat(pluginInfo.get().get().isTalkable(), is(true));
+			assertThat(pluginInfo.get().get().getVersion(), is("42"));
+			assertThat(pluginInfo.get().get().getLongVersion(), is("1.2.3"));
+			assertThat(pluginInfo.get().get().isStarted(), is(true));
+		}
+
+	}
+
 }

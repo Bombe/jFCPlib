@@ -25,5 +25,6 @@ public interface FcpClient {
 	ModifyPeerNoteCommand modifyPeerNote();
 
 	LoadPluginCommand loadPlugin();
+	ReloadPluginCommand reloadPlugin();
 
 }
