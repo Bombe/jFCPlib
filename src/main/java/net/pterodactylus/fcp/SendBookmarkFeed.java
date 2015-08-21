@@ -39,8 +39,8 @@ public class SendBookmarkFeed extends AbstractSendFeedMessage {
 	 * @param description
 	 *            The description of the bookmark (may be {@code null})
 	 * @param hasActiveLink
-	 *            {@code true} if the bookmark has an activelink image, {@code
-	 *            false} otherwise
+	 *            {@code true} if the bookmark has an activelink image,
+	 *            {@code false} otherwise
 	 */
 	public SendBookmarkFeed(String identifier, String nodeIdentifier, String name, String uri, String description, boolean hasActiveLink) {
 		super("SendBookmarkFeed", identifier, nodeIdentifier);

@@ -25,10 +25,11 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PersistentPutDir extends BaseMessage {
+public class PersistentPutDir extends BaseMessage implements Identifiable {
 
 	/**
-	 * Creates a new “PersistentPutDir” message that wraps the received message.
+	 * Creates a new “PersistentPutDir” message that wraps the received
+	 * message.
 	 *
 	 * @param receivedMessage
 	 *            The received message
@@ -42,6 +43,7 @@ public class PersistentPutDir extends BaseMessage {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

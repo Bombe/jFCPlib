@@ -41,8 +41,8 @@ public class Version {
 
 	/**
 	 * Creates a new Version from the given string. The string consists of the
-	 * four required fields node name, tree version, protocol version, and build
-	 * number, separated by a comma.
+	 * four required fields node name, tree version, protocol version, and
+	 * build number, separated by a comma.
 	 *
 	 * @param version
 	 *            The version string

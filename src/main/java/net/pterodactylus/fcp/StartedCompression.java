@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class StartedCompression extends BaseMessage {
+public class StartedCompression extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “StartedCompression” message that wraps the received
@@ -42,6 +42,7 @@ public class StartedCompression extends BaseMessage {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

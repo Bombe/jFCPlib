@@ -58,8 +58,8 @@ public class GetConfig extends FcpMessage {
 	}
 
 	/**
-	 * Sets whether the {@link ConfigData} result message shall include the long
-	 * descriptions.
+	 * Sets whether the {@link ConfigData} result message shall include the
+	 * long descriptions.
 	 *
 	 * @param withLongDescription
 	 *            <code>true</code> to include the long descriptions in the
@@ -70,8 +70,8 @@ public class GetConfig extends FcpMessage {
 	}
 
 	/**
-	 * Sets whether the {@link ConfigData} result message shall include the data
-	 * types.
+	 * Sets whether the {@link ConfigData} result message shall include the
+	 * data types.
 	 *
 	 * @param withDataTypes
 	 *            <code>true</code> to include the data types in the result,
@@ -94,8 +94,8 @@ public class GetConfig extends FcpMessage {
 	}
 
 	/**
-	 * Sets whether the {@link ConfigData} result message shall include the sort
-	 * order.
+	 * Sets whether the {@link ConfigData} result message shall include the
+	 * sort order.
 	 *
 	 * @param withSortOrder
 	 *            <code>true</code> to include the sort order in the result,

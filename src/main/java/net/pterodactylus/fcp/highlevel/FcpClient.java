@@ -18,6 +18,9 @@
 
 package net.pterodactylus.fcp.highlevel;
 
+import static com.google.common.collect.FluentIterable.from;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -28,11 +31,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.AddPeer;
+import net.pterodactylus.fcp.AllData;
+import net.pterodactylus.fcp.ClientGet;
 import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
 import net.pterodactylus.fcp.DataFound;
@@ -65,9 +71,8 @@ import net.pterodactylus.fcp.RemovePeer;
 import net.pterodactylus.fcp.SSKKeypair;
 import net.pterodactylus.fcp.SimpleProgress;
 import net.pterodactylus.fcp.WatchGlobal;
-import net.pterodactylus.util.filter.Filter;
-import net.pterodactylus.util.filter.Filters;
-import net.pterodactylus.util.thread.ObjectWrapper;
+
+import com.google.common.base.Predicate;
 
 /**
  * High-level FCP client that hides the details of the underlying FCP
@@ -75,16 +80,13 @@ import net.pterodactylus.util.thread.ObjectWrapper;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class FcpClient {
+public class FcpClient implements Closeable {
 
 	/** Object used for synchronization. */
 	private final Object syncObject = new Object();
 
 	/** Listener management. */
 	private final FcpClientListenerManager fcpClientListenerManager = new FcpClientListenerManager(this);
-
-	/** The name of this client. */
-	private final String name;
 
 	/** The underlying FCP connection. */
 	private final FcpConnection fcpConnection;
@@ -95,37 +97,34 @@ public class FcpClient {
 	/** Whether the client is currently connected. */
 	private volatile boolean connected;
 
+	/** The listener for “connection closed” events. */
+	private FcpListener connectionClosedListener;
+
 	/**
 	 * Creates an FCP client with the given name.
 	 *
-	 * @param name
-	 *            The name of the FCP client
 	 * @throws UnknownHostException
 	 *             if the hostname “localhost” is unknown
 	 */
-	public FcpClient(String name) throws UnknownHostException {
-		this(name, "localhost");
+	public FcpClient() throws UnknownHostException {
+		this("localhost");
 	}
 
 	/**
 	 * Creates an FCP client.
 	 *
-	 * @param name
-	 *            The name of the FCP client
 	 * @param hostname
 	 *            The hostname of the Freenet node
 	 * @throws UnknownHostException
 	 *             if the given hostname can not be resolved
 	 */
-	public FcpClient(String name, String hostname) throws UnknownHostException {
-		this(name, hostname, FcpConnection.DEFAULT_PORT);
+	public FcpClient(String hostname) throws UnknownHostException {
+		this(hostname, FcpConnection.DEFAULT_PORT);
 	}
 
 	/**
 	 * Creates an FCP client.
 	 *
-	 * @param name
-	 *            The name of the FCP client
 	 * @param hostname
 	 *            The hostname of the Freenet node
 	 * @param port
@@ -133,36 +132,56 @@ public class FcpClient {
 	 * @throws UnknownHostException
 	 *             if the given hostname can not be resolved
 	 */
-	public FcpClient(String name, String hostname, int port) throws UnknownHostException {
-		this(name, InetAddress.getByName(hostname), port);
+	public FcpClient(String hostname, int port) throws UnknownHostException {
+		this(InetAddress.getByName(hostname), port);
 	}
 
 	/**
 	 * Creates an FCP client.
 	 *
-	 * @param name
-	 *            The name of the FCP client
 	 * @param host
 	 *            The host address of the Freenet node
 	 */
-	public FcpClient(String name, InetAddress host) {
-		this(name, host, FcpConnection.DEFAULT_PORT);
+	public FcpClient(InetAddress host) {
+		this(host, FcpConnection.DEFAULT_PORT);
 	}
 
 	/**
 	 * Creates an FCP client.
 	 *
-	 * @param name
-	 *            The name of the FCP client
 	 * @param host
 	 *            The host address of the Freenet node
 	 * @param port
 	 *            The Freenet node’s FCP port
 	 */
-	public FcpClient(String name, InetAddress host, int port) {
-		this.name = name;
-		fcpConnection = new FcpConnection(host, port);
-		fcpConnection.addFcpListener(new FcpAdapter() {
+	public FcpClient(InetAddress host, int port) {
+		this(new FcpConnection(host, port), false);
+	}
+
+	/**
+	 * Creates a new high-level FCP client that will use the given connection.
+	 * This constructor will assume that the FCP connection is already
+	 * connected.
+	 *
+	 * @param fcpConnection
+	 *            The FCP connection to use
+	 */
+	public FcpClient(FcpConnection fcpConnection) {
+		this(fcpConnection, true);
+	}
+
+	/**
+	 * Creates a new high-level FCP client that will use the given connection.
+	 *
+	 * @param fcpConnection
+	 *            The FCP connection to use
+	 * @param connected
+	 *            The initial status of the FCP connection
+	 */
+	public FcpClient(FcpConnection fcpConnection, boolean connected) {
+		this.fcpConnection = fcpConnection;
+		this.connected = connected;
+		connectionClosedListener = new FcpAdapter() {
 
 			/**
 			 * {@inheritDoc}
@@ -170,10 +189,11 @@ public class FcpClient {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void connectionClosed(FcpConnection fcpConnection, Throwable throwable) {
-				connected = false;
+				FcpClient.this.connected = false;
 				fcpClientListenerManager.fireFcpClientDisconnected();
 			}
-		});
+		};
+		fcpConnection.addFcpListener(connectionClosedListener);
 	}
 
 	//
@@ -250,12 +270,14 @@ public class FcpClient {
 	/**
 	 * Connects the FCP client.
 	 *
+	 * @param name
+	 *            The name of the client
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @throws FcpException
 	 *             if an FCP error occurs
 	 */
-	public void connect() throws IOException, FcpException {
+	public void connect(final String name) throws IOException, FcpException {
 		checkConnected(false);
 		connected = true;
 		new ExtendedFcpAdapter() {
@@ -286,6 +308,88 @@ public class FcpClient {
 	}
 
 	/**
+	 * Returns the file with the given URI. The retrieved data will be run
+	 * through Freenet’s content filter.
+	 *
+	 * @param uri
+	 *            The URI to get
+	 * @return The result of the get request
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public GetResult getURI(final String uri) throws IOException, FcpException {
+		return getURI(uri, true);
+	}
+
+	/**
+	 * Returns the file with the given URI.
+	 *
+	 * @param uri
+	 *            The URI to get
+	 * @param filterData
+	 *            {@code true} to filter the retrieved data, {@code false}
+	 *            otherwise
+	 * @return The result of the get request
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @throws FcpException
+	 *             if an FCP error occurs
+	 */
+	public GetResult getURI(final String uri, final boolean filterData) throws IOException, FcpException {
+		checkConnected(true);
+		final GetResult getResult = new GetResult();
+		new ExtendedFcpAdapter() {
+
+			@SuppressWarnings("synthetic-access")
+			private final String identifier = createIdentifier("client-get");
+
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() throws IOException {
+				ClientGet clientGet = new ClientGet(uri, identifier);
+				clientGet.setFilterData(filterData);
+				fcpConnection.sendMessage(clientGet);
+			}
+
+			@Override
+			public void receivedGetFailed(FcpConnection fcpConnection, GetFailed getFailed) {
+				if (!getFailed.getIdentifier().equals(identifier)) {
+					return;
+				}
+				if ((getFailed.getCode() == 27) || (getFailed.getCode() == 24)) {
+					/* redirect! */
+					String newUri = getFailed.getRedirectURI();
+					getResult.realUri(newUri);
+					try {
+						ClientGet clientGet = new ClientGet(newUri, identifier);
+						clientGet.setFilterData(filterData);
+						fcpConnection.sendMessage(clientGet);
+					} catch (IOException ioe1) {
+						getResult.success(false).exception(ioe1);
+						completionLatch.countDown();
+					}
+				} else {
+					getResult.success(false).errorCode(getFailed.getCode());
+					completionLatch.countDown();
+				}
+			}
+
+			@Override
+			public void receivedAllData(FcpConnection fcpConnection, AllData allData) {
+				if (!allData.getIdentifier().equals(identifier)) {
+					return;
+				}
+				getResult.success(true).contentType(allData.getContentType()).contentLength(allData.getDataLength()).inputStream(allData.getPayloadInputStream());
+				completionLatch.countDown();
+			}
+
+		}.execute();
+		return getResult;
+	}
+
+	/**
 	 * Disconnects the FCP client.
 	 */
 	public void disconnect() {
@@ -296,6 +400,14 @@ public class FcpClient {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void close() {
+		disconnect();
+	}
+
+	/**
 	 * Returns whether this client is currently connected.
 	 *
 	 * @return {@code true} if the client is currently connected, {@code false}
@@ -303,6 +415,13 @@ public class FcpClient {
 	 */
 	public boolean isConnected() {
 		return connected;
+	}
+
+	/**
+	 * Detaches this client from its underlying FCP connection.
+	 */
+	public void detach() {
+		fcpConnection.removeFcpListener(connectionClosedListener);
 	}
 
 	//
@@ -478,8 +597,8 @@ public class FcpClient {
 
 	/**
 	 * Adds a peer, reading the noderef of the peer from the given file.
-	 * <strong>Note:</strong> the file to read the noderef from has to reside on
-	 * the same machine as the node!
+	 * <strong>Note:</strong> the file to read the noderef from has to reside
+	 * on the same machine as the node!
 	 *
 	 * @param file
 	 *            The name of the file containing the peer’s noderef
@@ -618,7 +737,7 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	public PeerNote getPeerNote(final Peer peer) throws IOException, FcpException {
-		final ObjectWrapper<PeerNote> objectWrapper = new ObjectWrapper<PeerNote>();
+		final AtomicReference<PeerNote> objectWrapper = new AtomicReference<PeerNote>();
 		new ExtendedFcpAdapter() {
 
 			/**
@@ -704,7 +823,7 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	public SSKKeypair generateKeyPair() throws IOException, FcpException {
-		final ObjectWrapper<SSKKeypair> sskKeypairWrapper = new ObjectWrapper<SSKKeypair>();
+		final AtomicReference<SSKKeypair> sskKeypairWrapper = new AtomicReference<SSKKeypair>();
 		new ExtendedFcpAdapter() {
 
 			/**
@@ -746,15 +865,12 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	public Collection<Request> getGetRequests(final boolean global) throws IOException, FcpException {
-		return Filters.filteredCollection(getRequests(global), new Filter<Request>() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			public boolean filterObject(Request request) {
+		return from(getRequests(global)).filter(new Predicate<Request>() {
+			@Override
+			public boolean apply(Request request) {
 				return request instanceof GetRequest;
 			}
-		});
+		}).toList();
 	}
 
 	/**
@@ -771,15 +887,12 @@ public class FcpClient {
 	 *             if an FCP error occurs
 	 */
 	public Collection<Request> getPutRequests(final boolean global) throws IOException, FcpException {
-		return Filters.filteredCollection(getRequests(global), new Filter<Request>() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			public boolean filterObject(Request request) {
+		return from(getRequests(global)).filter(new Predicate<Request>() {
+			@Override
+			public boolean apply(Request request) {
 				return request instanceof PutRequest;
 			}
-		});
+		}).toList();
 	}
 
 	/**
@@ -787,8 +900,8 @@ public class FcpClient {
 	 *
 	 * @param global
 	 *            <code>true</code> to return requests from the global queue,
-	 *            <code>false</code> to only show requests from the client-local
-	 *            queue
+	 *            <code>false</code> to only show requests from the
+	 *            client-local queue
 	 * @return All requests
 	 * @throws IOException
 	 *             if an I/O error occurs
@@ -993,7 +1106,7 @@ public class FcpClient {
 	 *             if an I/O error occurs
 	 */
 	public NodeData getNodeInformation(final Boolean giveOpennetRef, final Boolean withPrivate, final Boolean withVolatile) throws IOException, FcpException {
-		final ObjectWrapper<NodeData> nodeDataWrapper = new ObjectWrapper<NodeData>();
+		final AtomicReference<NodeData> nodeDataWrapper = new AtomicReference<NodeData>();
 		new ExtendedFcpAdapter() {
 
 			@Override

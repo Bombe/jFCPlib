@@ -36,8 +36,8 @@ public class NodeHello extends BaseMessage {
 	}
 
 	/**
-	 * Returns the build of the node. This may not be a number but also a string
-	 * like “@custom@” in case you built the node yourself.
+	 * Returns the build of the node. This may not be a number but also a
+	 * string like “@custom@” in case you built the node yourself.
 	 *
 	 * @return The build of the node
 	 */
@@ -46,8 +46,8 @@ public class NodeHello extends BaseMessage {
 	}
 
 	/**
-	 * Returns the build number of the node. This may not be a number but also a
-	 * string like “@custom@” in case you built the node yourself.
+	 * Returns the build number of the node. This may not be a number but also
+	 * a string like “@custom@” in case you built the node yourself.
 	 *
 	 * @return The build number of the node, or <code>-1</code> if the build
 	 *         number could not be determined
@@ -96,8 +96,8 @@ public class NodeHello extends BaseMessage {
 	/**
 	 * Returns the build number of the external library file.
 	 *
-	 * @return The build number of the external library file, or <code>-1</code>
-	 *         if the build number could not be determined
+	 * @return The build number of the external library file, or
+	 *         <code>-1</code> if the build number could not be determined
 	 */
 	public int getExtBuildNumber() {
 		return FcpUtils.safeParseInt(getExtBuild());

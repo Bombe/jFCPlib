@@ -19,13 +19,13 @@
 package net.pterodactylus.fcp;
 
 /**
- * The “URIGenerated” message signals the client that an URI was generated for a
- * {@link ClientPut} (or {@link ClientPutDiskDir} or {@link ClientPutComplexDir}
- * ) request.
+ * The “URIGenerated” message signals the client that an URI was generated for
+ * a {@link ClientPut} (or {@link ClientPutDiskDir} or
+ * {@link ClientPutComplexDir} ) request.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class URIGenerated extends BaseMessage {
+public class URIGenerated extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “URIGenerated” message that wraps the received message.
@@ -42,6 +42,7 @@ public class URIGenerated extends BaseMessage {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}
@@ -56,8 +57,8 @@ public class URIGenerated extends BaseMessage {
 	}
 
 	/**
-	 * Returns whether the request that generated the URI is on the global queue
-	 * or on the client-local queue.
+	 * Returns whether the request that generated the URI is on the global
+	 * queue or on the client-local queue.
 	 *
 	 * @return <code>true</code> if the request is on the global queue,
 	 *         <code>false</code> if it is on the client-local queue

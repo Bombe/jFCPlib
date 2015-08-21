@@ -21,8 +21,8 @@ package net.pterodactylus.fcp;
 import java.security.interfaces.DSAParams;
 
 /**
- * Container for the DSA group of a peer. A DSA group consists of a base (called
- * “g”), a prime (called “p”) and a subprime (called “q”).
+ * Container for the DSA group of a peer. A DSA group consists of a base
+ * (called “g”), a prime (called “p”) and a subprime (called “q”).
  *
  * @see DSAParams
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;

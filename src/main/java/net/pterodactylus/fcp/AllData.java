@@ -22,16 +22,16 @@ import java.io.InputStream;
 
 /**
  * The “AllData” message carries the payload of a successful {@link ClientGet}
- * request. You will only received this message if the {@link ClientGet} request
- * was started with a return type of {@link ReturnType#direct}. If you get this
- * message and decide that the data is for you, call
+ * request. You will only received this message if the {@link ClientGet}
+ * request was started with a return type of {@link ReturnType#direct}. If you
+ * get this message and decide that the data is for you, call
  * {@link #getPayloadInputStream()} to get the data. If an AllData message
  * passes through all registered {@link FcpListener}s without the payload being
  * consumed, the payload is discarded!
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class AllData extends BaseMessage {
+public class AllData extends BaseMessage implements Identifiable {
 
 	/** The payload. */
 	private InputStream payloadInputStream;
@@ -54,6 +54,7 @@ public class AllData extends BaseMessage {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}
@@ -97,6 +98,15 @@ public class AllData extends BaseMessage {
 	 */
 	public InputStream getPayloadInputStream() {
 		return payloadInputStream;
+	}
+
+	/**
+	 * Returns the content type of the found file.
+	 *
+	 * @return The content type
+	 */
+	public String getContentType() {
+		return getField("Metadata.ContentType");
 	}
 
 }

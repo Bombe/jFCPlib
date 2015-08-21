@@ -20,8 +20,8 @@ package net.pterodactylus.fcp;
 
 /**
  * Convenicence class for verbosity handling. This might come in handy with the
- * {@link ClientPut} and {@link ClientGet} requests. The verbosity is a bit-mask
- * that can be composed of several bits. {@link #PROGRESS} and
+ * {@link ClientPut} and {@link ClientGet} requests. The verbosity is a
+ * bit-mask that can be composed of several bits. {@link #PROGRESS} and
  * {@link #COMPRESSION} are single bits in that mask and can be combined into a
  * new verbosity using {@link #add(Verbosity)}.
  *
@@ -91,8 +91,8 @@ public class Verbosity {
 	 *
 	 * @param s
 	 *            The string to parse
-	 * @return The parsed verbosity, or {@link #NONE} if the string could not be
-	 *         parsed
+	 * @return The parsed verbosity, or {@link #NONE} if the string could not
+	 *         be parsed
 	 */
 	public static Verbosity valueOf(String s) {
 		try {

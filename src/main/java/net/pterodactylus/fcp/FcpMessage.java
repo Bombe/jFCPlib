@@ -59,9 +59,9 @@ public class FcpMessage implements Iterable<String> {
 	}
 
 	/**
-	 * Creates a new FCP message with the given name and the given payload input
-	 * stream. The payload input stream is not read until the message is sent to
-	 * the node using {@link FcpConnection#sendMessage(FcpMessage)}.
+	 * Creates a new FCP message with the given name and the given payload
+	 * input stream. The payload input stream is not read until the message is
+	 * sent to the node using {@link FcpConnection#sendMessage(FcpMessage)}.
 	 *
 	 * @param name
 	 *            The name of the message
@@ -87,8 +87,8 @@ public class FcpMessage implements Iterable<String> {
 	 *
 	 * @param field
 	 *            The name of the field to check for
-	 * @return <code>true</code> if the message has a field with the given name,
-	 *         <code>false</code> otherwise
+	 * @return <code>true</code> if the message has a field with the given
+	 *         name, <code>false</code> otherwise
 	 */
 	public boolean hasField(String field) {
 		return fields.containsKey(field);
@@ -134,6 +134,7 @@ public class FcpMessage implements Iterable<String> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Iterator<String> iterator() {
 		return fields.keySet().iterator();
 	}
@@ -152,8 +153,8 @@ public class FcpMessage implements Iterable<String> {
 	 * Writes this message to the given output stream. If the message has a
 	 * payload (i.e. {@link #payloadInputStream} is not <code>null</code>) the
 	 * payload is written to the given output stream after the message as well.
-	 * That means that this method can only be called once because on the second
-	 * invocation the payload input stream could not be read (again).
+	 * That means that this method can only be called once because on the
+	 * second invocation the payload input stream could not be read (again).
 	 *
 	 * @param outputStream
 	 *            The output stream to write the message to

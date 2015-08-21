@@ -18,14 +18,18 @@
 
 package net.pterodactylus.fcp;
 
-import net.pterodactylus.util.event.AbstractListenerManager;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Manages FCP listeners and event firing.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@pterodactylus.net&gt;
  */
-public class FcpListenerManager extends AbstractListenerManager<FcpConnection, FcpListener> {
+public class FcpListenerManager {
+
+	private final FcpConnection source;
+	private final List<FcpListener> listeners = new CopyOnWriteArrayList<FcpListener>();
 
 	/**
 	 * Creates a new listener manager.
@@ -34,7 +38,23 @@ public class FcpListenerManager extends AbstractListenerManager<FcpConnection, F
 	 *            The source FCP connection
 	 */
 	public FcpListenerManager(FcpConnection fcpConnection) {
-		super(fcpConnection);
+		this.source = fcpConnection;
+	}
+
+	public void addListener(FcpListener fcpListener) {
+		listeners.add(fcpListener);
+	}
+
+	public void removeListener(FcpListener fcpListener) {
+		listeners.remove(fcpListener);
+	}
+
+	private FcpConnection getSource() {
+		return source;
+	}
+
+	private List<FcpListener> getListeners() {
+		return listeners;
 	}
 
 	/**
@@ -291,7 +311,8 @@ public class FcpListenerManager extends AbstractListenerManager<FcpConnection, F
 	}
 
 	/**
-	 * Notifies all listeners that a “FinishedCompression” message was received.
+	 * Notifies all listeners that a “FinishedCompression” message was
+	 * received.
 	 *
 	 * @see FcpListener#receivedFinishedCompression(FcpConnection,
 	 *      FinishedCompression)
@@ -418,7 +439,8 @@ public class FcpListenerManager extends AbstractListenerManager<FcpConnection, F
 	}
 
 	/**
-	 * Notifies all listeners that a “SubscribedUSKUpdate” message was received.
+	 * Notifies all listeners that a “SubscribedUSKUpdate” message was
+	 * received.
 	 *
 	 * @see FcpListener#receivedSubscribedUSKUpdate(FcpConnection,
 	 *      SubscribedUSKUpdate)
@@ -556,8 +578,8 @@ public class FcpListenerManager extends AbstractListenerManager<FcpConnection, F
 	 * Notifies all listeners that the connection to the node was closed.
 	 *
 	 * @param throwable
-	 *            The exception that caused the disconnect, or <code>null</code>
-	 *            if there was no exception
+	 *            The exception that caused the disconnect, or
+	 *            <code>null</code> if there was no exception
 	 * @see FcpListener#connectionClosed(FcpConnection, Throwable)
 	 */
 	public void fireConnectionClosed(Throwable throwable) {

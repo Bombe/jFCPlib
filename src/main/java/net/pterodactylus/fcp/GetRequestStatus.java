@@ -20,8 +20,9 @@ package net.pterodactylus.fcp;
 
 /**
  * The “GetRequestStatus” message is used request status information about a
- * running request. It is also the only way to trigger a download of a persisted
- * completed {@link ClientGet} with a return type of {@link ReturnType#direct}.
+ * running request. It is also the only way to trigger a download of a
+ * persisted completed {@link ClientGet} with a return type of
+ * {@link ReturnType#direct}.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */

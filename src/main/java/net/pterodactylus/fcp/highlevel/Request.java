@@ -132,7 +132,8 @@ public abstract class Request {
 	 * Sets whether this request is complete.
 	 *
 	 * @param complete
-	 *            <code>true</code> if this request is complete, false otherwise
+	 *            <code>true</code> if this request is complete, false
+	 *            otherwise
 	 */
 	void setComplete(boolean complete) {
 		this.complete = complete;
@@ -219,8 +220,8 @@ public abstract class Request {
 	}
 
 	/**
-	 * Returns whether this request has fatally failed, i.e. repitition will not
-	 * cause the request to succeed.
+	 * Returns whether this request has fatally failed, i.e. repitition will
+	 * not cause the request to succeed.
 	 *
 	 * @return <code>true</code> if this request can not be made succeed by
 	 *         repeating, <code>false</code> otherwise
@@ -260,8 +261,8 @@ public abstract class Request {
 	}
 
 	/**
-	 * Returns the number of required blocks. Any progress percentages should be
-	 * calculated against this value as 100%. Also, as long as
+	 * Returns the number of required blocks. Any progress percentages should
+	 * be calculated against this value as 100%. Also, as long as
 	 * {@link #isFinalizedTotal()} returns {@code false} this value might
 	 * change.
 	 *

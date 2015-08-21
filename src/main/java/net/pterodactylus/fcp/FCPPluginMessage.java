@@ -38,9 +38,9 @@ public class FCPPluginMessage extends FcpMessage {
 	}
 
 	/**
-	 * Sets the identifier of the request. Though this is still optional you are
-	 * encouraged to include it because the plugin might reply in random order
-	 * to requests.
+	 * Sets the identifier of the request. Though this is still optional you
+	 * are encouraged to include it because the plugin might reply in random
+	 * order to requests.
 	 *
 	 * @param identifier
 	 *            The identifier of the request
@@ -63,8 +63,8 @@ public class FCPPluginMessage extends FcpMessage {
 
 	/**
 	 * Sets the length of data of the optional payload. If you call this method
-	 * you also have to call {@link #setPayloadInputStream(java.io.InputStream)}
-	 * !
+	 * you also have to call
+	 * {@link #setPayloadInputStream(java.io.InputStream)} !
 	 *
 	 * @param dataLength
 	 *            The length of data in the payload input stream

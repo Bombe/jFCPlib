@@ -22,8 +22,9 @@ package net.pterodactylus.fcp;
  * The “TestDDAReply” is sent as a response to {@link TestDDARequest}. If you
  * specified that you wanted to read files from that directory
  * {@link #getReadFilename()} will give you a filename. Similarly, if you
- * specified that you want to write in the directory {@link #getWriteFilename()}
- * will give you a filename to write {@link #getContentToWrite()} to.
+ * specified that you want to write in the directory
+ * {@link #getWriteFilename()} will give you a filename to write
+ * {@link #getContentToWrite()} to.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */

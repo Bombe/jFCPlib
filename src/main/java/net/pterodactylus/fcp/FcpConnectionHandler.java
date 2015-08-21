@@ -25,8 +25,6 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.pterodactylus.util.logging.Logging;
-
 /**
  * Handles an FCP connection to a node.
  *
@@ -35,7 +33,7 @@ import net.pterodactylus.util.logging.Logging;
 class FcpConnectionHandler implements Runnable {
 
 	/** The logger. */
-	private static final Logger logger = Logging.getLogger(FcpConnectionHandler.class.getName());
+	private static final Logger logger = Logger.getLogger(FcpConnectionHandler.class.getName());
 
 	/** The underlying connection. */
 	private final FcpConnection fcpConnection;
@@ -66,6 +64,7 @@ class FcpConnectionHandler implements Runnable {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void run() {
 		FcpMessage fcpMessage = null;
 		Throwable throwable = null;
@@ -100,7 +99,7 @@ class FcpConnectionHandler implements Runnable {
 				}
 				String field = line.substring(0, equalSign);
 				String value = line.substring(equalSign + 1);
-				assert fcpMessage != null : "fcp message is null";
+				assert fcpMessage != null: "fcp message is null";
 				fcpMessage.setField(field, value);
 			} catch (IOException ioe1) {
 				throwable = ioe1;

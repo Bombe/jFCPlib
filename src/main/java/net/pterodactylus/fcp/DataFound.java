@@ -20,12 +20,12 @@ package net.pterodactylus.fcp;
 
 /**
  * A “DataFound” message signals the client that the data requested by a
- * {@link ClientGet} operation has been found. This message does not include the
- * actual data, though.
+ * {@link ClientGet} operation has been found. This message does not include
+ * the actual data, though.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class DataFound extends BaseMessage {
+public class DataFound extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “DataFound” message that wraps the received message.
@@ -52,6 +52,7 @@ public class DataFound extends BaseMessage {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

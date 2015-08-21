@@ -29,7 +29,7 @@ import java.util.Map.Entry;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class FCPPluginReply extends BaseMessage {
+public class FCPPluginReply extends BaseMessage implements Identifiable {
 
 	/** The payload input stream. */
 	private final InputStream payloadInputStream;
@@ -61,6 +61,7 @@ public class FCPPluginReply extends BaseMessage {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

@@ -89,8 +89,8 @@ public class ClientGet extends FcpMessage {
 	}
 
 	/**
-	 * Sets the maximum size of the file to retrieve. If the file is larger than
-	 * this size the request will fail!
+	 * Sets the maximum size of the file to retrieve. If the file is larger
+	 * than this size the request will fail!
 	 *
 	 * @param maxSize
 	 *            The maximum size of the file to retrieve
@@ -174,6 +174,16 @@ public class ClientGet extends FcpMessage {
 	}
 
 	/**
+	 * Sets whether to filter the fetched content.
+	 *
+	 * @param filterData
+	 *            {@code true} to filter content, {@code false} otherwise
+	 */
+	public void setFilterData(boolean filterData) {
+		setField("FilterData", String.valueOf(filterData));
+	}
+
+	/**
 	 * Sets the allowed MIME types of the requested file. If the MIME type of
 	 * the file does not match one of the given MIME types the request will
 	 * fail!
@@ -197,8 +207,8 @@ public class ClientGet extends FcpMessage {
 	}
 
 	/**
-	 * Sets the name for the temporary file. You should only call this method if
-	 * your return type is {@link ReturnType#disk}!
+	 * Sets the name for the temporary file. You should only call this method
+	 * if your return type is {@link ReturnType#disk}!
 	 *
 	 * @param tempFilename
 	 *            The name of the temporary file

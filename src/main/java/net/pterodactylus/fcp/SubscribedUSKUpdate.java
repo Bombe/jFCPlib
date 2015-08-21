@@ -19,15 +19,15 @@
 package net.pterodactylus.fcp;
 
 /**
- * A “SubscribedUSKUpdate” message is sent each time a new edition of a USK that
- * was previously subscribed to with {@link SubscribeUSK} was found. Note that
- * if the new edition that was found is several editions ahead of the currently
- * last known edition, you will received a SubscribedUSKUpdate for each edition
- * inbetween as welL!
+ * A “SubscribedUSKUpdate” message is sent each time a new edition of a USK
+ * that was previously subscribed to with {@link SubscribeUSK} was found. Note
+ * that if the new edition that was found is several editions ahead of the
+ * currently last known edition, you will received a SubscribedUSKUpdate for
+ * each edition inbetween as welL!
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class SubscribedUSKUpdate extends BaseMessage {
+public class SubscribedUSKUpdate extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “SubscribedUSKUpdate” message that wraps the received
@@ -45,6 +45,7 @@ public class SubscribedUSKUpdate extends BaseMessage {
 	 *
 	 * @return The identifier of the subscription
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

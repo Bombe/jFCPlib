@@ -23,7 +23,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class EndListPeers extends BaseMessage {
+public class EndListPeers extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “EndListPeers” message that wraps the received message.
@@ -40,6 +40,7 @@ public class EndListPeers extends BaseMessage {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

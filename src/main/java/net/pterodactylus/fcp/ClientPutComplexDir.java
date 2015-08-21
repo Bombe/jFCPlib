@@ -102,6 +102,37 @@ public class ClientPutComplexDir extends FcpMessage {
 	}
 
 	/**
+	 * Sets whether an insert request should be forked when it is cached.
+	 *
+	 * @param forkOnCacheable
+	 *            {@code true} to fork the insert when it is cached,
+	 *            {@code false} otherwise
+	 */
+	public void setForkOnCacheable(boolean forkOnCacheable) {
+		setField("ForkOnCacheable", String.valueOf(forkOnCacheable));
+	}
+
+	/**
+	 * Sets the number of additional inserts of single blocks.
+	 *
+	 * @param extraInsertsSingleBlock
+	 *            The number of additional inserts
+	 */
+	public void setExtraInsertsSingleBlock(int extraInsertsSingleBlock) {
+		setField("ExtraInsertsSingleBlock", String.valueOf(extraInsertsSingleBlock));
+	}
+
+	/**
+	 * Sets the number of additional inserts of splitfile header blocks.
+	 *
+	 * @param extraInsertsSplitfileHeaderBlock
+	 *            The number of additional inserts
+	 */
+	public void setExtraInsertsSplitfileHeaderBlock(int extraInsertsSplitfileHeaderBlock) {
+		setField("ExtraInsertsSplitfileHeaderBlock", String.valueOf(extraInsertsSplitfileHeaderBlock));
+	}
+
+	/**
 	 * Sets whether the request is on the global queue.
 	 *
 	 * @param global
@@ -198,8 +229,8 @@ public class ClientPutComplexDir extends FcpMessage {
 	 * {@inheritDoc}
 	 * <p>
 	 * Do not call this method to add input streams! The input streams, if any,
-	 * will be taken directly from the {@link FileEntry}s and the stream you set
-	 * here will be overridden!
+	 * will be taken directly from the {@link FileEntry}s and the stream you
+	 * set here will be overridden!
 	 */
 	@Override
 	public void setPayloadInputStream(InputStream payloadInputStream) {

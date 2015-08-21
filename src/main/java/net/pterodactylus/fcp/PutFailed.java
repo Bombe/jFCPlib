@@ -30,7 +30,7 @@ import java.util.Map.Entry;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PutFailed extends BaseMessage {
+public class PutFailed extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “PutFailed” message that wraps the received message.
@@ -45,8 +45,8 @@ public class PutFailed extends BaseMessage {
 	/**
 	 * Returns the code of the error.
 	 *
-	 * @return The code of the error, or <code>-1</code> if the error code could
-	 *         not be parsed
+	 * @return The code of the error, or <code>-1</code> if the error code
+	 *         could not be parsed
 	 */
 	public int getCode() {
 		return FcpUtils.safeParseInt(getField("Code"));
@@ -57,6 +57,7 @@ public class PutFailed extends BaseMessage {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}
@@ -108,8 +109,8 @@ public class PutFailed extends BaseMessage {
 	}
 
 	/**
-	 * Returns whether the request failed fatally. If a request fails fatally it
-	 * can never complete, even with inifinite retries.
+	 * Returns whether the request failed fatally. If a request fails fatally
+	 * it can never complete, even with inifinite retries.
 	 *
 	 * @return <code>true</code> if the request failed fatally,
 	 *         <code>false</code> otherwise

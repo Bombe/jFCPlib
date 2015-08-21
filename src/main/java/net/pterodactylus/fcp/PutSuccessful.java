@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PutSuccessful extends BaseMessage {
+public class PutSuccessful extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “PutSuccessful” message that wraps the received message.
@@ -41,6 +41,7 @@ public class PutSuccessful extends BaseMessage {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}

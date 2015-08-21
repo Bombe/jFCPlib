@@ -24,7 +24,7 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class PersistentRequestRemoved extends BaseMessage {
+public class PersistentRequestRemoved extends BaseMessage implements Identifiable {
 
 	/**
 	 * Creates a new “PersistentRequestRemoved” message that wraps the received
@@ -42,6 +42,7 @@ public class PersistentRequestRemoved extends BaseMessage {
 	 *
 	 * @return The identifier of the request
 	 */
+	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}
@@ -50,8 +51,8 @@ public class PersistentRequestRemoved extends BaseMessage {
 	 * Returns whether the request was removed from the global queue.
 	 *
 	 * @return <code>true</code> if the request was removed from the global
-	 *         queue, <code>false</code> if it was removed from the client-local
-	 *         queue
+	 *         queue, <code>false</code> if it was removed from the
+	 *         client-local queue
 	 */
 	public boolean isGlobal() {
 		return Boolean.valueOf(getField("Global"));
