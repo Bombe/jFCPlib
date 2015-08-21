@@ -2087,6 +2087,24 @@ public class DefaultFcpClientTest {
 		}
 
 		@Test
+		public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
+			Future<Optional<PluginInfo>> pluginInfo =
+				fcpClient.loadPlugin().fromFreenet("KSK@plugin.jar").execute();
+			connectNode();
+			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+			String identifier = extractIdentifier(lines);
+			assertThat(lines, matchesFcpMessage(
+				"LoadPlugin",
+				"Identifier=" + identifier,
+				"PluginURL=KSK@plugin.jar",
+				"URLType=freenet",
+				"EndMessage"
+			));
+			replyWithPluginInfo(identifier);
+			verifyPluginInfo(pluginInfo);
+		}
+
+		@Test
 		public void failedLoad() throws ExecutionException, InterruptedException, IOException {
 			Future<Optional<PluginInfo>> pluginInfo =
 				fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();

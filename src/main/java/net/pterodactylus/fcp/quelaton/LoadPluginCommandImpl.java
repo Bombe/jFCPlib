@@ -57,6 +57,13 @@ public class LoadPluginCommandImpl implements LoadPluginCommand {
 	}
 
 	@Override
+	public Executable<Optional<PluginInfo>> fromFreenet(String key) {
+		loadPlugin.setUrlType(UrlType.FREENET);
+		loadPlugin.setPluginUrl(key);
+		return this::execute;
+	}
+
+	@Override
 	public Executable<Optional<PluginInfo>> fromFile(String filename) {
 		loadPlugin.setUrlType(UrlType.FILE);
 		loadPlugin.setPluginUrl(filename);
