@@ -37,6 +37,12 @@ public class RemovePluginCommandImpl implements RemovePluginCommand {
 	}
 
 	@Override
+	public RemovePluginCommand purge() {
+		removePlugin.setPurge(true);
+		return this;
+	}
+
+	@Override
 	public Executable<Boolean> plugin(String pluginClass) {
 		removePlugin.setPluginName(pluginClass);
 		return this::execute;

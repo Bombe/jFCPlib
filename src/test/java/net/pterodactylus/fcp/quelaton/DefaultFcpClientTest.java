@@ -2211,6 +2211,15 @@ public class DefaultFcpClientTest {
 				assertThat(pluginRemoved.get(), is(true));
 			}
 
+			@Test
+			public void removingPluginWithPurgeWorks()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<Boolean> pluginRemoved = fcpClient.removePlugin().purge().plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> allOf(matchPluginRemovedMessage(), hasItem("Purge=true")));
+				replyWithPluginRemoved();
+				assertThat(pluginRemoved.get(), is(true));
+			}
+
 			private void replyWithPluginRemoved() throws IOException {
 				fcpServer.writeLine(
 					"PluginRemoved",
