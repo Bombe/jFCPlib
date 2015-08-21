@@ -61,8 +61,8 @@ public class ReloadPluginCommandImpl implements ReloadPluginCommand {
 	}
 
 	private Optional<PluginInfo> executeDialog() throws IOException, ExecutionException, InterruptedException {
-		try (ReloadPluginDialog loadPluginDialog = new ReloadPluginDialog()) {
-			return loadPluginDialog.send(reloadPlugin).get();
+		try (ReloadPluginDialog reloadPluginDialog = new ReloadPluginDialog()) {
+			return reloadPluginDialog.send(reloadPlugin).get();
 		}
 	}
 
