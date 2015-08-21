@@ -13,6 +13,7 @@ public interface ReloadPluginCommand {
 
 	ReloadPluginCommand waitFor(int milliseconds);
 	ReloadPluginCommand purge();
+	ReloadPluginCommand addToConfig();
 	Executable<Optional<PluginInfo>> plugin(String pluginClassName);
 
 }

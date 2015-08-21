@@ -2171,6 +2171,16 @@ public class DefaultFcpClientTest {
 				verifyPluginInfo(pluginInfo);
 			}
 
+			@Test
+			public void reloadingPluginWithStoreWorks()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo =
+					fcpClient.reloadPlugin().addToConfig().plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> allOf(matchReloadPluginMessage(), hasItem("Store=true")));
+				replyWithPluginInfo();
+				verifyPluginInfo(pluginInfo);
+			}
+
 			private Matcher<List<String>> matchReloadPluginMessage() {
 				return matchesFcpMessage(
 					"ReloadPlugin",
