@@ -2202,6 +2202,15 @@ public class DefaultFcpClientTest {
 				assertThat(pluginRemoved.get(), is(true));
 			}
 
+			@Test
+			public void removingPluginWithMaxWaitTimeWorks()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<Boolean> pluginRemoved = fcpClient.removePlugin().waitFor(1234).plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> allOf(matchPluginRemovedMessage(), hasItem("MaxWaitTime=1234")));
+				replyWithPluginRemoved();
+				assertThat(pluginRemoved.get(), is(true));
+			}
+
 			private void replyWithPluginRemoved() throws IOException {
 				fcpServer.writeLine(
 					"PluginRemoved",

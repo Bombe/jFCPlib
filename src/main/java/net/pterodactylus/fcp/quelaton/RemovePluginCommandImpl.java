@@ -31,6 +31,12 @@ public class RemovePluginCommandImpl implements RemovePluginCommand {
 	}
 
 	@Override
+	public RemovePluginCommand waitFor(int milliseconds) {
+		removePlugin.setMaxWaitTime(milliseconds);
+		return this;
+	}
+
+	@Override
 	public Executable<Boolean> plugin(String pluginClass) {
 		removePlugin.setPluginName(pluginClass);
 		return this::execute;

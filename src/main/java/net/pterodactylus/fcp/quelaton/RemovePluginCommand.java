@@ -7,6 +7,7 @@ package net.pterodactylus.fcp.quelaton;
  */
 public interface RemovePluginCommand {
 
+	RemovePluginCommand waitFor(int milliseconds);
 	Executable<Boolean> plugin(String pluginClass);
 
 }
