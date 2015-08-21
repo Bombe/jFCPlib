@@ -27,5 +27,6 @@ public interface FcpClient {
 	LoadPluginCommand loadPlugin();
 	ReloadPluginCommand reloadPlugin();
 	RemovePluginCommand removePlugin();
+	GetPluginInfoCommand getPluginInfo();
 
 }

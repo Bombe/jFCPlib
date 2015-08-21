@@ -129,5 +129,10 @@ public class DefaultFcpClient implements FcpClient {
 		return new RemovePluginCommandImpl(threadPool, this::connect);
 	}
 
+	@Override
+	public GetPluginInfoCommand getPluginInfo() {
+		return new GetPluginInfoCommandImpl(threadPool, this::connect);
+	}
+
 }
 

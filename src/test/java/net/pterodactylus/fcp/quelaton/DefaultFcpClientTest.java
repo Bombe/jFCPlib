@@ -2240,6 +2240,27 @@ public class DefaultFcpClientTest {
 
 		}
 
+		public class GetPluginInfo {
+
+			@Test
+			public void gettingPluginInfoWorks() throws InterruptedException, ExecutionException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo = fcpClient.getPluginInfo().plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> matchGetPluginInfoMessage());
+				replyWithPluginInfo();
+				verifyPluginInfo(pluginInfo);
+			}
+
+			private Matcher<List<String>> matchGetPluginInfoMessage() {
+				return matchesFcpMessage(
+					"GetPluginInfo",
+					"Identifier=" + identifier,
+					"PluginName=" + CLASS_NAME,
+					"EndMessage"
+				);
+			}
+
+		}
+
 	}
 
 }
