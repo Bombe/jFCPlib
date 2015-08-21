@@ -3,6 +3,7 @@ package net.pterodactylus.fcp.quelaton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -22,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import net.pterodactylus.fcp.ARK;
@@ -1992,131 +1994,120 @@ public class DefaultFcpClientTest {
 
 	public class LoadPlugin {
 
-		@Test
-		public void officialFromFreenet() throws ExecutionException, InterruptedException, IOException {
-			Future<Optional<PluginInfo>> pluginInfo =
-				fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
+		private List<String> lines;
+		private String identifier;
+
+		private void connectAndAssert(Supplier<Matcher<List<String>>> requestMatcher)
+		throws InterruptedException, ExecutionException, IOException {
 			connectNode();
-			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-			String identifier = extractIdentifier(lines);
-			assertThat(lines, matchesFcpMessage(
-				"LoadPlugin",
-				"Identifier=" + identifier,
-				"PluginURL=superPlugin",
-				"URLType=official",
-				"OfficialSource=freenet",
-				"EndMessage"
-			));
-			assertThat(lines, not(contains(startsWith("Store="))));
-			replyWithPluginInfo(identifier);
-			verifyPluginInfo(pluginInfo);
+			lines = fcpServer.collectUntil(is("EndMessage"));
+			identifier = extractIdentifier(lines);
+			assertThat(lines, requestMatcher.get());
 		}
 
-		@Test
-		public void persistentOfficialFromFreenet() throws ExecutionException, InterruptedException,
-		IOException {
-			Future<Optional<PluginInfo>> pluginInfo =
-				fcpClient.loadPlugin().addToConfig().officialFromFreenet("superPlugin").execute();
-			connectNode();
-			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-			String identifier = extractIdentifier(lines);
-			assertThat(lines, matchesFcpMessage(
-				"LoadPlugin",
-				"Identifier=" + identifier,
-				"PluginURL=superPlugin",
-				"URLType=official",
-				"OfficialSource=freenet",
-				"Store=true",
-				"EndMessage"
-			));
-			replyWithPluginInfo(identifier);
-			verifyPluginInfo(pluginInfo);
+		public class OfficialPlugins {
+
+			@Test
+			public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo =
+					fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
+				connectAndAssert(() -> createMatcherForOfficialSource("freenet"));
+				assertThat(lines, not(contains(startsWith("Store="))));
+				replyWithPluginInfo(identifier);
+				verifyPluginInfo(pluginInfo);
+			}
+
+			@Test
+			public void persistentFromFreenet() throws ExecutionException, InterruptedException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo =
+					fcpClient.loadPlugin().addToConfig().officialFromFreenet("superPlugin").execute();
+				connectAndAssert(() -> createMatcherForOfficialSource("freenet"));
+				assertThat(lines, hasItem("Store=true"));
+				replyWithPluginInfo(identifier);
+				verifyPluginInfo(pluginInfo);
+			}
+
+			@Test
+			public void fromHttps() throws ExecutionException, InterruptedException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo =
+					fcpClient.loadPlugin().officialFromHttps("superPlugin").execute();
+				connectAndAssert(() -> createMatcherForOfficialSource("https"));
+				replyWithPluginInfo(identifier);
+				verifyPluginInfo(pluginInfo);
+			}
+
+			private Matcher<List<String>> createMatcherForOfficialSource(String officialSource) {
+				return matchesFcpMessage(
+					"LoadPlugin",
+					"Identifier=" + identifier,
+					"PluginURL=superPlugin",
+					"URLType=official",
+					"OfficialSource=" + officialSource,
+					"EndMessage"
+				);
+			}
+
 		}
 
-		@Test
-		public void officialFromHttps() throws ExecutionException, InterruptedException, IOException {
-			Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().officialFromHttps("superPlugin").execute();
-			connectNode();
-			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-			String identifier = extractIdentifier(lines);
-			assertThat(lines, matchesFcpMessage(
-				"LoadPlugin",
-				"Identifier=" + identifier,
-				"PluginURL=superPlugin",
-				"URLType=official",
-				"OfficialSource=https",
-				"EndMessage"
-			));
-			replyWithPluginInfo(identifier);
-			verifyPluginInfo(pluginInfo);
+		public class FromOtherSources {
+
+			private static final String FILE_PATH = "/path/to/plugin.jar";
+			private static final String URL = "http://server.com/plugin.jar";
+			private static final String KEY = "KSK@plugin.jar";
+
+			@Test
+			public void fromFile() throws ExecutionException, InterruptedException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFile(FILE_PATH).execute();
+				connectAndAssert(() -> createMatcher("file", FILE_PATH));
+				replyWithPluginInfo(identifier);
+				verifyPluginInfo(pluginInfo);
+			}
+
+			@Test
+			public void fromUrl() throws ExecutionException, InterruptedException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromUrl(URL).execute();
+				connectAndAssert(() -> createMatcher("url", URL));
+				replyWithPluginInfo(identifier);
+				verifyPluginInfo(pluginInfo);
+			}
+
+			@Test
+			public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFreenet(KEY).execute();
+				connectAndAssert(() -> createMatcher("freenet", KEY));
+				replyWithPluginInfo(identifier);
+				verifyPluginInfo(pluginInfo);
+			}
+
+			private Matcher<List<String>> createMatcher(String urlType, String url) {
+				return matchesFcpMessage(
+					"LoadPlugin",
+					"Identifier=" + identifier,
+					"PluginURL=" + url,
+					"URLType=" + urlType,
+					"EndMessage"
+				);
+			}
+
 		}
 
-		@Test
-		public void fromFile() throws ExecutionException, InterruptedException, IOException {
-			Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFile("/path/to/plugin.jar").execute();
-			connectNode();
-			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-			String identifier = extractIdentifier(lines);
-			assertThat(lines, matchesFcpMessage(
-				"LoadPlugin",
-				"Identifier=" + identifier,
-				"PluginURL=/path/to/plugin.jar",
-				"URLType=file",
-				"EndMessage"
-			));
-			replyWithPluginInfo(identifier);
-			verifyPluginInfo(pluginInfo);
-		}
+		public class Failed {
 
-		@Test
-		public void fromUrl() throws ExecutionException, InterruptedException, IOException {
-			Future<Optional<PluginInfo>> pluginInfo =
-				fcpClient.loadPlugin().fromUrl("http://server.com/plugin.jar").execute();
-			connectNode();
-			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-			String identifier = extractIdentifier(lines);
-			assertThat(lines, matchesFcpMessage(
-				"LoadPlugin",
-				"Identifier=" + identifier,
-				"PluginURL=http://server.com/plugin.jar",
-				"URLType=url",
-				"EndMessage"
-			));
-			replyWithPluginInfo(identifier);
-			verifyPluginInfo(pluginInfo);
-		}
+			@Test
+			public void failedLoad() throws ExecutionException, InterruptedException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo =
+					fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
+				connectNode();
+				List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+				String identifier = extractIdentifier(lines);
+				fcpServer.writeLine(
+					"ProtocolError",
+					"Identifier=" + identifier,
+					"EndMessage"
+				);
+				assertThat(pluginInfo.get().isPresent(), is(false));
+			}
 
-		@Test
-		public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
-			Future<Optional<PluginInfo>> pluginInfo =
-				fcpClient.loadPlugin().fromFreenet("KSK@plugin.jar").execute();
-			connectNode();
-			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-			String identifier = extractIdentifier(lines);
-			assertThat(lines, matchesFcpMessage(
-				"LoadPlugin",
-				"Identifier=" + identifier,
-				"PluginURL=KSK@plugin.jar",
-				"URLType=freenet",
-				"EndMessage"
-			));
-			replyWithPluginInfo(identifier);
-			verifyPluginInfo(pluginInfo);
-		}
-
-		@Test
-		public void failedLoad() throws ExecutionException, InterruptedException, IOException {
-			Future<Optional<PluginInfo>> pluginInfo =
-				fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
-			connectNode();
-			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-			String identifier = extractIdentifier(lines);
-			fcpServer.writeLine(
-				"ProtocolError",
-				"Identifier=" + identifier,
-				"EndMessage"
-			);
-			assertThat(pluginInfo.get().isPresent(), is(false));
 		}
 
 		private void replyWithPluginInfo(String identifier) throws IOException {
