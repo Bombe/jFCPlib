@@ -1992,7 +1992,7 @@ public class DefaultFcpClientTest {
 		assertThat(newConfigData.get().getCurrent("foo.bar"), is("baz"));
 	}
 
-	public class LoadPlugin {
+	public class PluginCommands {
 
 		private List<String> lines;
 		private String identifier;
@@ -2003,111 +2003,6 @@ public class DefaultFcpClientTest {
 			lines = fcpServer.collectUntil(is("EndMessage"));
 			identifier = extractIdentifier(lines);
 			assertThat(lines, requestMatcher.get());
-		}
-
-		public class OfficialPlugins {
-
-			@Test
-			public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
-				Future<Optional<PluginInfo>> pluginInfo =
-					fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
-				connectAndAssert(() -> createMatcherForOfficialSource("freenet"));
-				assertThat(lines, not(contains(startsWith("Store="))));
-				replyWithPluginInfo();
-				verifyPluginInfo(pluginInfo);
-			}
-
-			@Test
-			public void persistentFromFreenet() throws ExecutionException, InterruptedException, IOException {
-				Future<Optional<PluginInfo>> pluginInfo =
-					fcpClient.loadPlugin().addToConfig().officialFromFreenet("superPlugin").execute();
-				connectAndAssert(() -> createMatcherForOfficialSource("freenet"));
-				assertThat(lines, hasItem("Store=true"));
-				replyWithPluginInfo();
-				verifyPluginInfo(pluginInfo);
-			}
-
-			@Test
-			public void fromHttps() throws ExecutionException, InterruptedException, IOException {
-				Future<Optional<PluginInfo>> pluginInfo =
-					fcpClient.loadPlugin().officialFromHttps("superPlugin").execute();
-				connectAndAssert(() -> createMatcherForOfficialSource("https"));
-				replyWithPluginInfo();
-				verifyPluginInfo(pluginInfo);
-			}
-
-			private Matcher<List<String>> createMatcherForOfficialSource(String officialSource) {
-				return matchesFcpMessage(
-					"LoadPlugin",
-					"Identifier=" + identifier,
-					"PluginURL=superPlugin",
-					"URLType=official",
-					"OfficialSource=" + officialSource,
-					"EndMessage"
-				);
-			}
-
-		}
-
-		public class FromOtherSources {
-
-			private static final String FILE_PATH = "/path/to/plugin.jar";
-			private static final String URL = "http://server.com/plugin.jar";
-			private static final String KEY = "KSK@plugin.jar";
-
-			@Test
-			public void fromFile() throws ExecutionException, InterruptedException, IOException {
-				Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFile(FILE_PATH).execute();
-				connectAndAssert(() -> createMatcher("file", FILE_PATH));
-				replyWithPluginInfo();
-				verifyPluginInfo(pluginInfo);
-			}
-
-			@Test
-			public void fromUrl() throws ExecutionException, InterruptedException, IOException {
-				Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromUrl(URL).execute();
-				connectAndAssert(() -> createMatcher("url", URL));
-				replyWithPluginInfo();
-				verifyPluginInfo(pluginInfo);
-			}
-
-			@Test
-			public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
-				Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFreenet(KEY).execute();
-				connectAndAssert(() -> createMatcher("freenet", KEY));
-				replyWithPluginInfo();
-				verifyPluginInfo(pluginInfo);
-			}
-
-			private Matcher<List<String>> createMatcher(String urlType, String url) {
-				return matchesFcpMessage(
-					"LoadPlugin",
-					"Identifier=" + identifier,
-					"PluginURL=" + url,
-					"URLType=" + urlType,
-					"EndMessage"
-				);
-			}
-
-		}
-
-		public class Failed {
-
-			@Test
-			public void failedLoad() throws ExecutionException, InterruptedException, IOException {
-				Future<Optional<PluginInfo>> pluginInfo =
-					fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
-				connectNode();
-				List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-				String identifier = extractIdentifier(lines);
-				fcpServer.writeLine(
-					"ProtocolError",
-					"Identifier=" + identifier,
-					"EndMessage"
-				);
-				assertThat(pluginInfo.get().isPresent(), is(false));
-			}
-
 		}
 
 		private void replyWithPluginInfo() throws IOException {
@@ -2134,57 +2029,132 @@ public class DefaultFcpClientTest {
 			assertThat(pluginInfo.get().get().isStarted(), is(true));
 		}
 
-	}
+		public class LoadPlugin {
 
-	public class ReloadPlugin {
+			public class OfficialPlugins {
 
-		private static final String CLASS_NAME = "foo.plugin.Plugin";
-		private List<String> lines;
-		private String identifier;
+				@Test
+				public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
+					Future<Optional<PluginInfo>> pluginInfo =
+						fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
+					connectAndAssert(() -> createMatcherForOfficialSource("freenet"));
+					assertThat(lines, not(contains(startsWith("Store="))));
+					replyWithPluginInfo();
+					verifyPluginInfo(pluginInfo);
+				}
 
-		private void connectAndAssert(Supplier<Matcher<List<String>>> requestMatcher)
-		throws InterruptedException, ExecutionException, IOException {
-			connectNode();
-			lines = fcpServer.collectUntil(is("EndMessage"));
-			identifier = extractIdentifier(lines);
-			assertThat(lines, requestMatcher.get());
+				@Test
+				public void persistentFromFreenet() throws ExecutionException, InterruptedException, IOException {
+					Future<Optional<PluginInfo>> pluginInfo =
+						fcpClient.loadPlugin().addToConfig().officialFromFreenet("superPlugin").execute();
+					connectAndAssert(() -> createMatcherForOfficialSource("freenet"));
+					assertThat(lines, hasItem("Store=true"));
+					replyWithPluginInfo();
+					verifyPluginInfo(pluginInfo);
+				}
+
+				@Test
+				public void fromHttps() throws ExecutionException, InterruptedException, IOException {
+					Future<Optional<PluginInfo>> pluginInfo =
+						fcpClient.loadPlugin().officialFromHttps("superPlugin").execute();
+					connectAndAssert(() -> createMatcherForOfficialSource("https"));
+					replyWithPluginInfo();
+					verifyPluginInfo(pluginInfo);
+				}
+
+				private Matcher<List<String>> createMatcherForOfficialSource(String officialSource) {
+					return matchesFcpMessage(
+						"LoadPlugin",
+						"Identifier=" + identifier,
+						"PluginURL=superPlugin",
+						"URLType=official",
+						"OfficialSource=" + officialSource,
+						"EndMessage"
+					);
+				}
+
+			}
+
+			public class FromOtherSources {
+
+				private static final String FILE_PATH = "/path/to/plugin.jar";
+				private static final String URL = "http://server.com/plugin.jar";
+				private static final String KEY = "KSK@plugin.jar";
+
+				@Test
+				public void fromFile() throws ExecutionException, InterruptedException, IOException {
+					Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFile(FILE_PATH).execute();
+					connectAndAssert(() -> createMatcher("file", FILE_PATH));
+					replyWithPluginInfo();
+					verifyPluginInfo(pluginInfo);
+				}
+
+				@Test
+				public void fromUrl() throws ExecutionException, InterruptedException, IOException {
+					Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromUrl(URL).execute();
+					connectAndAssert(() -> createMatcher("url", URL));
+					replyWithPluginInfo();
+					verifyPluginInfo(pluginInfo);
+				}
+
+				@Test
+				public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
+					Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFreenet(KEY).execute();
+					connectAndAssert(() -> createMatcher("freenet", KEY));
+					replyWithPluginInfo();
+					verifyPluginInfo(pluginInfo);
+				}
+
+				private Matcher<List<String>> createMatcher(String urlType, String url) {
+					return matchesFcpMessage(
+						"LoadPlugin",
+						"Identifier=" + identifier,
+						"PluginURL=" + url,
+						"URLType=" + urlType,
+						"EndMessage"
+					);
+				}
+
+			}
+
+			public class Failed {
+
+				@Test
+				public void failedLoad() throws ExecutionException, InterruptedException, IOException {
+					Future<Optional<PluginInfo>> pluginInfo =
+						fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
+					connectNode();
+					List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+					String identifier = extractIdentifier(lines);
+					fcpServer.writeLine(
+						"ProtocolError",
+						"Identifier=" + identifier,
+						"EndMessage"
+					);
+					assertThat(pluginInfo.get().isPresent(), is(false));
+				}
+
+			}
+
 		}
 
-		@Test
-		public void reloadingPluginWorks() throws InterruptedException, ExecutionException, IOException {
-			Future<Optional<PluginInfo>> pluginInfo = fcpClient.reloadPlugin().plugin(CLASS_NAME).execute();
-			connectAndAssert(() -> matchesFcpMessage(
-				"ReloadPlugin",
-				"Identifier=" + identifier,
-				"PluginName=" + CLASS_NAME,
-				"EndMessage"
-			));
-			replyWithPluginInfo();
-			verifyPluginInfo(pluginInfo);
-		}
+		public class ReloadPlugin {
 
-		private void replyWithPluginInfo() throws IOException {
-			fcpServer.writeLine(
-				"PluginInfo",
-				"Identifier=" + identifier,
-				"PluginName=superPlugin",
-				"IsTalkable=true",
-				"LongVersion=1.2.3",
-				"Version=42",
-				"OriginUri=superPlugin",
-				"Started=true",
-				"EndMessage"
-			);
-		}
+			private static final String CLASS_NAME = "foo.plugin.Plugin";
 
-		private void verifyPluginInfo(Future<Optional<PluginInfo>> pluginInfo)
-		throws InterruptedException, ExecutionException {
-			assertThat(pluginInfo.get().get().getPluginName(), is("superPlugin"));
-			assertThat(pluginInfo.get().get().getOriginalURI(), is("superPlugin"));
-			assertThat(pluginInfo.get().get().isTalkable(), is(true));
-			assertThat(pluginInfo.get().get().getVersion(), is("42"));
-			assertThat(pluginInfo.get().get().getLongVersion(), is("1.2.3"));
-			assertThat(pluginInfo.get().get().isStarted(), is(true));
+			@Test
+			public void reloadingPluginWorks() throws InterruptedException, ExecutionException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo = fcpClient.reloadPlugin().plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> matchesFcpMessage(
+					"ReloadPlugin",
+					"Identifier=" + identifier,
+					"PluginName=" + CLASS_NAME,
+					"EndMessage"
+				));
+				replyWithPluginInfo();
+				verifyPluginInfo(pluginInfo);
+			}
+
 		}
 
 	}
