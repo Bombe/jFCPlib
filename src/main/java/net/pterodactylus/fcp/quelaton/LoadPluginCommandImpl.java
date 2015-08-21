@@ -48,6 +48,14 @@ public class LoadPluginCommandImpl implements LoadPluginCommand {
 		return this::execute;
 	}
 
+	@Override
+	public Executable<Optional<PluginInfo>> officialFromHttps(String pluginIdentifier) {
+		loadPlugin.setUrlType(UrlType.OFFICIAL);
+		loadPlugin.setOfficialSource(OfficialSource.HTTPS);
+		loadPlugin.setPluginUrl(pluginIdentifier);
+		return this::execute;
+	}
+
 	private ListenableFuture<Optional<PluginInfo>> execute() {
 		return threadPool.submit(this::executeDialog);
 	}
