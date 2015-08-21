@@ -33,6 +33,7 @@ import net.pterodactylus.fcp.NodeData;
 import net.pterodactylus.fcp.NodeRef;
 import net.pterodactylus.fcp.Peer;
 import net.pterodactylus.fcp.PeerNote;
+import net.pterodactylus.fcp.PluginInfo;
 import net.pterodactylus.fcp.Priority;
 import net.pterodactylus.fcp.fake.FakeTcpServer;
 import net.pterodactylus.fcp.quelaton.ClientGetCommand.Data;
@@ -1984,6 +1985,92 @@ public class DefaultFcpClientTest {
 			"EndMessage"
 		);
 		assertThat(newConfigData.get().getCurrent("foo.bar"), is("baz"));
+	}
+
+	@Test
+	public void defaultFcpClientCanLoadPluginFromFreenet() throws ExecutionException, InterruptedException,
+	IOException {
+		Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"LoadPlugin",
+			"Identifier=" + identifier,
+			"PluginURL=superPlugin",
+			"URLType=official",
+			"OfficialSource=freenet",
+			"EndMessage"
+		));
+		assertThat(lines, not(contains(startsWith("Store="))));
+		fcpServer.writeLine(
+			"PluginInfo",
+			"Identifier=" + identifier,
+			"PluginName=superPlugin",
+			"IsTalkable=true",
+			"LongVersion=1.2.3",
+			"Version=42",
+			"OriginUri=superPlugin",
+			"Started=true",
+			"EndMessage"
+		);
+		assertThat(pluginInfo.get().get().getPluginName(), is("superPlugin"));
+		assertThat(pluginInfo.get().get().getOriginalURI(), is("superPlugin"));
+		assertThat(pluginInfo.get().get().isTalkable(), is(true));
+		assertThat(pluginInfo.get().get().getVersion(), is("42"));
+		assertThat(pluginInfo.get().get().getLongVersion(), is("1.2.3"));
+		assertThat(pluginInfo.get().get().isStarted(), is(true));
+	}
+
+	@Test
+	public void defaultFcpClientCanLoadPersistentPluginFromFreenet() throws ExecutionException, InterruptedException,
+	IOException {
+		Future<Optional<PluginInfo>> pluginInfo =
+			fcpClient.loadPlugin().addToConfig().officialFromFreenet("superPlugin").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		assertThat(lines, matchesFcpMessage(
+			"LoadPlugin",
+			"Identifier=" + identifier,
+			"PluginURL=superPlugin",
+			"URLType=official",
+			"OfficialSource=freenet",
+			"Store=true",
+			"EndMessage"
+		));
+		fcpServer.writeLine(
+			"PluginInfo",
+			"Identifier=" + identifier,
+			"PluginName=superPlugin",
+			"IsTalkable=true",
+			"LongVersion=1.2.3",
+			"Version=42",
+			"OriginUri=superPlugin",
+			"Started=true",
+			"EndMessage"
+		);
+		assertThat(pluginInfo.get().get().getPluginName(), is("superPlugin"));
+		assertThat(pluginInfo.get().get().getOriginalURI(), is("superPlugin"));
+		assertThat(pluginInfo.get().get().isTalkable(), is(true));
+		assertThat(pluginInfo.get().get().getVersion(), is("42"));
+		assertThat(pluginInfo.get().get().getLongVersion(), is("1.2.3"));
+		assertThat(pluginInfo.get().get().isStarted(), is(true));
+	}
+
+	@Test
+	public void failedLoadingPluginIsRecognized() throws ExecutionException, InterruptedException,
+	IOException {
+		Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
+		connectNode();
+		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+		String identifier = extractIdentifier(lines);
+		fcpServer.writeLine(
+			"ProtocolError",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+		assertThat(pluginInfo.get().isPresent(), is(false));
 	}
 
 }
