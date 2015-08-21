@@ -1993,7 +1993,7 @@ public class DefaultFcpClientTest {
 	public class LoadPlugin {
 
 		@Test
-		public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
+		public void officialFromFreenet() throws ExecutionException, InterruptedException, IOException {
 			Future<Optional<PluginInfo>> pluginInfo =
 				fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
 			connectNode();
@@ -2013,7 +2013,7 @@ public class DefaultFcpClientTest {
 		}
 
 		@Test
-		public void persistentFromFreenet() throws ExecutionException, InterruptedException,
+		public void persistentOfficialFromFreenet() throws ExecutionException, InterruptedException,
 		IOException {
 			Future<Optional<PluginInfo>> pluginInfo =
 				fcpClient.loadPlugin().addToConfig().officialFromFreenet("superPlugin").execute();
@@ -2034,7 +2034,7 @@ public class DefaultFcpClientTest {
 		}
 
 		@Test
-		public void fromHttps() throws ExecutionException, InterruptedException, IOException {
+		public void officialFromHttps() throws ExecutionException, InterruptedException, IOException {
 			Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().officialFromHttps("superPlugin").execute();
 			connectNode();
 			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
