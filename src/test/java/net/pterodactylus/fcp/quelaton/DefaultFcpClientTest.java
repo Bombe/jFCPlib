@@ -40,18 +40,21 @@ import net.pterodactylus.fcp.quelaton.ClientGetCommand.Data;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
+import com.nitorcreations.junit.runners.NestedRunner;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * Unit test for {@link DefaultFcpClient}.
  *
  * @author <a href="bombe@freenetproject.org">David ‘Bombe’ Roden</a>
  */
+@RunWith(NestedRunner.class)
 public class DefaultFcpClientTest {
 
 	private static final String INSERT_URI =
@@ -1987,157 +1990,123 @@ public class DefaultFcpClientTest {
 		assertThat(newConfigData.get().getCurrent("foo.bar"), is("baz"));
 	}
 
-	@Test
-	public void defaultFcpClientCanLoadPluginFromFreenet() throws ExecutionException, InterruptedException,
-	IOException {
-		Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"LoadPlugin",
-			"Identifier=" + identifier,
-			"PluginURL=superPlugin",
-			"URLType=official",
-			"OfficialSource=freenet",
-			"EndMessage"
-		));
-		assertThat(lines, not(contains(startsWith("Store="))));
-		fcpServer.writeLine(
-			"PluginInfo",
-			"Identifier=" + identifier,
-			"PluginName=superPlugin",
-			"IsTalkable=true",
-			"LongVersion=1.2.3",
-			"Version=42",
-			"OriginUri=superPlugin",
-			"Started=true",
-			"EndMessage"
-		);
-		assertThat(pluginInfo.get().get().getPluginName(), is("superPlugin"));
-		assertThat(pluginInfo.get().get().getOriginalURI(), is("superPlugin"));
-		assertThat(pluginInfo.get().get().isTalkable(), is(true));
-		assertThat(pluginInfo.get().get().getVersion(), is("42"));
-		assertThat(pluginInfo.get().get().getLongVersion(), is("1.2.3"));
-		assertThat(pluginInfo.get().get().isStarted(), is(true));
-	}
+	public class LoadPlugin {
 
-	@Test
-	public void defaultFcpClientCanLoadPersistentPluginFromFreenet() throws ExecutionException, InterruptedException,
-	IOException {
-		Future<Optional<PluginInfo>> pluginInfo =
-			fcpClient.loadPlugin().addToConfig().officialFromFreenet("superPlugin").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"LoadPlugin",
-			"Identifier=" + identifier,
-			"PluginURL=superPlugin",
-			"URLType=official",
-			"OfficialSource=freenet",
-			"Store=true",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"PluginInfo",
-			"Identifier=" + identifier,
-			"PluginName=superPlugin",
-			"IsTalkable=true",
-			"LongVersion=1.2.3",
-			"Version=42",
-			"OriginUri=superPlugin",
-			"Started=true",
-			"EndMessage"
-		);
-		assertThat(pluginInfo.get().get().getPluginName(), is("superPlugin"));
-		assertThat(pluginInfo.get().get().getOriginalURI(), is("superPlugin"));
-		assertThat(pluginInfo.get().get().isTalkable(), is(true));
-		assertThat(pluginInfo.get().get().getVersion(), is("42"));
-		assertThat(pluginInfo.get().get().getLongVersion(), is("1.2.3"));
-		assertThat(pluginInfo.get().get().isStarted(), is(true));
-	}
+		@Test
+		public void fromFreenet() throws ExecutionException, InterruptedException, IOException {
+			Future<Optional<PluginInfo>> pluginInfo =
+				fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
+			connectNode();
+			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+			String identifier = extractIdentifier(lines);
+			assertThat(lines, matchesFcpMessage(
+				"LoadPlugin",
+				"Identifier=" + identifier,
+				"PluginURL=superPlugin",
+				"URLType=official",
+				"OfficialSource=freenet",
+				"EndMessage"
+			));
+			assertThat(lines, not(contains(startsWith("Store="))));
+			replyWithPluginInfo(identifier);
+			verifyPluginInfo(pluginInfo);
+		}
 
-	@Test
-	public void defaultFcpClientCanLoadPluginFromHttps() throws ExecutionException, InterruptedException,
-	IOException {
-		Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().officialFromHttps("superPlugin").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"LoadPlugin",
-			"Identifier=" + identifier,
-			"PluginURL=superPlugin",
-			"URLType=official",
-			"OfficialSource=https",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"PluginInfo",
-			"Identifier=" + identifier,
-			"PluginName=superPlugin",
-			"IsTalkable=true",
-			"LongVersion=1.2.3",
-			"Version=42",
-			"OriginUri=superPlugin",
-			"Started=true",
-			"EndMessage"
-		);
-		assertThat(pluginInfo.get().get().getPluginName(), is("superPlugin"));
-		assertThat(pluginInfo.get().get().getOriginalURI(), is("superPlugin"));
-		assertThat(pluginInfo.get().get().isTalkable(), is(true));
-		assertThat(pluginInfo.get().get().getVersion(), is("42"));
-		assertThat(pluginInfo.get().get().getLongVersion(), is("1.2.3"));
-		assertThat(pluginInfo.get().get().isStarted(), is(true));
-	}
+		@Test
+		public void persistentFromFreenet() throws ExecutionException, InterruptedException,
+		IOException {
+			Future<Optional<PluginInfo>> pluginInfo =
+				fcpClient.loadPlugin().addToConfig().officialFromFreenet("superPlugin").execute();
+			connectNode();
+			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+			String identifier = extractIdentifier(lines);
+			assertThat(lines, matchesFcpMessage(
+				"LoadPlugin",
+				"Identifier=" + identifier,
+				"PluginURL=superPlugin",
+				"URLType=official",
+				"OfficialSource=freenet",
+				"Store=true",
+				"EndMessage"
+			));
+			replyWithPluginInfo(identifier);
+			verifyPluginInfo(pluginInfo);
+		}
 
-	@Test
-	public void defaultFcpClientCanLoadPluginFromFile() throws ExecutionException, InterruptedException,
-	IOException {
-		Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFile("/path/to/plugin.jar").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"LoadPlugin",
-			"Identifier=" + identifier,
-			"PluginURL=/path/to/plugin.jar",
-			"URLType=file",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"PluginInfo",
-			"Identifier=" + identifier,
-			"PluginName=superPlugin",
-			"IsTalkable=true",
-			"LongVersion=1.2.3",
-			"Version=42",
-			"OriginUri=superPlugin",
-			"Started=true",
-			"EndMessage"
-		);
-		assertThat(pluginInfo.get().get().getPluginName(), is("superPlugin"));
-		assertThat(pluginInfo.get().get().getOriginalURI(), is("superPlugin"));
-		assertThat(pluginInfo.get().get().isTalkable(), is(true));
-		assertThat(pluginInfo.get().get().getVersion(), is("42"));
-		assertThat(pluginInfo.get().get().getLongVersion(), is("1.2.3"));
-		assertThat(pluginInfo.get().get().isStarted(), is(true));
-	}
+		@Test
+		public void fromHttps() throws ExecutionException, InterruptedException, IOException {
+			Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().officialFromHttps("superPlugin").execute();
+			connectNode();
+			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+			String identifier = extractIdentifier(lines);
+			assertThat(lines, matchesFcpMessage(
+				"LoadPlugin",
+				"Identifier=" + identifier,
+				"PluginURL=superPlugin",
+				"URLType=official",
+				"OfficialSource=https",
+				"EndMessage"
+			));
+			replyWithPluginInfo(identifier);
+			verifyPluginInfo(pluginInfo);
+		}
 
-	@Test
-	public void failedLoadingPluginIsRecognized() throws ExecutionException, InterruptedException,
-	IOException {
-		Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"ProtocolError",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		assertThat(pluginInfo.get().isPresent(), is(false));
+		@Test
+		public void fromFile() throws ExecutionException, InterruptedException, IOException {
+			Future<Optional<PluginInfo>> pluginInfo = fcpClient.loadPlugin().fromFile("/path/to/plugin.jar").execute();
+			connectNode();
+			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+			String identifier = extractIdentifier(lines);
+			assertThat(lines, matchesFcpMessage(
+				"LoadPlugin",
+				"Identifier=" + identifier,
+				"PluginURL=/path/to/plugin.jar",
+				"URLType=file",
+				"EndMessage"
+			));
+			replyWithPluginInfo(identifier);
+			verifyPluginInfo(pluginInfo);
+		}
+
+		@Test
+		public void failedLoad() throws ExecutionException, InterruptedException, IOException {
+			Future<Optional<PluginInfo>> pluginInfo =
+				fcpClient.loadPlugin().officialFromFreenet("superPlugin").execute();
+			connectNode();
+			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+			String identifier = extractIdentifier(lines);
+			fcpServer.writeLine(
+				"ProtocolError",
+				"Identifier=" + identifier,
+				"EndMessage"
+			);
+			assertThat(pluginInfo.get().isPresent(), is(false));
+		}
+
+		private void replyWithPluginInfo(String identifier) throws IOException {
+			fcpServer.writeLine(
+				"PluginInfo",
+				"Identifier=" + identifier,
+				"PluginName=superPlugin",
+				"IsTalkable=true",
+				"LongVersion=1.2.3",
+				"Version=42",
+				"OriginUri=superPlugin",
+				"Started=true",
+				"EndMessage"
+			);
+		}
+
+		private void verifyPluginInfo(Future<Optional<PluginInfo>> pluginInfo)
+		throws InterruptedException, ExecutionException {
+			assertThat(pluginInfo.get().get().getPluginName(), is("superPlugin"));
+			assertThat(pluginInfo.get().get().getOriginalURI(), is("superPlugin"));
+			assertThat(pluginInfo.get().get().isTalkable(), is(true));
+			assertThat(pluginInfo.get().get().getVersion(), is("42"));
+			assertThat(pluginInfo.get().get().getLongVersion(), is("1.2.3"));
+			assertThat(pluginInfo.get().get().isStarted(), is(true));
+		}
+
 	}
 
 }
