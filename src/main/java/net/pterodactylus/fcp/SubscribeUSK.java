@@ -18,13 +18,15 @@
 
 package net.pterodactylus.fcp;
 
+import java.util.Optional;
+
 /**
  * With a “SubscribeUSK” a client requests to be notified if the edition number
  * of a USK changes.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class SubscribeUSK extends FcpMessage {
+public class SubscribeUSK extends FcpMessage implements Identifiable {
 
 	public SubscribeUSK(String identifier) {
 		super("SubscribeUSK");
@@ -36,20 +38,73 @@ public class SubscribeUSK extends FcpMessage {
 		setField("URI", uri);
 	}
 
+	@Override
+	public String getIdentifier() {
+		return getField("Identifier");
+	}
+
+	public String getUri() {
+		return getField("URI");
+	}
+
 	public void setUri(String uri) {
 		setField("URI", uri);
+	}
+
+	public boolean isActive() {
+		return !Boolean.parseBoolean(getField("DontPoll"));
 	}
 
 	/**
 	 * Sets whether updates for the USK are actively searched.
 	 *
 	 * @param active
-	 *            <code>true</code> to actively search for newer editions,
-	 *            <code>false</code> to only watch for newer editions that are
-	 *            found from other requests
+	 * 	<code>true</code> to actively search for newer editions,
+	 * 	<code>false</code> to only watch for newer editions that are
+	 * 	found from other requests
 	 */
 	public void setActive(boolean active) {
 		setField("DontPoll", String.valueOf(!active));
+	}
+
+	public boolean isSparse() {
+		return Boolean.valueOf(getField("SparsePoll"));
+	}
+
+	public void setSparse(boolean sparse) {
+		setField("SparsePoll", String.valueOf(sparse));
+	}
+
+	public Priority getPriority() {
+		return Optional.ofNullable(getField("PriorityClass")).map(Priority::valueOf).orElse(Priority.bulkSplitfile);
+	}
+
+	public void setPriority(Priority priority) {
+		setField("PriorityClass", priority.toString());
+	}
+
+	public Priority getActivePriority() {
+		return Optional.ofNullable(getField("PriorityClassProgress")).map(Priority::valueOf).orElse(Priority.update);
+	}
+
+	public void setActivePriority(Priority activePriority) {
+		setField("PriorityClassProgress", activePriority.toString());
+	}
+
+	public boolean isRealTime() {
+		return Boolean.valueOf(getField("RealTimeFlag"));
+	}
+
+	public void setRealTime(boolean realTime) {
+		setField("RealTimeFlag", String.valueOf(realTime));
+	}
+
+	public boolean isIgnoreDateHints() {
+		return Boolean.valueOf(getField("IgnoreUSKDatehints"));
+	}
+
+	public void setIgnoreDateHints(boolean ignoreDateHints) {
+		setField("IgnoreUSKDatehints", String.valueOf(ignoreDateHints));
 	}
 
 }
