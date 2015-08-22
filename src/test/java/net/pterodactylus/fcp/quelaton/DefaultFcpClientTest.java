@@ -2310,6 +2310,24 @@ public class DefaultFcpClientTest {
 			assertThat(edition.get(), is(24));
 		}
 
+		@Test
+		public void subscriptionUpdatesMultipleTimes() throws InterruptedException, ExecutionException, IOException {
+			Future<Optional<UskSubscription>> uskSubscription = fcpClient.subscribeUsk().uri(URI).execute();
+			connectAndAssert(() -> matchesFcpMessage("SubscribeUSK", "URI=" + URI, "EndMessage"));
+			replyWithSubscribed();
+			assertThat(uskSubscription.get().get().getUri(), is(URI));
+			AtomicInteger edition = new AtomicInteger();
+			CountDownLatch updated = new CountDownLatch(2);
+			uskSubscription.get().get().onUpdate(e -> {
+				edition.set(e);
+				updated.countDown();
+			});
+			uskSubscription.get().get().onUpdate(e -> updated.countDown());
+			sendUpdateNotification(23);
+			assertThat("updated in time", updated.await(5, TimeUnit.SECONDS), is(true));
+			assertThat(edition.get(), is(23));
+		}
+
 		private void replyWithSubscribed() throws IOException {
 			fcpServer.writeLine(
 				"SubscribedUSK",
