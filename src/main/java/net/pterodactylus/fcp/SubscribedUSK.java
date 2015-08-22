@@ -1,5 +1,5 @@
 /*
- * jFCPlib - SubscribeUSK.java - Copyright © 2008 David Roden
+ * jFCPlib - SubscribedUSKUpdate.java - Copyright © 2008 David Roden
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,37 +19,27 @@
 package net.pterodactylus.fcp;
 
 /**
- * With a “SubscribeUSK” a client requests to be notified if the edition number
- * of a USK changes.
+ * A “SubscribedUSK” message is sent when a {@link SubscribeUSK} was succesfully processed.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class SubscribeUSK extends FcpMessage {
+public class SubscribedUSK extends BaseMessage implements Identifiable {
 
-	public SubscribeUSK(String identifier) {
-		super("SubscribeUSK");
-		setField("Identifier", identifier);
+	public SubscribedUSK(FcpMessage receivedMessage) {
+		super(receivedMessage);
 	}
 
-	public SubscribeUSK(String uri, String identifier) {
-		this(identifier);
-		setField("URI", uri);
+	@Override
+	public String getIdentifier() {
+		return getField("Identifier");
 	}
 
-	public void setUri(String uri) {
-		setField("URI", uri);
+	public String getURI() {
+		return getField("URI");
 	}
 
-	/**
-	 * Sets whether updates for the USK are actively searched.
-	 *
-	 * @param active
-	 *            <code>true</code> to actively search for newer editions,
-	 *            <code>false</code> to only watch for newer editions that are
-	 *            found from other requests
-	 */
-	public void setActive(boolean active) {
-		setField("DontPoll", String.valueOf(!active));
+	public boolean isDontPoll() {
+		return Boolean.parseBoolean(getField("DontPoll"));
 	}
 
 }

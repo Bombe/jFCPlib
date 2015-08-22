@@ -134,5 +134,10 @@ public class DefaultFcpClient implements FcpClient {
 		return new GetPluginInfoCommandImpl(threadPool, this::connect);
 	}
 
+	@Override
+	public SubscribeUskCommand subscribeUsk() {
+		return new SubscribeUskCommandImpl(threadPool, this::connect);
+	}
+
 }
 

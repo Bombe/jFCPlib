@@ -46,6 +46,7 @@ import net.pterodactylus.fcp.SSKKeypair;
 import net.pterodactylus.fcp.SentFeed;
 import net.pterodactylus.fcp.SimpleProgress;
 import net.pterodactylus.fcp.StartedCompression;
+import net.pterodactylus.fcp.SubscribedUSK;
 import net.pterodactylus.fcp.SubscribedUSKUpdate;
 import net.pterodactylus.fcp.TestDDAComplete;
 import net.pterodactylus.fcp.TestDDAReply;
@@ -354,6 +355,13 @@ public abstract class FcpDialog<R> implements AutoCloseable, FcpListener {
 	}
 
 	protected void consumePersistentRequestRemoved(PersistentRequestRemoved persistentRequestRemoved) { }
+
+	@Override
+	public final void receivedSubscribedUSK(FcpConnection fcpConnection, SubscribedUSK subscribedUSK) {
+		consume(this::consumeSubscribedUSK, subscribedUSK);
+	}
+
+	protected void consumeSubscribedUSK(SubscribedUSK subscribedUSK) { }
 
 	@Override
 	public final void receivedSubscribedUSKUpdate(FcpConnection fcpConnection, SubscribedUSKUpdate subscribedUSKUpdate) {

@@ -1993,20 +1993,20 @@ public class DefaultFcpClientTest {
 		assertThat(newConfigData.get().getCurrent("foo.bar"), is("baz"));
 	}
 
+	private List<String> lines;
+	private String identifier;
+
+	private void connectAndAssert(Supplier<Matcher<List<String>>> requestMatcher)
+	throws InterruptedException, ExecutionException, IOException {
+		connectNode();
+		lines = fcpServer.collectUntil(is("EndMessage"));
+		identifier = extractIdentifier(lines);
+		assertThat(lines, requestMatcher.get());
+	}
+
 	public class PluginCommands {
 
 		private static final String CLASS_NAME = "foo.plugin.Plugin";
-
-		private List<String> lines;
-		private String identifier;
-
-		private void connectAndAssert(Supplier<Matcher<List<String>>> requestMatcher)
-		throws InterruptedException, ExecutionException, IOException {
-			connectNode();
-			lines = fcpServer.collectUntil(is("EndMessage"));
-			identifier = extractIdentifier(lines);
-			assertThat(lines, requestMatcher.get());
-		}
 
 		private void replyWithPluginInfo() throws IOException {
 			fcpServer.writeLine(
@@ -2281,6 +2281,26 @@ public class DefaultFcpClientTest {
 				);
 			}
 
+		}
+
+	}
+
+	public class UskSubscriptionCommands {
+
+		private static final String URI = "SSK@some,uri/file.txt";
+
+		@Test
+		public void subscriptionWorks() throws InterruptedException, ExecutionException, IOException {
+			Future<Optional<UskSubscription>> uskSubscription = fcpClient.subscribeUsk().uri(URI).execute();
+			connectAndAssert(() -> matchesFcpMessage("SubscribeUSK", "URI=" + URI, "EndMessage"));
+			fcpServer.writeLine(
+				"SubscribedUSK",
+				"Identifier=" + identifier,
+				"URI=" + URI,
+				"DontPoll=false",
+				"EndMessage"
+			);
+			assertThat(uskSubscription.get().get().getUri(), is(URI));
 		}
 
 	}

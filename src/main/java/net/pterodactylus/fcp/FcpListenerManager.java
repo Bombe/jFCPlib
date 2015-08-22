@@ -438,6 +438,12 @@ public class FcpListenerManager {
 		}
 	}
 
+	public void fireReceivedSubscribedUSK(SubscribedUSK subscribedUSK) {
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedSubscribedUSK(getSource(), subscribedUSK);
+		}
+	}
+
 	/**
 	 * Notifies all listeners that a “SubscribedUSKUpdate” message was
 	 * received.

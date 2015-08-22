@@ -29,4 +29,6 @@ public interface FcpClient {
 	RemovePluginCommand removePlugin();
 	GetPluginInfoCommand getPluginInfo();
 
+	SubscribeUskCommand subscribeUsk();
+
 }
