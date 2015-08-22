@@ -2290,7 +2290,7 @@ public class DefaultFcpClientTest {
 
 	public class UskSubscriptionCommands {
 
-		private static final String URI = "SSK@some,uri/file.txt";
+		private static final String URI = "USK@some,uri/file.txt";
 
 		@Test
 		public void subscriptionWorks() throws InterruptedException, ExecutionException, IOException {
