@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.IdentifierCollision;
 import net.pterodactylus.fcp.SubscribeUSK;
@@ -26,8 +25,12 @@ public class SubscribeUskCommandImpl implements SubscribeUskCommand {
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
 	private final SubscribeUSK subscribeUSK = new SubscribeUSK(IDENTIFIER.generate());
+	private final ActiveSubscriptions activeSubscriptions;
 
-	public SubscribeUskCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public SubscribeUskCommandImpl(
+		ExecutorService threadPool, ConnectionSupplier connectionSupplier,
+		ActiveSubscriptions activeSubscriptions) {
+		this.activeSubscriptions = activeSubscriptions;
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
 	}
@@ -44,14 +47,18 @@ public class SubscribeUskCommandImpl implements SubscribeUskCommand {
 
 	private Optional<UskSubscription> executeDialog() throws IOException, ExecutionException, InterruptedException {
 		try (SubscribeUskDialog subscribeUskDialog = new SubscribeUskDialog()) {
-			return subscribeUskDialog.send(subscribeUSK).get();
+			if (subscribeUskDialog.send(subscribeUSK).get()) {
+				UskSubscription uskSubscription = activeSubscriptions.createUskSubscription(subscribeUSK);
+				return Optional.of(uskSubscription);
+			}
+			return Optional.empty();
 		}
 	}
 
-	private class SubscribeUskDialog extends FcpDialog<Optional<UskSubscription>> {
+	private class SubscribeUskDialog extends FcpDialog<Boolean> {
 
 		private final AtomicBoolean finished = new AtomicBoolean();
-		private final AtomicReference<SubscribedUSK> subscribedUSK = new AtomicReference<>();
+		private final AtomicBoolean success = new AtomicBoolean();
 
 		public SubscribeUskDialog() throws IOException {
 			super(threadPool, connectionSupplier.get());
@@ -63,18 +70,13 @@ public class SubscribeUskCommandImpl implements SubscribeUskCommand {
 		}
 
 		@Override
-		protected Optional<UskSubscription> getResult() {
-			return Optional.ofNullable(subscribedUSK.get()).map(subscribedUSK -> new UskSubscription() {
-				@Override
-				public String getUri() {
-					return subscribedUSK.getURI();
-				}
-			});
+		protected Boolean getResult() {
+			return success.get();
 		}
 
 		@Override
 		protected void consumeSubscribedUSK(SubscribedUSK subscribedUSK) {
-			this.subscribedUSK.set(subscribedUSK);
+			success.set(true);
 			finished.set(true);
 		}
 

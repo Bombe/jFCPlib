@@ -8,5 +8,12 @@ package net.pterodactylus.fcp.quelaton;
 public interface UskSubscription {
 
 	String getUri();
+	void onUpdate(UskUpdater uskUpdater);
+
+	interface UskUpdater {
+
+		void uskUpdated(int edition);
+
+	}
 
 }

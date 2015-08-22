@@ -20,10 +20,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -2301,6 +2304,28 @@ public class DefaultFcpClientTest {
 				"EndMessage"
 			);
 			assertThat(uskSubscription.get().get().getUri(), is(URI));
+			AtomicInteger edition = new AtomicInteger();
+			CountDownLatch updated = new CountDownLatch(2);
+			uskSubscription.get().get().onUpdate(e -> {
+				edition.set(e);
+				updated.countDown();
+			});
+			fcpServer.writeLine(
+				"SubscribedUSKUpdate",
+				"Identifier=" + identifier,
+				"URI=" + URI,
+				"Edition=23",
+				"EndMessage"
+			);
+			fcpServer.writeLine(
+				"SubscribedUSKUpdate",
+				"Identifier=" + identifier,
+				"URI=" + URI,
+				"Edition=24",
+				"EndMessage"
+			);
+			assertThat("updated in time", updated.await(5, TimeUnit.SECONDS), is(true));
+			assertThat(edition.get(), is(24));
 		}
 
 	}
