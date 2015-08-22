@@ -1,5 +1,7 @@
 package net.pterodactylus.fcp.quelaton;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * USK subscription object that is returned to the client application.
  *
@@ -9,6 +11,7 @@ public interface UskSubscription {
 
 	String getUri();
 	void onUpdate(UskUpdater uskUpdater);
+	void cancel() throws ExecutionException, InterruptedException;
 
 	interface UskUpdater {
 

@@ -23,7 +23,12 @@ import net.pterodactylus.fcp.SubscribedUSKUpdate;
  */
 public class ActiveSubscriptions {
 
+	private final Supplier<UnsubscribeUskCommand> unsubscribeUskCommandSupplier;
 	private final Map<String, RemoteUskSubscription> subscriptions = Collections.synchronizedMap(new HashMap<>());
+
+	public ActiveSubscriptions(Supplier<UnsubscribeUskCommand> unsubscribeUskCommandSupplier) {
+		this.unsubscribeUskCommandSupplier = unsubscribeUskCommandSupplier;
+	}
 
 	public void renew(Consumer<FcpListener> fcpEventSender, Supplier<SubscribeUskCommand> subscribeUskCommandSupplier)
 	throws ExecutionException, InterruptedException {
@@ -58,7 +63,7 @@ public class ActiveSubscriptions {
 		return remoteUskSubscription;
 	}
 
-	private static class RemoteUskSubscription implements UskSubscription {
+	private class RemoteUskSubscription implements UskSubscription {
 
 		private final String identifier;
 		private final String uri;
@@ -97,6 +102,11 @@ public class ActiveSubscriptions {
 			for (UskUpdater uskUpdater : uskUpdaters) {
 				uskUpdater.uskUpdated(edition);
 			}
+		}
+
+		public void cancel() throws ExecutionException, InterruptedException {
+			unsubscribeUskCommandSupplier.get().identifier(identifier).execute().get();
+			subscriptions.remove(identifier);
 		}
 
 	}

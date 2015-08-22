@@ -23,7 +23,7 @@ public class DefaultFcpClient implements FcpClient {
 	private final int port;
 	private final AtomicReference<FcpConnection> fcpConnection = new AtomicReference<>();
 	private final Supplier<String> clientName;
-	private final ActiveSubscriptions activeSubscriptions = new ActiveSubscriptions();
+	private final ActiveSubscriptions activeSubscriptions = new ActiveSubscriptions(this::unsubscribeUsk);
 
 	public DefaultFcpClient(ExecutorService threadPool, String hostname, int port, Supplier<String> clientName) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
@@ -143,6 +143,10 @@ public class DefaultFcpClient implements FcpClient {
 	@Override
 	public SubscribeUskCommand subscribeUsk() {
 		return new SubscribeUskCommandImpl(threadPool, this::connect, activeSubscriptions);
+	}
+
+	private UnsubscribeUskCommand unsubscribeUsk() {
+		return new UnsubscribeUskCommandImpl(threadPool, this::connect);
 	}
 
 }

@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -2330,6 +2331,20 @@ public class DefaultFcpClientTest {
 			sendUpdateNotification(23);
 			assertThat("updated in time", updated.await(5, TimeUnit.SECONDS), is(true));
 			assertThat(edition.get(), is(23));
+		}
+
+		@Test
+		public void subscriptionCanBeCancelled() throws InterruptedException, ExecutionException, IOException {
+			Future<Optional<UskSubscription>> uskSubscription = fcpClient.subscribeUsk().uri(URI).execute();
+			connectAndAssert(() -> matchesFcpMessage("SubscribeUSK", "URI=" + URI, "EndMessage"));
+			replyWithSubscribed();
+			assertThat(uskSubscription.get().get().getUri(), is(URI));
+			AtomicBoolean updated = new AtomicBoolean();
+			uskSubscription.get().get().onUpdate(e -> updated.set(true));
+			uskSubscription.get().get().cancel();
+			readMessage(() -> matchesFcpMessage("UnsubscribeUSK", "Identifier=" + identifier, "EndMessage"));
+			sendUpdateNotification(23);
+			assertThat(updated.get(), is(false));
 		}
 
 		private void replyWithSubscribed() throws IOException {
