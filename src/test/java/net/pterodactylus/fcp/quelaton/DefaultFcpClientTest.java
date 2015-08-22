@@ -2002,6 +2002,10 @@ public class DefaultFcpClientTest {
 	private void connectAndAssert(Supplier<Matcher<List<String>>> requestMatcher)
 	throws InterruptedException, ExecutionException, IOException {
 		connectNode();
+		readMessage(requestMatcher);
+	}
+
+	private void readMessage(Supplier<Matcher<List<String>>> requestMatcher) throws IOException {
 		lines = fcpServer.collectUntil(is("EndMessage"));
 		identifier = extractIdentifier(lines);
 		assertThat(lines, requestMatcher.get());
