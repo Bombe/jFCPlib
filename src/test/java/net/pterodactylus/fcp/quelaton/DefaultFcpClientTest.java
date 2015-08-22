@@ -2296,13 +2296,7 @@ public class DefaultFcpClientTest {
 		public void subscriptionWorks() throws InterruptedException, ExecutionException, IOException {
 			Future<Optional<UskSubscription>> uskSubscription = fcpClient.subscribeUsk().uri(URI).execute();
 			connectAndAssert(() -> matchesFcpMessage("SubscribeUSK", "URI=" + URI, "EndMessage"));
-			fcpServer.writeLine(
-				"SubscribedUSK",
-				"Identifier=" + identifier,
-				"URI=" + URI,
-				"DontPoll=false",
-				"EndMessage"
-			);
+			replyWithSubscribed();
 			assertThat(uskSubscription.get().get().getUri(), is(URI));
 			AtomicInteger edition = new AtomicInteger();
 			CountDownLatch updated = new CountDownLatch(2);
@@ -2310,22 +2304,31 @@ public class DefaultFcpClientTest {
 				edition.set(e);
 				updated.countDown();
 			});
-			fcpServer.writeLine(
-				"SubscribedUSKUpdate",
-				"Identifier=" + identifier,
-				"URI=" + URI,
-				"Edition=23",
-				"EndMessage"
-			);
-			fcpServer.writeLine(
-				"SubscribedUSKUpdate",
-				"Identifier=" + identifier,
-				"URI=" + URI,
-				"Edition=24",
-				"EndMessage"
-			);
+			sendUpdateNotification(23);
+			sendUpdateNotification(24);
 			assertThat("updated in time", updated.await(5, TimeUnit.SECONDS), is(true));
 			assertThat(edition.get(), is(24));
+		}
+
+		private void replyWithSubscribed() throws IOException {
+			fcpServer.writeLine(
+				"SubscribedUSK",
+				"Identifier=" + identifier,
+				"URI=" + URI,
+				"DontPoll=false",
+				"EndMessage"
+			);
+		}
+
+		private void sendUpdateNotification(int edition, String... additionalLines) throws IOException {
+			fcpServer.writeLine(
+				"SubscribedUSKUpdate",
+				"Identifier=" + identifier,
+				"URI=" + URI,
+				"Edition=" + edition
+			);
+			fcpServer.writeLine(additionalLines);
+			fcpServer.writeLine("EndMessage");
 		}
 
 	}
