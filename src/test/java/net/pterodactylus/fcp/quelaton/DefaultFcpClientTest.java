@@ -839,224 +839,6 @@ public class DefaultFcpClientTest {
 	}
 
 	@Test
-	public void listPeerNotesCanGetPeerNotesByNodeName() throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byName("Friend1").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"ListPeerNotes",
-			"NodeIdentifier=Friend1",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"PeerNote",
-			"Identifier=" + identifier,
-			"NodeIdentifier=Friend1",
-			"NoteText=RXhhbXBsZSBUZXh0Lg==",
-			"PeerNoteType=1",
-			"EndMessage"
-		);
-		fcpServer.writeLine(
-			"EndListPeerNotes",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		assertThat(peerNote.get().get().getNoteText(), is("RXhhbXBsZSBUZXh0Lg=="));
-		assertThat(peerNote.get().get().getPeerNoteType(), is(1));
-	}
-
-	@Test
-	public void listPeerNotesReturnsEmptyOptionalWhenNodeIdenfierUnknown()
-	throws InterruptedException, ExecutionException,
-	IOException {
-		Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byName("Friend1").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"ListPeerNotes",
-			"NodeIdentifier=Friend1",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"UnknownNodeIdentifier",
-			"Identifier=" + identifier,
-			"NodeIdentifier=Friend1",
-			"EndMessage"
-		);
-		assertThat(peerNote.get().isPresent(), is(false));
-	}
-
-	@Test
-	public void listPeerNotesCanGetPeerNotesByNodeIdentifier()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byIdentity("id1").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"ListPeerNotes",
-			"NodeIdentifier=id1",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"PeerNote",
-			"Identifier=" + identifier,
-			"NodeIdentifier=id1",
-			"NoteText=RXhhbXBsZSBUZXh0Lg==",
-			"PeerNoteType=1",
-			"EndMessage"
-		);
-		fcpServer.writeLine(
-			"EndListPeerNotes",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		assertThat(peerNote.get().get().getNoteText(), is("RXhhbXBsZSBUZXh0Lg=="));
-		assertThat(peerNote.get().get().getPeerNoteType(), is(1));
-	}
-
-	@Test
-	public void listPeerNotesCanGetPeerNotesByHostNameAndPortNumber()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byHostAndPort("1.2.3.4", 5678).execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"ListPeerNotes",
-			"NodeIdentifier=1.2.3.4:5678",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"PeerNote",
-			"Identifier=" + identifier,
-			"NodeIdentifier=id1",
-			"NoteText=RXhhbXBsZSBUZXh0Lg==",
-			"PeerNoteType=1",
-			"EndMessage"
-		);
-		fcpServer.writeLine(
-			"EndListPeerNotes",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		assertThat(peerNote.get().get().getNoteText(), is("RXhhbXBsZSBUZXh0Lg=="));
-		assertThat(peerNote.get().get().getPeerNoteType(), is(1));
-	}
-
-	@Test
-	public void defaultFcpClientCanModifyPeerNoteByName()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Boolean> noteUpdated = fcpClient.modifyPeerNote().darknetComment("foo").byName("Friend1").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"ModifyPeerNote",
-			"Identifier=" + identifier,
-			"NodeIdentifier=Friend1",
-			"PeerNoteType=1",
-			"NoteText=Zm9v",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"PeerNote",
-			"Identifier=" + identifier,
-			"NodeIdentifier=Friend1",
-			"NoteText=Zm9v",
-			"PeerNoteType=1",
-			"EndMessage"
-		);
-		assertThat(noteUpdated.get(), is(true));
-	}
-
-	@Test
-	public void defaultFcpClientKnowsPeerNoteWasNotModifiedOnUnknownNodeIdentifier()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Boolean> noteUpdated = fcpClient.modifyPeerNote().darknetComment("foo").byName("Friend1").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"ModifyPeerNote",
-			"Identifier=" + identifier,
-			"NodeIdentifier=Friend1",
-			"PeerNoteType=1",
-			"NoteText=Zm9v",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"UnknownNodeIdentifier",
-			"Identifier=" + identifier,
-			"NodeIdentifier=Friend1",
-			"EndMessage"
-		);
-		assertThat(noteUpdated.get(), is(false));
-	}
-
-	@Test
-	public void defaultFcpClientFailsToModifyPeerNoteWithoutPeerNote()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Boolean> noteUpdated = fcpClient.modifyPeerNote().byName("Friend1").execute();
-		assertThat(noteUpdated.get(), is(false));
-	}
-
-	@Test
-	public void defaultFcpClientCanModifyPeerNoteByIdentifier()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Boolean> noteUpdated = fcpClient.modifyPeerNote().darknetComment("foo").byIdentifier("id1").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"ModifyPeerNote",
-			"Identifier=" + identifier,
-			"NodeIdentifier=id1",
-			"PeerNoteType=1",
-			"NoteText=Zm9v",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"PeerNote",
-			"Identifier=" + identifier,
-			"NodeIdentifier=id1",
-			"NoteText=Zm9v",
-			"PeerNoteType=1",
-			"EndMessage"
-		);
-		assertThat(noteUpdated.get(), is(true));
-	}
-
-	@Test
-	public void defaultFcpClientCanModifyPeerNoteByHostAndPort()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Boolean> noteUpdated =
-			fcpClient.modifyPeerNote().darknetComment("foo").byHostAndPort("1.2.3.4", 5678).execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"ModifyPeerNote",
-			"Identifier=" + identifier,
-			"NodeIdentifier=1.2.3.4:5678",
-			"PeerNoteType=1",
-			"NoteText=Zm9v",
-			"EndMessage"
-		));
-		fcpServer.writeLine(
-			"PeerNote",
-			"Identifier=" + identifier,
-			"NodeIdentifier=1.2.3.4:5678",
-			"NoteText=Zm9v",
-			"PeerNoteType=1",
-			"EndMessage"
-		);
-		assertThat(noteUpdated.get(), is(true));
-	}
-
-	@Test
 	public void defaultFcpClientCanGetConfigWithoutDetails()
 	throws InterruptedException, ExecutionException, IOException {
 		Future<ConfigData> configData = fcpClient.getConfig().execute();
@@ -1288,399 +1070,549 @@ public class DefaultFcpClientTest {
 		assertThat(lines, requestMatcher.get());
 	}
 
-	public class PeerCommands {
+	public class Peers {
 
-		public class ListPeer {
+		public class PeerCommands {
 
-			@Test
-			public void byIdentity() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.listPeer().byIdentity("id1").execute();
-				connectAndAssert(() -> matchesListPeer("id1"));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
+			public class ListPeer {
+
+				@Test
+				public void byIdentity() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.listPeer().byIdentity("id1").execute();
+					connectAndAssert(() -> matchesListPeer("id1"));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void byHostAndPort() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.listPeer().byHostAndPort("host.free.net", 12345).execute();
+					connectAndAssert(() -> matchesListPeer("host.free.net:12345"));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void byName() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.listPeer().byName("FriendNode").execute();
+					connectAndAssert(() -> matchesListPeer("FriendNode"));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void unknownNodeIdentifier() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.listPeer().byIdentity("id2").execute();
+					connectAndAssert(() -> matchesListPeer("id2"));
+					replyWithUnknownNodeIdentifier();
+					assertThat(peer.get().isPresent(), is(false));
+				}
+
+				private Matcher<List<String>> matchesListPeer(String nodeId) {
+					return matchesFcpMessage(
+						"ListPeer",
+						"Identifier=" + identifier,
+						"NodeIdentifier=" + nodeId,
+						"EndMessage"
+					);
+				}
+
 			}
 
-			@Test
-			public void byHostAndPort() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.listPeer().byHostAndPort("host.free.net", 12345).execute();
-				connectAndAssert(() -> matchesListPeer("host.free.net:12345"));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
+			public class ListPeers {
+
+				@Test
+				public void withoutMetadataOrVolatile() throws IOException, ExecutionException, InterruptedException {
+					Future<Collection<Peer>> peers = fcpClient.listPeers().execute();
+					connectAndAssert(() -> matchesListPeers(false, false));
+					replyWithPeer("id1");
+					replyWithPeer("id2");
+					sendEndOfPeerList();
+					assertThat(peers.get(), hasSize(2));
+					assertThat(peers.get().stream().map(Peer::getIdentity).collect(Collectors.toList()),
+						containsInAnyOrder("id1", "id2"));
+				}
+
+				@Test
+				public void withMetadata() throws IOException, ExecutionException, InterruptedException {
+					Future<Collection<Peer>> peers = fcpClient.listPeers().includeMetadata().execute();
+					connectAndAssert(() -> matchesListPeers(false, true));
+					replyWithPeer("id1", "metadata.foo=bar1");
+					replyWithPeer("id2", "metadata.foo=bar2");
+					sendEndOfPeerList();
+					assertThat(peers.get(), hasSize(2));
+					assertThat(peers.get().stream().map(peer -> peer.getMetadata("foo")).collect(Collectors.toList()),
+						containsInAnyOrder("bar1", "bar2"));
+				}
+
+				@Test
+				public void withVolatile() throws IOException, ExecutionException, InterruptedException {
+					Future<Collection<Peer>> peers = fcpClient.listPeers().includeVolatile().execute();
+					connectAndAssert(() -> matchesListPeers(true, false));
+					replyWithPeer("id1", "volatile.foo=bar1");
+					replyWithPeer("id2", "volatile.foo=bar2");
+					sendEndOfPeerList();
+					assertThat(peers.get(), hasSize(2));
+					assertThat(peers.get().stream().map(peer -> peer.getVolatile("foo")).collect(Collectors.toList()),
+						containsInAnyOrder("bar1", "bar2"));
+				}
+
+				private Matcher<List<String>> matchesListPeers(boolean withVolatile, boolean withMetadata) {
+					return matchesFcpMessage(
+						"ListPeers",
+						"WithVolatile=" + withVolatile,
+						"WithMetadata=" + withMetadata,
+						"EndMessage"
+					);
+				}
+
+				private void sendEndOfPeerList() throws IOException {
+					fcpServer.writeLine(
+						"EndListPeers",
+						"Identifier=" + identifier,
+						"EndMessage"
+					);
+				}
+
 			}
 
-			@Test
-			public void byName() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.listPeer().byName("FriendNode").execute();
-				connectAndAssert(() -> matchesListPeer("FriendNode"));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
+			public class AddPeer {
+
+				@Test
+				public void fromFile() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.addPeer().fromFile(new File("/tmp/ref.txt")).execute();
+					connectAndAssert(() -> allOf(matchesAddPeer(), hasItem("File=/tmp/ref.txt")));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void fromUrl() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.addPeer().fromURL(new URL("http://node.ref/")).execute();
+					connectAndAssert(() -> allOf(matchesAddPeer(), hasItem("URL=http://node.ref/")));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void fromNodeRef() throws InterruptedException, ExecutionException, IOException {
+					NodeRef nodeRef = createNodeRef();
+					Future<Optional<Peer>> peer = fcpClient.addPeer().fromNodeRef(nodeRef).execute();
+					connectAndAssert(() -> allOf(matchesAddPeer(), Matchers.<String>hasItems(
+						"myName=name",
+						"ark.pubURI=public",
+						"ark.number=1",
+						"dsaGroup.g=base",
+						"dsaGroup.p=prime",
+						"dsaGroup.q=subprime",
+						"dsaPubKey.y=dsa-public",
+						"physical.udp=1.2.3.4:5678",
+						"auth.negTypes=3;5",
+						"sig=sig"
+					)));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				private NodeRef createNodeRef() {
+					NodeRef nodeRef = new NodeRef();
+					nodeRef.setIdentity("id1");
+					nodeRef.setName("name");
+					nodeRef.setARK(new ARK("public", "1"));
+					nodeRef.setDSAGroup(new DSAGroup("base", "prime", "subprime"));
+					nodeRef.setNegotiationTypes(new int[] { 3, 5 });
+					nodeRef.setPhysicalUDP("1.2.3.4:5678");
+					nodeRef.setDSAPublicKey("dsa-public");
+					nodeRef.setSignature("sig");
+					return nodeRef;
+				}
+
+				private Matcher<List<String>> matchesAddPeer() {
+					return matchesFcpMessage(
+						"AddPeer",
+						"Identifier=" + identifier,
+						"EndMessage"
+					);
+				}
+
 			}
 
-			@Test
-			public void unknownNodeIdentifier() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.listPeer().byIdentity("id2").execute();
-				connectAndAssert(() -> matchesListPeer("id2"));
-				replyWithUnknownNodeIdentifier();
-				assertThat(peer.get().isPresent(), is(false));
+			public class ModifyPeer {
+
+				@Test
+				public void defaultFcpClientCanEnablePeerByName()
+				throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.modifyPeer().enable().byName("id1").execute();
+					connectAndAssert(() -> matchesModifyPeer("id1", "IsDisabled", false));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void defaultFcpClientCanDisablePeerByName()
+				throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.modifyPeer().disable().byName("id1").execute();
+					connectAndAssert(() -> matchesModifyPeer("id1", "IsDisabled", true));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void defaultFcpClientCanEnablePeerByIdentity()
+				throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.modifyPeer().enable().byIdentity("id1").execute();
+					connectAndAssert(() -> matchesModifyPeer("id1", "IsDisabled", false));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void defaultFcpClientCanEnablePeerByHostAndPort()
+				throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer =
+						fcpClient.modifyPeer().enable().byHostAndPort("1.2.3.4", 5678).execute();
+					connectAndAssert(() -> matchesModifyPeer("1.2.3.4:5678", "IsDisabled", false));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void allowLocalAddressesOfPeer() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer =
+						fcpClient.modifyPeer().allowLocalAddresses().byIdentity("id1").execute();
+					connectAndAssert(() -> allOf(
+						matchesModifyPeer("id1", "AllowLocalAddresses", true),
+						not(contains(startsWith("IsDisabled=")))
+					));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void disallowLocalAddressesOfPeer()
+				throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer =
+						fcpClient.modifyPeer().disallowLocalAddresses().byIdentity("id1").execute();
+					connectAndAssert(() -> allOf(
+						matchesModifyPeer("id1", "AllowLocalAddresses", false),
+						not(contains(startsWith("IsDisabled=")))
+					));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void setBurstOnlyForPeer() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.modifyPeer().setBurstOnly().byIdentity("id1").execute();
+					connectAndAssert(() -> allOf(
+						matchesModifyPeer("id1", "IsBurstOnly", true),
+						not(contains(startsWith("AllowLocalAddresses="))),
+						not(contains(startsWith("IsDisabled=")))
+					));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void clearBurstOnlyForPeer() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.modifyPeer().clearBurstOnly().byIdentity("id1").execute();
+					connectAndAssert(() -> allOf(
+						matchesModifyPeer("id1", "IsBurstOnly", false),
+						not(contains(startsWith("AllowLocalAddresses="))),
+						not(contains(startsWith("IsDisabled=")))
+					));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void defaultFcpClientCanSetListenOnlyForPeer()
+				throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.modifyPeer().setListenOnly().byIdentity("id1").execute();
+					connectAndAssert(() -> allOf(
+						matchesModifyPeer("id1", "IsListenOnly", true),
+						not(contains(startsWith("AllowLocalAddresses="))),
+						not(contains(startsWith("IsDisabled="))),
+						not(contains(startsWith("IsBurstOnly=")))
+					));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void clearListenOnlyForPeer() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.modifyPeer().clearListenOnly().byIdentity("id1").execute();
+					connectAndAssert(() -> allOf(
+						matchesModifyPeer("id1", "IsListenOnly", false),
+						not(contains(startsWith("AllowLocalAddresses="))),
+						not(contains(startsWith("IsDisabled="))),
+						not(contains(startsWith("IsBurstOnly=")))
+					));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void ignoreSourceForPeer() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.modifyPeer().ignoreSource().byIdentity("id1").execute();
+					connectAndAssert(() -> allOf(
+						matchesModifyPeer("id1", "IgnoreSourcePort", true),
+						not(contains(startsWith("AllowLocalAddresses="))),
+						not(contains(startsWith("IsDisabled="))),
+						not(contains(startsWith("IsBurstOnly="))),
+						not(contains(startsWith("IsListenOnly=")))
+					));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void useSourceForPeer() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.modifyPeer().useSource().byIdentity("id1").execute();
+					connectAndAssert(() -> allOf(
+						matchesModifyPeer("id1", "IgnoreSourcePort", false),
+						not(contains(startsWith("AllowLocalAddresses="))),
+						not(contains(startsWith("IsDisabled="))),
+						not(contains(startsWith("IsBurstOnly="))),
+						not(contains(startsWith("IsListenOnly=")))
+					));
+					replyWithPeer("id1");
+					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void unknownNode() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.modifyPeer().enable().byIdentity("id1").execute();
+					connectAndAssert(() -> matchesModifyPeer("id1", "IsDisabled", false));
+					replyWithUnknownNodeIdentifier();
+					assertThat(peer.get().isPresent(), is(false));
+				}
+
+				private Matcher<List<String>> matchesModifyPeer(String nodeIdentifier, String setting, boolean value) {
+					return matchesFcpMessage(
+						"ModifyPeer",
+						"Identifier=" + identifier,
+						"NodeIdentifier=" + nodeIdentifier,
+						setting + "=" + value,
+						"EndMessage"
+					);
+				}
+
 			}
 
-			private Matcher<List<String>> matchesListPeer(String nodeId) {
-				return matchesFcpMessage(
-					"ListPeer",
-					"Identifier=" + identifier,
-					"NodeIdentifier=" + nodeId,
-					"EndMessage"
-				);
+			public class RemovePeer {
+
+				@Test
+				public void byName() throws InterruptedException, ExecutionException, IOException {
+					Future<Boolean> peer = fcpClient.removePeer().byName("Friend1").execute();
+					connectAndAssert(() -> matchesRemovePeer("Friend1"));
+					replyWithPeerRemoved("Friend1");
+					assertThat(peer.get(), is(true));
+				}
+
+				@Test
+				public void invalidName() throws InterruptedException, ExecutionException, IOException {
+					Future<Boolean> peer = fcpClient.removePeer().byName("NotFriend1").execute();
+					connectAndAssert(() -> matchesRemovePeer("NotFriend1"));
+					replyWithUnknownNodeIdentifier();
+					assertThat(peer.get(), is(false));
+				}
+
+				@Test
+				public void byIdentity() throws InterruptedException, ExecutionException, IOException {
+					Future<Boolean> peer = fcpClient.removePeer().byIdentity("id1").execute();
+					connectAndAssert(() -> matchesRemovePeer("id1"));
+					replyWithPeerRemoved("id1");
+					assertThat(peer.get(), is(true));
+				}
+
+				@Test
+				public void byHostAndPort() throws InterruptedException, ExecutionException, IOException {
+					Future<Boolean> peer = fcpClient.removePeer().byHostAndPort("1.2.3.4", 5678).execute();
+					connectAndAssert(() -> matchesRemovePeer("1.2.3.4:5678"));
+					replyWithPeerRemoved("Friend1");
+					assertThat(peer.get(), is(true));
+				}
+
+				private Matcher<List<String>> matchesRemovePeer(String nodeIdentifier) {
+					return matchesFcpMessage(
+						"RemovePeer",
+						"Identifier=" + identifier,
+						"NodeIdentifier=" + nodeIdentifier,
+						"EndMessage"
+					);
+				}
+
+				private void replyWithPeerRemoved(String nodeIdentifier) throws IOException {
+					fcpServer.writeLine(
+						"PeerRemoved",
+						"Identifier=" + identifier,
+						"NodeIdentifier=" + nodeIdentifier,
+						"EndMessage"
+					);
+				}
+
 			}
 
-		}
-
-		public class ListPeers {
-
-			@Test
-			public void withoutMetadataOrVolatile() throws IOException, ExecutionException, InterruptedException {
-				Future<Collection<Peer>> peers = fcpClient.listPeers().execute();
-				connectAndAssert(() -> matchesListPeers(false, false));
-				replyWithPeer("id1");
-				replyWithPeer("id2");
-				sendEndOfPeerList();
-				assertThat(peers.get(), hasSize(2));
-				assertThat(peers.get().stream().map(Peer::getIdentity).collect(Collectors.toList()),
-					containsInAnyOrder("id1", "id2"));
-			}
-
-			@Test
-			public void withMetadata() throws IOException, ExecutionException, InterruptedException {
-				Future<Collection<Peer>> peers = fcpClient.listPeers().includeMetadata().execute();
-				connectAndAssert(() -> matchesListPeers(false, true));
-				replyWithPeer("id1", "metadata.foo=bar1");
-				replyWithPeer("id2", "metadata.foo=bar2");
-				sendEndOfPeerList();
-				assertThat(peers.get(), hasSize(2));
-				assertThat(peers.get().stream().map(peer -> peer.getMetadata("foo")).collect(Collectors.toList()),
-					containsInAnyOrder("bar1", "bar2"));
-			}
-
-			@Test
-			public void withVolatile() throws IOException, ExecutionException, InterruptedException {
-				Future<Collection<Peer>> peers = fcpClient.listPeers().includeVolatile().execute();
-				connectAndAssert(() -> matchesListPeers(true, false));
-				replyWithPeer("id1", "volatile.foo=bar1");
-				replyWithPeer("id2", "volatile.foo=bar2");
-				sendEndOfPeerList();
-				assertThat(peers.get(), hasSize(2));
-				assertThat(peers.get().stream().map(peer -> peer.getVolatile("foo")).collect(Collectors.toList()),
-					containsInAnyOrder("bar1", "bar2"));
-			}
-
-			private Matcher<List<String>> matchesListPeers(boolean withVolatile, boolean withMetadata) {
-				return matchesFcpMessage(
-					"ListPeers",
-					"WithVolatile=" + withVolatile,
-					"WithMetadata=" + withMetadata,
-					"EndMessage"
-				);
-			}
-
-			private void sendEndOfPeerList() throws IOException {
+			private void replyWithPeer(String peerId, String... additionalLines) throws IOException {
 				fcpServer.writeLine(
-					"EndListPeers",
+					"Peer",
 					"Identifier=" + identifier,
-					"EndMessage"
+					"identity=" + peerId,
+					"opennet=false",
+					"ark.pubURI=SSK@3YEf.../ark",
+					"ark.number=78",
+					"auth.negTypes=2",
+					"version=Fred,0.7,1.0,1466",
+					"lastGoodVersion=Fred,0.7,1.0,1466"
 				);
+				fcpServer.writeLine(additionalLines);
+				fcpServer.writeLine("EndMessage");
 			}
 
 		}
 
-		public class AddPeer {
+		public class PeerNoteCommands {
 
-			@Test
-			public void fromFile() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.addPeer().fromFile(new File("/tmp/ref.txt")).execute();
-				connectAndAssert(() -> allOf(matchesAddPeer(), hasItem("File=/tmp/ref.txt")));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
+			public class ListPeerNotes {
+
+				@Test
+				public void onUnknownNodeIdentifier() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byName("Friend1").execute();
+					connectAndAssert(() -> matchesListPeerNotes("Friend1"));
+					replyWithUnknownNodeIdentifier();
+					assertThat(peerNote.get().isPresent(), is(false));
+				}
+
+				@Test
+				public void byNodeName() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byName("Friend1").execute();
+					connectAndAssert(() -> matchesListPeerNotes("Friend1"));
+					replyWithPeerNote();
+					replyWithEndListPeerNotes();
+					assertThat(peerNote.get().get().getNoteText(), is("RXhhbXBsZSBUZXh0Lg=="));
+					assertThat(peerNote.get().get().getPeerNoteType(), is(1));
+				}
+
+				@Test
+				public void byNodeIdentifier() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<PeerNote>> peerNote = fcpClient.listPeerNotes().byIdentity("id1").execute();
+					connectAndAssert(() -> matchesListPeerNotes("id1"));
+					replyWithPeerNote();
+					replyWithEndListPeerNotes();
+					assertThat(peerNote.get().get().getNoteText(), is("RXhhbXBsZSBUZXh0Lg=="));
+					assertThat(peerNote.get().get().getPeerNoteType(), is(1));
+				}
+
+				@Test
+				public void byHostAndPort() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<PeerNote>> peerNote =
+						fcpClient.listPeerNotes().byHostAndPort("1.2.3.4", 5678).execute();
+					connectAndAssert(() -> matchesListPeerNotes("1.2.3.4:5678"));
+					replyWithPeerNote();
+					replyWithEndListPeerNotes();
+					assertThat(peerNote.get().get().getNoteText(), is("RXhhbXBsZSBUZXh0Lg=="));
+					assertThat(peerNote.get().get().getPeerNoteType(), is(1));
+				}
+
+				private Matcher<List<String>> matchesListPeerNotes(String nodeIdentifier) {
+					return matchesFcpMessage(
+						"ListPeerNotes",
+						"NodeIdentifier=" + nodeIdentifier,
+						"EndMessage"
+					);
+				}
+
+				private void replyWithEndListPeerNotes() throws IOException {
+					fcpServer.writeLine(
+						"EndListPeerNotes",
+						"Identifier=" + identifier,
+						"EndMessage"
+					);
+				}
+
+				private void replyWithPeerNote() throws IOException {
+					fcpServer.writeLine(
+						"PeerNote",
+						"Identifier=" + identifier,
+						"NodeIdentifier=Friend1",
+						"NoteText=RXhhbXBsZSBUZXh0Lg==",
+						"PeerNoteType=1",
+						"EndMessage"
+					);
+				}
+
 			}
 
-			@Test
-			public void fromUrl() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.addPeer().fromURL(new URL("http://node.ref/")).execute();
-				connectAndAssert(() -> allOf(matchesAddPeer(), hasItem("URL=http://node.ref/")));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
+			public class ModifyPeerNotes {
+
+				@Test
+				public void byName() throws InterruptedException, ExecutionException, IOException {
+					Future<Boolean> noteUpdated =
+						fcpClient.modifyPeerNote().darknetComment("foo").byName("Friend1").execute();
+					connectAndAssert(() -> matchesModifyPeerNote("Friend1"));
+					replyWithPeerNote();
+					assertThat(noteUpdated.get(), is(true));
+				}
+
+				@Test
+				public void onUnknownNodeIdentifier() throws InterruptedException, ExecutionException, IOException {
+					Future<Boolean> noteUpdated =
+						fcpClient.modifyPeerNote().darknetComment("foo").byName("Friend1").execute();
+					connectAndAssert(() -> matchesModifyPeerNote("Friend1"));
+					replyWithUnknownNodeIdentifier();
+					assertThat(noteUpdated.get(), is(false));
+				}
+
+				@Test
+				public void defaultFcpClientFailsToModifyPeerNoteWithoutPeerNote()
+				throws InterruptedException, ExecutionException, IOException {
+					Future<Boolean> noteUpdated = fcpClient.modifyPeerNote().byName("Friend1").execute();
+					assertThat(noteUpdated.get(), is(false));
+				}
+
+				@Test
+				public void byIdentifier() throws InterruptedException, ExecutionException, IOException {
+					Future<Boolean> noteUpdated =
+						fcpClient.modifyPeerNote().darknetComment("foo").byIdentifier("id1").execute();
+					connectAndAssert(() -> matchesModifyPeerNote("id1"));
+					replyWithPeerNote();
+					assertThat(noteUpdated.get(), is(true));
+				}
+
+				@Test
+				public void byHostAndPort() throws InterruptedException, ExecutionException, IOException {
+					Future<Boolean> noteUpdated =
+						fcpClient.modifyPeerNote().darknetComment("foo").byHostAndPort("1.2.3.4", 5678).execute();
+					connectAndAssert(() -> matchesModifyPeerNote("1.2.3.4:5678"));
+					replyWithPeerNote();
+					assertThat(noteUpdated.get(), is(true));
+				}
+
+				private Matcher<List<String>> matchesModifyPeerNote(String nodeIdentifier) {
+					return matchesFcpMessage(
+						"ModifyPeerNote",
+						"Identifier=" + identifier,
+						"NodeIdentifier=" + nodeIdentifier,
+						"PeerNoteType=1",
+						"NoteText=Zm9v",
+						"EndMessage"
+					);
+				}
+
+				private void replyWithPeerNote() throws IOException {
+					fcpServer.writeLine(
+						"PeerNote",
+						"Identifier=" + identifier,
+						"NodeIdentifier=Friend1",
+						"NoteText=Zm9v",
+						"PeerNoteType=1",
+						"EndMessage"
+					);
+				}
+
 			}
 
-			@Test
-			public void fromNodeRef() throws InterruptedException, ExecutionException, IOException {
-				NodeRef nodeRef = createNodeRef();
-				Future<Optional<Peer>> peer = fcpClient.addPeer().fromNodeRef(nodeRef).execute();
-				connectAndAssert(() -> allOf(matchesAddPeer(), Matchers.<String>hasItems(
-					"myName=name",
-					"ark.pubURI=public",
-					"ark.number=1",
-					"dsaGroup.g=base",
-					"dsaGroup.p=prime",
-					"dsaGroup.q=subprime",
-					"dsaPubKey.y=dsa-public",
-					"physical.udp=1.2.3.4:5678",
-					"auth.negTypes=3;5",
-					"sig=sig"
-				)));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			private NodeRef createNodeRef() {
-				NodeRef nodeRef = new NodeRef();
-				nodeRef.setIdentity("id1");
-				nodeRef.setName("name");
-				nodeRef.setARK(new ARK("public", "1"));
-				nodeRef.setDSAGroup(new DSAGroup("base", "prime", "subprime"));
-				nodeRef.setNegotiationTypes(new int[] { 3, 5 });
-				nodeRef.setPhysicalUDP("1.2.3.4:5678");
-				nodeRef.setDSAPublicKey("dsa-public");
-				nodeRef.setSignature("sig");
-				return nodeRef;
-			}
-
-			private Matcher<List<String>> matchesAddPeer() {
-				return matchesFcpMessage(
-					"AddPeer",
-					"Identifier=" + identifier,
-					"EndMessage"
-				);
-			}
-
-		}
-
-		public class ModifyPeer {
-
-			@Test
-			public void defaultFcpClientCanEnablePeerByName()
-			throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().enable().byName("id1").execute();
-				connectAndAssert(() -> matchesModifyPeer("id1", "IsDisabled", false));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void defaultFcpClientCanDisablePeerByName()
-			throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().disable().byName("id1").execute();
-				connectAndAssert(() -> matchesModifyPeer("id1", "IsDisabled", true));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void defaultFcpClientCanEnablePeerByIdentity()
-			throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().enable().byIdentity("id1").execute();
-				connectAndAssert(() -> matchesModifyPeer("id1", "IsDisabled", false));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void defaultFcpClientCanEnablePeerByHostAndPort()
-			throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().enable().byHostAndPort("1.2.3.4", 5678).execute();
-				connectAndAssert(() -> matchesModifyPeer("1.2.3.4:5678", "IsDisabled", false));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void allowLocalAddressesOfPeer() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().allowLocalAddresses().byIdentity("id1").execute();
-				connectAndAssert(() -> allOf(
-					matchesModifyPeer("id1", "AllowLocalAddresses", true),
-					not(contains(startsWith("IsDisabled=")))
-				));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void disallowLocalAddressesOfPeer() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer =
-					fcpClient.modifyPeer().disallowLocalAddresses().byIdentity("id1").execute();
-				connectAndAssert(() -> allOf(
-					matchesModifyPeer("id1", "AllowLocalAddresses", false),
-					not(contains(startsWith("IsDisabled=")))
-				));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void setBurstOnlyForPeer() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().setBurstOnly().byIdentity("id1").execute();
-				connectAndAssert(() -> allOf(
-					matchesModifyPeer("id1", "IsBurstOnly", true),
-					not(contains(startsWith("AllowLocalAddresses="))),
-					not(contains(startsWith("IsDisabled=")))
-				));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void clearBurstOnlyForPeer() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().clearBurstOnly().byIdentity("id1").execute();
-				connectAndAssert(() -> allOf(
-					matchesModifyPeer("id1", "IsBurstOnly", false),
-					not(contains(startsWith("AllowLocalAddresses="))),
-					not(contains(startsWith("IsDisabled=")))
-				));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void defaultFcpClientCanSetListenOnlyForPeer()
-			throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().setListenOnly().byIdentity("id1").execute();
-				connectAndAssert(() -> allOf(
-					matchesModifyPeer("id1", "IsListenOnly", true),
-					not(contains(startsWith("AllowLocalAddresses="))),
-					not(contains(startsWith("IsDisabled="))),
-					not(contains(startsWith("IsBurstOnly=")))
-				));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void clearListenOnlyForPeer() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().clearListenOnly().byIdentity("id1").execute();
-				connectAndAssert(() -> allOf(
-					matchesModifyPeer("id1", "IsListenOnly", false),
-					not(contains(startsWith("AllowLocalAddresses="))),
-					not(contains(startsWith("IsDisabled="))),
-					not(contains(startsWith("IsBurstOnly=")))
-				));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void ignoreSourceForPeer() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().ignoreSource().byIdentity("id1").execute();
-				connectAndAssert(() -> allOf(
-					matchesModifyPeer("id1", "IgnoreSourcePort", true),
-					not(contains(startsWith("AllowLocalAddresses="))),
-					not(contains(startsWith("IsDisabled="))),
-					not(contains(startsWith("IsBurstOnly="))),
-					not(contains(startsWith("IsListenOnly=")))
-				));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void useSourceForPeer() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().useSource().byIdentity("id1").execute();
-				connectAndAssert(() -> allOf(
-					matchesModifyPeer("id1", "IgnoreSourcePort", false),
-					not(contains(startsWith("AllowLocalAddresses="))),
-					not(contains(startsWith("IsDisabled="))),
-					not(contains(startsWith("IsBurstOnly="))),
-					not(contains(startsWith("IsListenOnly=")))
-				));
-				replyWithPeer("id1");
-				assertThat(peer.get().get().getIdentity(), is("id1"));
-			}
-
-			@Test
-			public void unknownNode() throws InterruptedException, ExecutionException, IOException {
-				Future<Optional<Peer>> peer = fcpClient.modifyPeer().enable().byIdentity("id1").execute();
-				connectAndAssert(() -> matchesModifyPeer("id1", "IsDisabled", false));
-				replyWithUnknownNodeIdentifier();
-				assertThat(peer.get().isPresent(), is(false));
-			}
-
-			private Matcher<List<String>> matchesModifyPeer(String nodeIdentifier, String setting, boolean value) {
-				return matchesFcpMessage(
-					"ModifyPeer",
-					"Identifier=" + identifier,
-					"NodeIdentifier=" + nodeIdentifier,
-					setting + "=" + value,
-					"EndMessage"
-				);
-			}
-
-		}
-
-		public class RemovePeer {
-
-			@Test
-			public void byName() throws InterruptedException, ExecutionException, IOException {
-				Future<Boolean> peer = fcpClient.removePeer().byName("Friend1").execute();
-				connectAndAssert(() -> matchesRemovePeer("Friend1"));
-				replyWithPeerRemoved("Friend1");
-				assertThat(peer.get(), is(true));
-			}
-
-			@Test
-			public void invalidName() throws InterruptedException, ExecutionException, IOException {
-				Future<Boolean> peer = fcpClient.removePeer().byName("NotFriend1").execute();
-				connectAndAssert(() -> matchesRemovePeer("NotFriend1"));
-				replyWithUnknownNodeIdentifier();
-				assertThat(peer.get(), is(false));
-			}
-
-			@Test
-			public void byIdentity() throws InterruptedException, ExecutionException, IOException {
-				Future<Boolean> peer = fcpClient.removePeer().byIdentity("id1").execute();
-				connectAndAssert(() -> matchesRemovePeer("id1"));
-				replyWithPeerRemoved("id1");
-				assertThat(peer.get(), is(true));
-			}
-
-			@Test
-			public void byHostAndPort() throws InterruptedException, ExecutionException, IOException {
-				Future<Boolean> peer = fcpClient.removePeer().byHostAndPort("1.2.3.4", 5678).execute();
-				connectAndAssert(() -> matchesRemovePeer("1.2.3.4:5678"));
-				replyWithPeerRemoved("Friend1");
-				assertThat(peer.get(), is(true));
-			}
-
-			private Matcher<List<String>> matchesRemovePeer(String nodeIdentifier) {
-				return matchesFcpMessage(
-					"RemovePeer",
-					"Identifier=" + identifier,
-					"NodeIdentifier=" + nodeIdentifier,
-					"EndMessage"
-				);
-			}
-
-			private void replyWithPeerRemoved(String nodeIdentifier) throws IOException {
-				fcpServer.writeLine(
-					"PeerRemoved",
-					"Identifier=" + identifier,
-					"NodeIdentifier=" + nodeIdentifier,
-					"EndMessage"
-				);
-			}
-
-		}
-
-		private void replyWithPeer(String peerId, String... additionalLines) throws IOException {
-			fcpServer.writeLine(
-				"Peer",
-				"Identifier=" + identifier,
-				"identity=" + peerId,
-				"opennet=false",
-				"ark.pubURI=SSK@3YEf.../ark",
-				"ark.number=78",
-				"auth.negTypes=2",
-				"version=Fred,0.7,1.0,1466",
-				"lastGoodVersion=Fred,0.7,1.0,1466"
-			);
-			fcpServer.writeLine(additionalLines);
-			fcpServer.writeLine("EndMessage");
 		}
 
 		private void replyWithUnknownNodeIdentifier() throws IOException {
