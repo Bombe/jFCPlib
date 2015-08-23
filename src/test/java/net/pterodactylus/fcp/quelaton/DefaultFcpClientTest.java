@@ -110,22 +110,6 @@ public class DefaultFcpClientTest {
 		keyPairFuture.get();
 	}
 
-	@Test
-	public void defaultFcpClientCanGenerateKeypair() throws ExecutionException, InterruptedException, IOException {
-		Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine("SSKKeypair",
-			"InsertURI=" + INSERT_URI + "",
-			"RequestURI=" + REQUEST_URI + "",
-			"Identifier=" + identifier,
-			"EndMessage");
-		FcpKeyPair keyPair = keyPairFuture.get();
-		assertThat(keyPair.getPublicKey(), is(REQUEST_URI));
-		assertThat(keyPair.getPrivateKey(), is(INSERT_URI));
-	}
-
 	private void connectNode() throws InterruptedException, ExecutionException, IOException {
 		fcpServer.connect().get();
 		fcpServer.collectUntil(is("EndMessage"));
@@ -1068,6 +1052,28 @@ public class DefaultFcpClientTest {
 		lines = fcpServer.collectUntil(is("EndMessage"));
 		identifier = extractIdentifier(lines);
 		assertThat(lines, requestMatcher.get());
+	}
+
+	public class GenerateKeyPair {
+
+		@Test
+		public void defaultFcpClientCanGenerateKeypair() throws ExecutionException, InterruptedException, IOException {
+			Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
+			connectAndAssert(() ->matchesFcpMessage("GenerateSSK", "EndMessage"));
+			replyWithKeyPair();
+			FcpKeyPair keyPair = keyPairFuture.get();
+			assertThat(keyPair.getPublicKey(), is(REQUEST_URI));
+			assertThat(keyPair.getPrivateKey(), is(INSERT_URI));
+		}
+
+		private void replyWithKeyPair() throws IOException {
+			fcpServer.writeLine("SSKKeypair",
+				"InsertURI=" + INSERT_URI + "",
+				"RequestURI=" + REQUEST_URI + "",
+				"Identifier=" + identifier,
+				"EndMessage");
+		}
+
 	}
 
 	public class Peers {
