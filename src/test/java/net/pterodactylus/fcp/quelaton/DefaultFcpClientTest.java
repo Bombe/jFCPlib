@@ -107,30 +107,6 @@ public class DefaultFcpClientTest {
 		);
 	}
 
-	@Test
-	public void clientGetCanDownloadData() throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Data>> dataFuture = fcpClient.clientGet().uri("KSK@foo.txt").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, matchesFcpMessage("ClientGet", "ReturnType=direct", "URI=KSK@foo.txt"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"AllData",
-			"Identifier=" + identifier,
-			"DataLength=6",
-			"StartupTime=1435610539000",
-			"CompletionTime=1435610540000",
-			"Metadata.ContentType=text/plain;charset=utf-8",
-			"Data",
-			"Hello"
-		);
-		Optional<Data> data = dataFuture.get();
-		assertThat(data.get().getMimeType(), is("text/plain;charset=utf-8"));
-		assertThat(data.get().size(), is(6L));
-		assertThat(ByteStreams.toByteArray(data.get().getInputStream()),
-			is("Hello\n".getBytes(StandardCharsets.UTF_8)));
-	}
-
 	private String extractIdentifier(List<String> lines) {
 		return lines.stream()
 			.filter(s -> s.startsWith("Identifier="))
