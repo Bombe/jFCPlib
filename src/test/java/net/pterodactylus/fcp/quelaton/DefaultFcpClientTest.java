@@ -88,29 +88,6 @@ public class DefaultFcpClientTest {
 		threadPool.shutdown();
 	}
 
-	@Test(expected = ExecutionException.class)
-	public void defaultFcpClientThrowsExceptionIfItCanNotConnect()
-	throws IOException, ExecutionException, InterruptedException {
-		Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
-		fcpServer.connect().get();
-		fcpServer.collectUntil(is("EndMessage"));
-		fcpServer.writeLine(
-			"CloseConnectionDuplicateClientName",
-			"EndMessage"
-		);
-		keyPairFuture.get();
-	}
-
-	@Test(expected = ExecutionException.class)
-	public void defaultFcpClientThrowsExceptionIfConnectionIsClosed()
-	throws IOException, ExecutionException, InterruptedException {
-		Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
-		fcpServer.connect().get();
-		fcpServer.collectUntil(is("EndMessage"));
-		fcpServer.close();
-		keyPairFuture.get();
-	}
-
 	private void connectNode() throws InterruptedException, ExecutionException, IOException {
 		fcpServer.connect().get();
 		fcpServer.collectUntil(is("EndMessage"));
@@ -959,6 +936,29 @@ public class DefaultFcpClientTest {
 		lines = fcpServer.collectUntil(is("EndMessage"));
 		identifier = extractIdentifier(lines);
 		assertThat(lines, requestMatcher.get());
+	}
+
+	public class Connections {
+
+		@Test(expected = ExecutionException.class)
+		public void throwsExceptionOnFailure() throws IOException, ExecutionException, InterruptedException {
+			Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
+			connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
+			fcpServer.writeLine(
+				"CloseConnectionDuplicateClientName",
+				"EndMessage"
+			);
+			keyPairFuture.get();
+		}
+
+		@Test(expected = ExecutionException.class)
+		public void throwsExceptionIfConnectionIsClosed() throws IOException, ExecutionException, InterruptedException {
+			Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
+			connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
+			fcpServer.close();
+			keyPairFuture.get();
+		}
+
 	}
 
 	public class GenerateKeyPair {
