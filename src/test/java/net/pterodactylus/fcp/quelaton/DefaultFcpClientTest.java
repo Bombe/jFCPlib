@@ -115,65 +115,8 @@ public class DefaultFcpClientTest {
 			.orElse("");
 	}
 
-	@Test
-	public void defaultFcpClientReusesConnection() throws InterruptedException, ExecutionException, IOException {
-		Future<FcpKeyPair> keyPair = fcpClient.generateKeypair().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"SSKKeypair",
-			"InsertURI=" + INSERT_URI + "",
-			"RequestURI=" + REQUEST_URI + "",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		keyPair.get();
-		keyPair = fcpClient.generateKeypair().execute();
-		lines = fcpServer.collectUntil(is("EndMessage"));
-		identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"SSKKeypair",
-			"InsertURI=" + INSERT_URI + "",
-			"RequestURI=" + REQUEST_URI + "",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		keyPair.get();
-	}
-
-	@Test
-	public void defaultFcpClientCanReconnectAfterConnectionHasBeenClosed()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<FcpKeyPair> keyPair = fcpClient.generateKeypair().execute();
-		connectNode();
-		fcpServer.collectUntil(is("EndMessage"));
-		fcpServer.close();
-		try {
-			keyPair.get();
-			Assert.fail();
-		} catch (ExecutionException e) {
-		}
-		keyPair = fcpClient.generateKeypair().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"SSKKeypair",
-			"InsertURI=" + INSERT_URI + "",
-			"RequestURI=" + REQUEST_URI + "",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		keyPair.get();
-	}
-
 	private Matcher<List<String>> matchesFcpMessage(String name, String... requiredLines) {
 		return matchesFcpMessageWithTerminator(name, "EndMessage", requiredLines);
-	}
-
-	private Matcher<List<String>> matchesDataMessage(String name, String... requiredLines) {
-		return matchesFcpMessageWithTerminator(name, "Data", requiredLines);
 	}
 
 	private Matcher<Iterable<String>> hasHead(String firstElement) {
@@ -914,39 +857,74 @@ public class DefaultFcpClientTest {
 		assertThat(lines, requestMatcher.get());
 	}
 
-	public class Connections {
+	public class ConnectionsAndKeyPairs {
 
-		@Test(expected = ExecutionException.class)
-		public void throwsExceptionOnFailure() throws IOException, ExecutionException, InterruptedException {
-			Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
-			connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
-			fcpServer.writeLine(
-				"CloseConnectionDuplicateClientName",
-				"EndMessage"
-			);
-			keyPairFuture.get();
+		public class Connections {
+
+			@Test(expected = ExecutionException.class)
+			public void throwsExceptionOnFailure() throws IOException, ExecutionException, InterruptedException {
+				Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
+				connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
+				fcpServer.writeLine(
+					"CloseConnectionDuplicateClientName",
+					"EndMessage"
+				);
+				keyPairFuture.get();
+			}
+
+			@Test(expected = ExecutionException.class)
+			public void throwsExceptionIfConnectionIsClosed() throws IOException, ExecutionException, InterruptedException {
+				Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
+				connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
+				fcpServer.close();
+				keyPairFuture.get();
+			}
+
+			@Test
+			public void connectionIsReused() throws InterruptedException, ExecutionException, IOException {
+				Future<FcpKeyPair> keyPair = fcpClient.generateKeypair().execute();
+				connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
+				replyWithKeyPair();
+				keyPair.get();
+				keyPair = fcpClient.generateKeypair().execute();
+				readMessage(() -> matchesFcpMessage("GenerateSSK"));
+				identifier = extractIdentifier(lines);
+				replyWithKeyPair();
+				keyPair.get();
+			}
+
+			@Test
+			public void defaultFcpClientCanReconnectAfterConnectionHasBeenClosed()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<FcpKeyPair> keyPair = fcpClient.generateKeypair().execute();
+				connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
+				fcpServer.close();
+				try {
+					keyPair.get();
+					Assert.fail();
+				} catch (ExecutionException e) {
+				}
+				keyPair = fcpClient.generateKeypair().execute();
+				connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
+				replyWithKeyPair();
+				keyPair.get();
+			}
+
 		}
 
-		@Test(expected = ExecutionException.class)
-		public void throwsExceptionIfConnectionIsClosed() throws IOException, ExecutionException, InterruptedException {
-			Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
-			connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
-			fcpServer.close();
-			keyPairFuture.get();
-		}
+		public class GenerateKeyPair {
 
-	}
+			@Test
+			public void defaultFcpClientCanGenerateKeypair()
+			throws ExecutionException, InterruptedException, IOException {
+				Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
+				connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
+				replyWithKeyPair();
+				FcpKeyPair keyPair = keyPairFuture.get();
+				assertThat(keyPair.getPublicKey(), is(REQUEST_URI));
+				assertThat(keyPair.getPrivateKey(), is(INSERT_URI));
+			}
 
-	public class GenerateKeyPair {
-
-		@Test
-		public void defaultFcpClientCanGenerateKeypair() throws ExecutionException, InterruptedException, IOException {
-			Future<FcpKeyPair> keyPairFuture = fcpClient.generateKeypair().execute();
-			connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
-			replyWithKeyPair();
-			FcpKeyPair keyPair = keyPairFuture.get();
-			assertThat(keyPair.getPublicKey(), is(REQUEST_URI));
-			assertThat(keyPair.getPrivateKey(), is(INSERT_URI));
 		}
 
 		private void replyWithKeyPair() throws IOException {
