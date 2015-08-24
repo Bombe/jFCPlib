@@ -1866,7 +1866,7 @@ public class DefaultFcpClientTest {
 		@Test
 		public void works() throws InterruptedException, ExecutionException, IOException {
 			Future<Optional<Data>> dataFuture = fcpClient.clientGet().uri("KSK@foo.txt").execute();
-			connectAndAssert(() -> matchesFcpMessage("ClientGet", "URI=KSK@foo.txt"));
+			connectAndAssert(() -> matchesFcpMessage("ClientGet", "URI=KSK@foo.txt", "ReturnType=direct"));
 			replyWithAllData("not-test", "Hello World", "text/plain;charset=latin-9");
 			replyWithAllData(identifier, "Hello", "text/plain;charset=utf-8");
 			Optional<Data> data = dataFuture.get();
@@ -1877,6 +1877,7 @@ public class DefaultFcpClientTest {
 		public void getFailedIsRecognized() throws InterruptedException, ExecutionException, IOException {
 			Future<Optional<Data>> dataFuture = fcpClient.clientGet().uri("KSK@foo.txt").execute();
 			connectAndAssert(() -> matchesFcpMessage("ClientGet", "URI=KSK@foo.txt"));
+			replyWithGetFailed("not-test");
 			replyWithGetFailed(identifier);
 			Optional<Data> data = dataFuture.get();
 			assertThat(data.isPresent(), is(false));
