@@ -580,6 +580,7 @@ public class DefaultFcpClientTest {
 					keyPair.get();
 					Assert.fail();
 				} catch (ExecutionException e) {
+					/* ignore. */
 				}
 				keyPair = fcpClient.generateKeypair().execute();
 				connectAndAssert(() -> matchesFcpMessage("GenerateSSK"));
