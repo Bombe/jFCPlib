@@ -197,333 +197,6 @@ public class DefaultFcpClientTest {
 	}
 
 	@Test
-	public void clientPutWithDirectDataSendsCorrectCommand()
-	throws IOException, ExecutionException, InterruptedException {
-		fcpClient.clientPut()
-			.from(new ByteArrayInputStream("Hello\n".getBytes()))
-			.length(6)
-			.uri("KSK@foo.txt")
-			.execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("Hello"));
-		assertThat(lines, allOf(
-			hasHead("ClientPut"),
-			hasParameters(1, 2, "UploadFrom=direct", "DataLength=6", "URI=KSK@foo.txt"),
-			hasTail("EndMessage", "Hello")
-		));
-	}
-
-	@Test
-	public void clientPutWithDirectDataSucceedsOnCorrectIdentifier()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Key>> key = fcpClient.clientPut()
-			.from(new ByteArrayInputStream("Hello\n".getBytes()))
-			.length(6)
-			.uri("KSK@foo.txt")
-			.execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("Hello"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"PutFailed",
-			"Identifier=not-the-right-one",
-			"EndMessage"
-		);
-		fcpServer.writeLine(
-			"PutSuccessful",
-			"URI=KSK@foo.txt",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
-	}
-
-	@Test
-	public void clientPutWithDirectDataFailsOnCorrectIdentifier()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Key>> key = fcpClient.clientPut()
-			.from(new ByteArrayInputStream("Hello\n".getBytes()))
-			.length(6)
-			.uri("KSK@foo.txt")
-			.execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("Hello"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"PutSuccessful",
-			"Identifier=not-the-right-one",
-			"URI=KSK@foo.txt",
-			"EndMessage"
-		);
-		fcpServer.writeLine(
-			"PutFailed",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		assertThat(key.get().isPresent(), is(false));
-	}
-
-	@Test
-	public void clientPutWithRenamedDirectDataSendsCorrectCommand()
-	throws InterruptedException, ExecutionException, IOException {
-		fcpClient.clientPut()
-			.named("otherName.txt")
-			.from(new ByteArrayInputStream("Hello\n".getBytes()))
-			.length(6)
-			.uri("KSK@foo.txt")
-			.execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("Hello"));
-		assertThat(lines, allOf(
-			hasHead("ClientPut"),
-			hasParameters(1, 2, "TargetFilename=otherName.txt", "UploadFrom=direct", "DataLength=6", "URI=KSK@foo.txt"),
-			hasTail("EndMessage", "Hello")
-		));
-	}
-
-	@Test
-	public void clientPutWithRedirectSendsCorrectCommand()
-	throws IOException, ExecutionException, InterruptedException {
-		fcpClient.clientPut().redirectTo("KSK@bar.txt").uri("KSK@foo.txt").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines,
-			matchesFcpMessage("ClientPut", "UploadFrom=redirect", "URI=KSK@foo.txt", "TargetURI=KSK@bar.txt"));
-	}
-
-	@Test
-	public void clientPutWithFileSendsCorrectCommand() throws InterruptedException, ExecutionException, IOException {
-		fcpClient.clientPut().from(new File("/tmp/data.txt")).uri("KSK@foo.txt").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines,
-			matchesFcpMessage("ClientPut", "UploadFrom=disk", "URI=KSK@foo.txt", "Filename=/tmp/data.txt"));
-	}
-
-	@Test
-	public void clientPutWithFileCanCompleteTestDdaSequence()
-	throws IOException, ExecutionException, InterruptedException {
-		File tempFile = createTempFile();
-		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).uri("KSK@foo.txt").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"ProtocolError",
-			"Identifier=" + identifier,
-			"Code=25",
-			"EndMessage"
-		);
-		lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, matchesFcpMessage(
-			"TestDDARequest",
-			"Directory=" + tempFile.getParent(),
-			"WantReadDirectory=true",
-			"WantWriteDirectory=false"
-		));
-		fcpServer.writeLine(
-			"TestDDAReply",
-			"Directory=" + tempFile.getParent(),
-			"ReadFilename=" + tempFile,
-			"EndMessage"
-		);
-		lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, matchesFcpMessage(
-			"TestDDAResponse",
-			"Directory=" + tempFile.getParent(),
-			"ReadContent=test-content"
-		));
-		fcpServer.writeLine(
-			"TestDDAComplete",
-			"Directory=" + tempFile.getParent(),
-			"ReadDirectoryAllowed=true",
-			"EndMessage"
-		);
-		lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines,
-			matchesFcpMessage("ClientPut", "UploadFrom=disk", "URI=KSK@foo.txt",
-				"Filename=" + new File(tempFile.getParent(), "test.dat")));
-	}
-
-	private File createTempFile() throws IOException {
-		File tempFile = File.createTempFile("test-dda-", ".dat");
-		tempFile.deleteOnExit();
-		Files.write("test-content", tempFile, StandardCharsets.UTF_8);
-		return tempFile;
-	}
-
-	@Test
-	public void clientPutDoesNotReactToProtocolErrorForDifferentIdentifier()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Key>> key = fcpClient.clientPut().from(new File("/tmp/data.txt")).uri("KSK@foo.txt").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"ProtocolError",
-			"Identifier=not-the-right-one",
-			"Code=25",
-			"EndMessage"
-		);
-		fcpServer.writeLine(
-			"PutSuccessful",
-			"Identifier=" + identifier,
-			"URI=KSK@foo.txt",
-			"EndMessage"
-		);
-		assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
-	}
-
-	@Test
-	public void clientPutAbortsOnProtocolErrorOtherThan25()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<Optional<Key>> key = fcpClient.clientPut().from(new File("/tmp/data.txt")).uri("KSK@foo.txt").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"ProtocolError",
-			"Identifier=" + identifier,
-			"Code=1",
-			"EndMessage"
-		);
-		assertThat(key.get().isPresent(), is(false));
-	}
-
-	@Test
-	public void clientPutDoesNotReplyToWrongTestDdaReply() throws IOException, ExecutionException,
-	InterruptedException {
-		File tempFile = createTempFile();
-		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).uri("KSK@foo.txt").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"ProtocolError",
-			"Identifier=" + identifier,
-			"Code=25",
-			"EndMessage"
-		);
-		lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, matchesFcpMessage(
-			"TestDDARequest",
-			"Directory=" + tempFile.getParent(),
-			"WantReadDirectory=true",
-			"WantWriteDirectory=false"
-		));
-		fcpServer.writeLine(
-			"TestDDAReply",
-			"Directory=/some-other-directory",
-			"ReadFilename=" + tempFile,
-			"EndMessage"
-		);
-		fcpServer.writeLine(
-			"TestDDAReply",
-			"Directory=" + tempFile.getParent(),
-			"ReadFilename=" + tempFile,
-			"EndMessage"
-		);
-		lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, matchesFcpMessage(
-			"TestDDAResponse",
-			"Directory=" + tempFile.getParent(),
-			"ReadContent=test-content"
-		));
-	}
-
-	@Test
-	public void clientPutSendsResponseEvenIfFileCanNotBeRead()
-	throws IOException, ExecutionException, InterruptedException {
-		File tempFile = createTempFile();
-		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).uri("KSK@foo.txt").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"ProtocolError",
-			"Identifier=" + identifier,
-			"Code=25",
-			"EndMessage"
-		);
-		lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, matchesFcpMessage(
-			"TestDDARequest",
-			"Directory=" + tempFile.getParent(),
-			"WantReadDirectory=true",
-			"WantWriteDirectory=false"
-		));
-		fcpServer.writeLine(
-			"TestDDAReply",
-			"Directory=" + tempFile.getParent(),
-			"ReadFilename=" + tempFile + ".foo",
-			"EndMessage"
-		);
-		lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, matchesFcpMessage(
-			"TestDDAResponse",
-			"Directory=" + tempFile.getParent(),
-			"ReadContent=failed-to-read"
-		));
-	}
-
-	@Test
-	public void clientPutDoesNotResendOriginalClientPutOnTestDDACompleteWithWrongDirectory()
-	throws IOException, ExecutionException, InterruptedException {
-		File tempFile = createTempFile();
-		fcpClient.clientPut().from(new File(tempFile.getParent(), "test.dat")).uri("KSK@foo.txt").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"TestDDAComplete",
-			"Directory=/some-other-directory",
-			"EndMessage"
-		);
-		fcpServer.writeLine(
-			"ProtocolError",
-			"Identifier=" + identifier,
-			"Code=25",
-			"EndMessage"
-		);
-		lines = fcpServer.collectUntil(is("EndMessage"));
-		assertThat(lines, matchesFcpMessage(
-			"TestDDARequest",
-			"Directory=" + tempFile.getParent(),
-			"WantReadDirectory=true",
-			"WantWriteDirectory=false"
-		));
-	}
-
-	@Test
-	public void clientPutSendsNotificationsForGeneratedKeys()
-	throws InterruptedException, ExecutionException, IOException {
-		List<String> generatedKeys = new CopyOnWriteArrayList<>();
-		Future<Optional<Key>> key = fcpClient.clientPut()
-			.onKeyGenerated(generatedKeys::add)
-			.from(new ByteArrayInputStream("Hello\n".getBytes()))
-			.length(6)
-			.uri("KSK@foo.txt")
-			.execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("Hello"));
-		String identifier = extractIdentifier(lines);
-		fcpServer.writeLine(
-			"URIGenerated",
-			"Identifier=" + identifier,
-			"URI=KSK@foo.txt",
-			"EndMessage"
-		);
-		fcpServer.writeLine(
-			"PutSuccessful",
-			"URI=KSK@foo.txt",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
-		assertThat(generatedKeys, contains("KSK@foo.txt"));
-	}
-
-	@Test
 	public void defaultFcpClientCanGetNodeInformation() throws InterruptedException, ExecutionException, IOException {
 		Future<NodeData> nodeData = fcpClient.getNode().execute();
 		connectNode();
@@ -852,7 +525,11 @@ public class DefaultFcpClientTest {
 	}
 
 	private void readMessage(Supplier<Matcher<List<String>>> requestMatcher) throws IOException {
-		lines = fcpServer.collectUntil(is("EndMessage"));
+		readMessage("EndMessage", requestMatcher);
+	}
+
+	private void readMessage(String terminator, Supplier<Matcher<List<String>>> requestMatcher) throws IOException {
+		lines = fcpServer.collectUntil(is(terminator));
 		identifier = extractIdentifier(lines);
 		assertThat(lines, requestMatcher.get());
 	}
@@ -1947,6 +1624,297 @@ public class DefaultFcpClientTest {
 			assertThat(data.get().size(), is(6L));
 			assertThat(ByteStreams.toByteArray(data.get().getInputStream()),
 				is("Hello\n".getBytes(StandardCharsets.UTF_8)));
+		}
+
+	}
+
+	public class ClientPut {
+
+		@Test
+		public void sendsCorrectCommand() throws IOException, ExecutionException, InterruptedException {
+			fcpClient.clientPut()
+				.from(new ByteArrayInputStream("Hello\n".getBytes()))
+				.length(6)
+				.uri("KSK@foo.txt")
+				.execute();
+			connectNode();
+			readMessage("Hello", () -> matchesDirectClientPut());
+		}
+
+		@Test
+		public void succeedsOnCorrectIdentifier() throws InterruptedException, ExecutionException, IOException {
+			Future<Optional<Key>> key = fcpClient.clientPut()
+				.from(new ByteArrayInputStream("Hello\n".getBytes()))
+				.length(6)
+				.uri("KSK@foo.txt")
+				.execute();
+			connectNode();
+			readMessage("Hello", () -> matchesDirectClientPut());
+			replyWithPutFailed("not-the-right-one");
+			replyWithPutSuccessful(identifier);
+			assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
+		}
+
+		@Test
+		public void failsOnCorrectIdentifier() throws InterruptedException, ExecutionException, IOException {
+			Future<Optional<Key>> key = fcpClient.clientPut()
+				.from(new ByteArrayInputStream("Hello\n".getBytes()))
+				.length(6)
+				.uri("KSK@foo.txt")
+				.execute();
+			connectNode();
+			readMessage("Hello", () -> matchesDirectClientPut());
+			replyWithPutSuccessful("not-the-right-one");
+			replyWithPutFailed(identifier);
+			assertThat(key.get().isPresent(), is(false));
+		}
+
+		@Test
+		public void renameIsSentCorrectly() throws InterruptedException, ExecutionException, IOException {
+			fcpClient.clientPut()
+				.named("otherName.txt")
+				.from(new ByteArrayInputStream("Hello\n".getBytes()))
+				.length(6)
+				.uri("KSK@foo.txt")
+				.execute();
+			connectNode();
+			readMessage("Hello", () -> allOf(
+				hasHead("ClientPut"),
+				hasParameters(1, 2, "TargetFilename=otherName.txt", "UploadFrom=direct", "DataLength=6",
+					"URI=KSK@foo.txt"),
+				hasTail("EndMessage", "Hello")
+			));
+		}
+
+		@Test
+		public void redirectIsSentCorrecly() throws IOException, ExecutionException, InterruptedException {
+			fcpClient.clientPut().redirectTo("KSK@bar.txt").uri("KSK@foo.txt").execute();
+			connectAndAssert(() ->
+				matchesFcpMessage("ClientPut", "UploadFrom=redirect", "URI=KSK@foo.txt", "TargetURI=KSK@bar.txt"));
+		}
+
+		@Test
+		public void withFileIsSentCorrectly() throws InterruptedException, ExecutionException, IOException {
+			fcpClient.clientPut().from(new File("/tmp/data.txt")).uri("KSK@foo.txt").execute();
+			connectAndAssert(() ->
+				matchesFcpMessage("ClientPut", "UploadFrom=disk", "URI=KSK@foo.txt", "Filename=/tmp/data.txt"));
+		}
+
+		public class DDA {
+
+			private final File ddaFile;
+			private final File fileToUpload;
+
+			public DDA() throws IOException {
+				ddaFile = createDdaFile();
+				fileToUpload = new File(ddaFile.getParent(), "test.dat");
+			}
+
+			private Matcher<List<String>> matchesFileClientPut(File file) {
+				return matchesFcpMessage("ClientPut", "UploadFrom=disk", "URI=KSK@foo.txt", "Filename=" + file);
+			}
+
+			@Test
+			public void completeDda() throws IOException, ExecutionException, InterruptedException {
+				fcpClient.clientPut().from(fileToUpload).uri("KSK@foo.txt").execute();
+				connectAndAssert(() -> matchesFileClientPut(fileToUpload));
+				sendDdaRequired(identifier);
+				readMessage(() -> matchesTestDDARequest(ddaFile));
+				sendTestDDAReply(ddaFile.getParent(), ddaFile);
+				readMessage(() -> matchesTestDDAResponse(ddaFile));
+				writeTestDDAComplete(ddaFile);
+				readMessage(() -> matchesFileClientPut(fileToUpload));
+			}
+
+			@Test
+			public void ignoreOtherDda() throws IOException, ExecutionException, InterruptedException {
+				fcpClient.clientPut().from(fileToUpload).uri("KSK@foo.txt").execute();
+				connectAndAssert(() -> matchesFileClientPut(fileToUpload));
+				sendDdaRequired(identifier);
+				readMessage(() -> matchesTestDDARequest(ddaFile));
+				sendTestDDAReply("/some-other-directory", ddaFile);
+				sendTestDDAReply(ddaFile.getParent(), ddaFile);
+				readMessage(() -> matchesTestDDAResponse(ddaFile));
+			}
+
+			@Test
+			public void sendResponseIfFileUnreadable() throws IOException, ExecutionException, InterruptedException {
+				fcpClient.clientPut().from(fileToUpload).uri("KSK@foo.txt").execute();
+				connectAndAssert(() -> matchesFileClientPut(fileToUpload));
+				sendDdaRequired(identifier);
+				readMessage(() -> matchesTestDDARequest(ddaFile));
+				sendTestDDAReply(ddaFile.getParent(), new File(ddaFile + ".foo"));
+				readMessage(() -> matchesFailedToReadResponse());
+			}
+
+			@Test
+			public void clientPutDoesNotResendOriginalClientPutOnTestDDACompleteWithWrongDirectory()
+			throws IOException, ExecutionException, InterruptedException {
+				fcpClient.clientPut().from(fileToUpload).uri("KSK@foo.txt").execute();
+				connectNode();
+				List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+				String identifier = extractIdentifier(lines);
+				fcpServer.writeLine(
+					"TestDDAComplete",
+					"Directory=/some-other-directory",
+					"EndMessage"
+				);
+				sendDdaRequired(identifier);
+				lines = fcpServer.collectUntil(is("EndMessage"));
+				assertThat(lines, matchesFcpMessage(
+					"TestDDARequest",
+					"Directory=" + ddaFile.getParent(),
+					"WantReadDirectory=true",
+					"WantWriteDirectory=false"
+				));
+			}
+
+			private Matcher<List<String>> matchesFailedToReadResponse() {
+				return matchesFcpMessage(
+					"TestDDAResponse",
+					"Directory=" + ddaFile.getParent(),
+					"ReadContent=failed-to-read"
+				);
+			}
+
+			private void writeTestDDAComplete(File tempFile) throws IOException {
+				fcpServer.writeLine(
+					"TestDDAComplete",
+					"Directory=" + tempFile.getParent(),
+					"ReadDirectoryAllowed=true",
+					"EndMessage"
+				);
+			}
+
+			private Matcher<List<String>> matchesTestDDAResponse(File tempFile) {
+				return matchesFcpMessage(
+					"TestDDAResponse",
+					"Directory=" + tempFile.getParent(),
+					"ReadContent=test-content"
+				);
+			}
+
+			private void sendTestDDAReply(String directory, File tempFile) throws IOException {
+				fcpServer.writeLine(
+					"TestDDAReply",
+					"Directory=" + directory,
+					"ReadFilename=" + tempFile,
+					"EndMessage"
+				);
+			}
+
+			private Matcher<List<String>> matchesTestDDARequest(File tempFile) {
+				return matchesFcpMessage(
+					"TestDDARequest",
+					"Directory=" + tempFile.getParent(),
+					"WantReadDirectory=true",
+					"WantWriteDirectory=false"
+				);
+			}
+
+			private void sendDdaRequired(String identifier) throws IOException {
+				fcpServer.writeLine(
+					"ProtocolError",
+					"Identifier=" + identifier,
+					"Code=25",
+					"EndMessage"
+				);
+			}
+
+		}
+
+		private void replyWithPutSuccessful(String identifier) throws IOException {
+			fcpServer.writeLine(
+				"PutSuccessful",
+				"URI=KSK@foo.txt",
+				"Identifier=" + identifier,
+				"EndMessage"
+			);
+		}
+
+		private void replyWithPutFailed(String identifier) throws IOException {
+			fcpServer.writeLine(
+				"PutFailed",
+				"Identifier=" + identifier,
+				"EndMessage"
+			);
+		}
+
+		private Matcher<List<String>> matchesDirectClientPut() {
+			return allOf(
+				hasHead("ClientPut"),
+				hasParameters(1, 2, "UploadFrom=direct", "DataLength=6", "URI=KSK@foo.txt"),
+				hasTail("EndMessage", "Hello")
+			);
+		}
+
+		private File createDdaFile() throws IOException {
+			File tempFile = File.createTempFile("test-dda-", ".dat");
+			tempFile.deleteOnExit();
+			Files.write("test-content", tempFile, StandardCharsets.UTF_8);
+			return tempFile;
+		}
+
+		@Test
+		public void clientPutDoesNotReactToProtocolErrorForDifferentIdentifier()
+		throws InterruptedException, ExecutionException, IOException {
+			Future<Optional<Key>> key = fcpClient.clientPut().from(new File("/tmp/data.txt")).uri("KSK@foo.txt").execute();
+			connectNode();
+			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+			String identifier = extractIdentifier(lines);
+			fcpServer.writeLine(
+				"ProtocolError",
+				"Identifier=not-the-right-one",
+				"Code=25",
+				"EndMessage"
+			);
+			fcpServer.writeLine(
+				"PutSuccessful",
+				"Identifier=" + identifier,
+				"URI=KSK@foo.txt",
+				"EndMessage"
+			);
+			assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
+		}
+
+		@Test
+		public void clientPutAbortsOnProtocolErrorOtherThan25()
+		throws InterruptedException, ExecutionException, IOException {
+			Future<Optional<Key>> key = fcpClient.clientPut().from(new File("/tmp/data.txt")).uri("KSK@foo.txt").execute();
+			connectNode();
+			List<String> lines = fcpServer.collectUntil(is("EndMessage"));
+			String identifier = extractIdentifier(lines);
+			fcpServer.writeLine(
+				"ProtocolError",
+				"Identifier=" + identifier,
+				"Code=1",
+				"EndMessage"
+			);
+			assertThat(key.get().isPresent(), is(false));
+		}
+
+		@Test
+		public void clientPutSendsNotificationsForGeneratedKeys()
+		throws InterruptedException, ExecutionException, IOException {
+			List<String> generatedKeys = new CopyOnWriteArrayList<>();
+			Future<Optional<Key>> key = fcpClient.clientPut()
+				.onKeyGenerated(generatedKeys::add)
+				.from(new ByteArrayInputStream("Hello\n".getBytes()))
+				.length(6)
+				.uri("KSK@foo.txt")
+				.execute();
+			connectNode();
+			List<String> lines = fcpServer.collectUntil(is("Hello"));
+			String identifier = extractIdentifier(lines);
+			fcpServer.writeLine(
+				"URIGenerated",
+				"Identifier=" + identifier,
+				"URI=KSK@foo.txt",
+				"EndMessage"
+			);
+			replyWithPutSuccessful(identifier);
+			assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
+			assertThat(generatedKeys, contains("KSK@foo.txt"));
 		}
 
 	}
