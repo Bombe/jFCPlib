@@ -1305,7 +1305,7 @@ public class DefaultFcpClientTest {
 			@Test
 			public void reloadingPluginWorks() throws InterruptedException, ExecutionException, IOException {
 				Future<Optional<PluginInfo>> pluginInfo = fcpClient.reloadPlugin().plugin(CLASS_NAME).execute();
-				connectAndAssert(() -> matchReloadPluginMessage());
+				connectAndAssert(this::matchReloadPluginMessage);
 				replyWithPluginInfo();
 				verifyPluginInfo(pluginInfo);
 			}
@@ -1355,7 +1355,7 @@ public class DefaultFcpClientTest {
 			@Test
 			public void removingPluginWorks() throws InterruptedException, ExecutionException, IOException {
 				Future<Boolean> pluginRemoved = fcpClient.removePlugin().plugin(CLASS_NAME).execute();
-				connectAndAssert(() -> matchPluginRemovedMessage());
+				connectAndAssert(this::matchPluginRemovedMessage);
 				replyWithPluginRemoved();
 				assertThat(pluginRemoved.get(), is(true));
 			}
@@ -1402,7 +1402,7 @@ public class DefaultFcpClientTest {
 			@Test
 			public void gettingPluginInfoWorks() throws InterruptedException, ExecutionException, IOException {
 				Future<Optional<PluginInfo>> pluginInfo = fcpClient.getPluginInfo().plugin(CLASS_NAME).execute();
-				connectAndAssert(() -> matchGetPluginInfoMessage());
+				connectAndAssert(this::matchGetPluginInfoMessage);
 				replyWithPluginInfo();
 				verifyPluginInfo(pluginInfo);
 			}
@@ -1638,7 +1638,7 @@ public class DefaultFcpClientTest {
 				.uri("KSK@foo.txt")
 				.execute();
 			connectNode();
-			readMessage("Hello", () -> matchesDirectClientPut());
+			readMessage("Hello", this::matchesDirectClientPut);
 		}
 
 		@Test
@@ -1649,7 +1649,7 @@ public class DefaultFcpClientTest {
 				.uri("KSK@foo.txt")
 				.execute();
 			connectNode();
-			readMessage("Hello", () -> matchesDirectClientPut());
+			readMessage("Hello", this::matchesDirectClientPut);
 			replyWithPutFailed("not-the-right-one");
 			replyWithPutSuccessful(identifier);
 			assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
@@ -1663,7 +1663,7 @@ public class DefaultFcpClientTest {
 				.uri("KSK@foo.txt")
 				.execute();
 			connectNode();
-			readMessage("Hello", () -> matchesDirectClientPut());
+			readMessage("Hello", this::matchesDirectClientPut);
 			replyWithPutSuccessful("not-the-right-one");
 			replyWithPutFailed(identifier);
 			assertThat(key.get().isPresent(), is(false));
@@ -1744,7 +1744,7 @@ public class DefaultFcpClientTest {
 				sendDdaRequired(identifier);
 				readMessage(() -> matchesTestDDARequest(ddaFile));
 				sendTestDDAReply(ddaFile.getParent(), new File(ddaFile + ".foo"));
-				readMessage(() -> matchesFailedToReadResponse());
+				readMessage(this::matchesFailedToReadResponse);
 			}
 
 			@Test
