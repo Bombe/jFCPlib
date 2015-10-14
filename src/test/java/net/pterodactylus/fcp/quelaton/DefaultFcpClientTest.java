@@ -196,118 +196,6 @@ public class DefaultFcpClientTest {
 		};
 	}
 
-	@Test
-	public void defaultFcpClientCanGetNodeInformation() throws InterruptedException, ExecutionException, IOException {
-		Future<NodeData> nodeData = fcpClient.getNode().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetNode",
-			"Identifier=" + identifier,
-			"GiveOpennetRef=false",
-			"WithPrivate=false",
-			"WithVolatile=false"
-		));
-		fcpServer.writeLine(
-			"NodeData",
-			"Identifier=" + identifier,
-			"ark.pubURI=SSK@3YEf.../ark",
-			"ark.number=78",
-			"auth.negTypes=2",
-			"version=Fred,0.7,1.0,1466",
-			"lastGoodVersion=Fred,0.7,1.0,1466",
-			"EndMessage"
-		);
-		assertThat(nodeData.get(), notNullValue());
-	}
-
-	@Test
-	public void defaultFcpClientCanGetNodeInformationWithOpennetRef()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<NodeData> nodeData = fcpClient.getNode().opennetRef().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetNode",
-			"Identifier=" + identifier,
-			"GiveOpennetRef=true",
-			"WithPrivate=false",
-			"WithVolatile=false"
-		));
-		fcpServer.writeLine(
-			"NodeData",
-			"Identifier=" + identifier,
-			"opennet=true",
-			"ark.pubURI=SSK@3YEf.../ark",
-			"ark.number=78",
-			"auth.negTypes=2",
-			"version=Fred,0.7,1.0,1466",
-			"lastGoodVersion=Fred,0.7,1.0,1466",
-			"EndMessage"
-		);
-		assertThat(nodeData.get().getVersion().toString(), is("Fred,0.7,1.0,1466"));
-	}
-
-	@Test
-	public void defaultFcpClientCanGetNodeInformationWithPrivateData()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<NodeData> nodeData = fcpClient.getNode().includePrivate().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetNode",
-			"Identifier=" + identifier,
-			"GiveOpennetRef=false",
-			"WithPrivate=true",
-			"WithVolatile=false"
-		));
-		fcpServer.writeLine(
-			"NodeData",
-			"Identifier=" + identifier,
-			"opennet=false",
-			"ark.pubURI=SSK@3YEf.../ark",
-			"ark.number=78",
-			"auth.negTypes=2",
-			"version=Fred,0.7,1.0,1466",
-			"lastGoodVersion=Fred,0.7,1.0,1466",
-			"ark.privURI=SSK@XdHMiRl",
-			"EndMessage"
-		);
-		assertThat(nodeData.get().getARK().getPrivateURI(), is("SSK@XdHMiRl"));
-	}
-
-	@Test
-	public void defaultFcpClientCanGetNodeInformationWithVolatileData()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<NodeData> nodeData = fcpClient.getNode().includeVolatile().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetNode",
-			"Identifier=" + identifier,
-			"GiveOpennetRef=false",
-			"WithPrivate=false",
-			"WithVolatile=true"
-		));
-		fcpServer.writeLine(
-			"NodeData",
-			"Identifier=" + identifier,
-			"opennet=false",
-			"ark.pubURI=SSK@3YEf.../ark",
-			"ark.number=78",
-			"auth.negTypes=2",
-			"version=Fred,0.7,1.0,1466",
-			"lastGoodVersion=Fred,0.7,1.0,1466",
-			"volatile.freeJavaMemory=205706528",
-			"EndMessage"
-		);
-		assertThat(nodeData.get().getVolatile("freeJavaMemory"), is("205706528"));
-	}
-
 	private List<String> lines;
 	private String identifier;
 
@@ -1827,6 +1715,71 @@ public class DefaultFcpClientTest {
 
 		private void replyWithConfigData(String... additionalLines) throws IOException {
 			fcpServer.writeLine("ConfigData", "Identifier=" + identifier);
+			fcpServer.writeLine(additionalLines);
+			fcpServer.writeLine("EndMessage");
+		}
+
+	}
+
+	public class NodeInformation {
+
+		@Test
+		public void defaultFcpClientCanGetNodeInformation() throws InterruptedException, ExecutionException, IOException {
+			Future<NodeData> nodeData = fcpClient.getNode().execute();
+			connectAndAssert(() -> matchesGetNode(false, false, false));
+			replyWithNodeData();
+			assertThat(nodeData.get(), notNullValue());
+			assertThat(nodeData.get().getNodeRef().isOpennet(), is(false));
+		}
+
+		@Test
+		public void defaultFcpClientCanGetNodeInformationWithOpennetRef()
+		throws InterruptedException, ExecutionException, IOException {
+			Future<NodeData> nodeData = fcpClient.getNode().opennetRef().execute();
+			connectAndAssert(() -> matchesGetNode(true, false, false));
+			replyWithNodeData("opennet=true");
+			assertThat(nodeData.get().getVersion().toString(), is("Fred,0.7,1.0,1466"));
+			assertThat(nodeData.get().getNodeRef().isOpennet(), is(true));
+		}
+
+		@Test
+		public void defaultFcpClientCanGetNodeInformationWithPrivateData()
+		throws InterruptedException, ExecutionException, IOException {
+			Future<NodeData> nodeData = fcpClient.getNode().includePrivate().execute();
+			connectAndAssert(() -> matchesGetNode(false, true, false));
+			replyWithNodeData("ark.privURI=SSK@XdHMiRl");
+			assertThat(nodeData.get().getARK().getPrivateURI(), is("SSK@XdHMiRl"));
+		}
+
+		@Test
+		public void defaultFcpClientCanGetNodeInformationWithVolatileData()
+		throws InterruptedException, ExecutionException, IOException {
+			Future<NodeData> nodeData = fcpClient.getNode().includeVolatile().execute();
+			connectAndAssert(() -> matchesGetNode(false, false, true));
+			replyWithNodeData("volatile.freeJavaMemory=205706528");
+			assertThat(nodeData.get().getVolatile("freeJavaMemory"), is("205706528"));
+		}
+
+		private Matcher<List<String>> matchesGetNode(boolean withOpennetRef, boolean withPrivate, boolean withVolatile) {
+			return matchesFcpMessage(
+				"GetNode",
+				"Identifier=" + identifier,
+				"GiveOpennetRef=" + withOpennetRef,
+				"WithPrivate=" + withPrivate,
+				"WithVolatile=" + withVolatile
+			);
+		}
+
+		private void replyWithNodeData(String... additionalLines) throws IOException {
+			fcpServer.writeLine(
+				"NodeData",
+				"Identifier=" + identifier,
+				"ark.pubURI=SSK@3YEf.../ark",
+				"ark.number=78",
+				"auth.negTypes=2",
+				"version=Fred,0.7,1.0,1466",
+				"lastGoodVersion=Fred,0.7,1.0,1466"
+			);
 			fcpServer.writeLine(additionalLines);
 			fcpServer.writeLine("EndMessage");
 		}
