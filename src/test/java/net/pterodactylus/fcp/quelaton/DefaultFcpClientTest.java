@@ -308,213 +308,6 @@ public class DefaultFcpClientTest {
 		assertThat(nodeData.get().getVolatile("freeJavaMemory"), is("205706528"));
 	}
 
-	@Test
-	public void defaultFcpClientCanGetConfigWithoutDetails()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<ConfigData> configData = fcpClient.getConfig().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetConfig",
-			"Identifier=" + identifier
-		));
-		fcpServer.writeLine(
-			"ConfigData",
-			"Identifier=" + identifier,
-			"EndMessage"
-		);
-		assertThat(configData.get(), notNullValue());
-	}
-
-	@Test
-	public void defaultFcpClientCanGetConfigWithCurrent()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<ConfigData> configData = fcpClient.getConfig().withCurrent().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetConfig",
-			"Identifier=" + identifier,
-			"WithCurrent=true"
-		));
-		fcpServer.writeLine(
-			"ConfigData",
-			"Identifier=" + identifier,
-			"current.foo=bar",
-			"EndMessage"
-		);
-		assertThat(configData.get().getCurrent("foo"), is("bar"));
-	}
-
-	@Test
-	public void defaultFcpClientCanGetConfigWithDefaults()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<ConfigData> configData = fcpClient.getConfig().withDefaults().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetConfig",
-			"Identifier=" + identifier,
-			"WithDefaults=true"
-		));
-		fcpServer.writeLine(
-			"ConfigData",
-			"Identifier=" + identifier,
-			"default.foo=bar",
-			"EndMessage"
-		);
-		assertThat(configData.get().getDefault("foo"), is("bar"));
-	}
-
-	@Test
-	public void defaultFcpClientCanGetConfigWithSortOrder()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<ConfigData> configData = fcpClient.getConfig().withSortOrder().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetConfig",
-			"Identifier=" + identifier,
-			"WithSortOrder=true"
-		));
-		fcpServer.writeLine(
-			"ConfigData",
-			"Identifier=" + identifier,
-			"sortOrder.foo=17",
-			"EndMessage"
-		);
-		assertThat(configData.get().getSortOrder("foo"), is(17));
-	}
-
-	@Test
-	public void defaultFcpClientCanGetConfigWithExpertFlag()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<ConfigData> configData = fcpClient.getConfig().withExpertFlag().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetConfig",
-			"Identifier=" + identifier,
-			"WithExpertFlag=true"
-		));
-		fcpServer.writeLine(
-			"ConfigData",
-			"Identifier=" + identifier,
-			"expertFlag.foo=true",
-			"EndMessage"
-		);
-		assertThat(configData.get().getExpertFlag("foo"), is(true));
-	}
-
-	@Test
-	public void defaultFcpClientCanGetConfigWithForceWriteFlag()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<ConfigData> configData = fcpClient.getConfig().withForceWriteFlag().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetConfig",
-			"Identifier=" + identifier,
-			"WithForceWriteFlag=true"
-		));
-		fcpServer.writeLine(
-			"ConfigData",
-			"Identifier=" + identifier,
-			"forceWriteFlag.foo=true",
-			"EndMessage"
-		);
-		assertThat(configData.get().getForceWriteFlag("foo"), is(true));
-	}
-
-	@Test
-	public void defaultFcpClientCanGetConfigWithShortDescription()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<ConfigData> configData = fcpClient.getConfig().withShortDescription().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetConfig",
-			"Identifier=" + identifier,
-			"WithShortDescription=true"
-		));
-		fcpServer.writeLine(
-			"ConfigData",
-			"Identifier=" + identifier,
-			"shortDescription.foo=bar",
-			"EndMessage"
-		);
-		assertThat(configData.get().getShortDescription("foo"), is("bar"));
-	}
-
-	@Test
-	public void defaultFcpClientCanGetConfigWithLongDescription()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<ConfigData> configData = fcpClient.getConfig().withLongDescription().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetConfig",
-			"Identifier=" + identifier,
-			"WithLongDescription=true"
-		));
-		fcpServer.writeLine(
-			"ConfigData",
-			"Identifier=" + identifier,
-			"longDescription.foo=bar",
-			"EndMessage"
-		);
-		assertThat(configData.get().getLongDescription("foo"), is("bar"));
-	}
-
-	@Test
-	public void defaultFcpClientCanGetConfigWithDataTypes()
-	throws InterruptedException, ExecutionException, IOException {
-		Future<ConfigData> configData = fcpClient.getConfig().withDataTypes().execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"GetConfig",
-			"Identifier=" + identifier,
-			"WithDataTypes=true"
-		));
-		fcpServer.writeLine(
-			"ConfigData",
-			"Identifier=" + identifier,
-			"dataType.foo=number",
-			"EndMessage"
-		);
-		assertThat(configData.get().getDataType("foo"), is("number"));
-	}
-
-	@Test
-	public void defaultFcpClientCanModifyConfigData() throws InterruptedException, ExecutionException, IOException {
-		Future<ConfigData> newConfigData = fcpClient.modifyConfig().set("foo.bar").to("baz").execute();
-		connectNode();
-		List<String> lines = fcpServer.collectUntil(is("EndMessage"));
-		String identifier = extractIdentifier(lines);
-		assertThat(lines, matchesFcpMessage(
-			"ModifyConfig",
-			"Identifier=" + identifier,
-			"foo.bar=baz"
-		));
-		fcpServer.writeLine(
-			"ConfigData",
-			"Identifier=" + identifier,
-			"current.foo.bar=baz",
-			"EndMessage"
-		);
-		assertThat(newConfigData.get().getCurrent("foo.bar"), is("baz"));
-	}
-
 	private List<String> lines;
 	private String identifier;
 
@@ -1916,6 +1709,126 @@ public class DefaultFcpClientTest {
 			replyWithPutSuccessful(identifier);
 			assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
 			assertThat(generatedKeys, contains("KSK@foo.txt"));
+		}
+
+	}
+
+	public class ConfigCommand {
+
+		public class GetConfig {
+
+			@Test
+			public void defaultFcpClientCanGetConfigWithoutDetails()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<ConfigData> configData = fcpClient.getConfig().execute();
+				connectAndAssert(() -> matchesFcpMessage("GetConfig", "Identifier=" + identifier));
+				replyWithConfigData();
+				assertThat(configData.get(), notNullValue());
+			}
+
+			@Test
+			public void defaultFcpClientCanGetConfigWithCurrent()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<ConfigData> configData = fcpClient.getConfig().withCurrent().execute();
+				connectAndAssert(() -> matchesGetConfigWithAdditionalParameter("WithCurrent"));
+				replyWithConfigData("current.foo=bar");
+				assertThat(configData.get().getCurrent("foo"), is("bar"));
+			}
+
+			@Test
+			public void defaultFcpClientCanGetConfigWithDefaults()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<ConfigData> configData = fcpClient.getConfig().withDefaults().execute();
+				connectAndAssert(() -> matchesGetConfigWithAdditionalParameter("WithDefaults"));
+				replyWithConfigData("default.foo=bar");
+				assertThat(configData.get().getDefault("foo"), is("bar"));
+			}
+
+			@Test
+			public void defaultFcpClientCanGetConfigWithSortOrder()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<ConfigData> configData = fcpClient.getConfig().withSortOrder().execute();
+				connectAndAssert(() -> matchesGetConfigWithAdditionalParameter("WithSortOrder"));
+				replyWithConfigData("sortOrder.foo=17");
+				assertThat(configData.get().getSortOrder("foo"), is(17));
+			}
+
+			@Test
+			public void defaultFcpClientCanGetConfigWithExpertFlag()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<ConfigData> configData = fcpClient.getConfig().withExpertFlag().execute();
+				connectAndAssert(() -> matchesGetConfigWithAdditionalParameter("WithExpertFlag"));
+				replyWithConfigData("expertFlag.foo=true");
+				assertThat(configData.get().getExpertFlag("foo"), is(true));
+			}
+
+			@Test
+			public void defaultFcpClientCanGetConfigWithForceWriteFlag()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<ConfigData> configData = fcpClient.getConfig().withForceWriteFlag().execute();
+				connectAndAssert(() -> matchesGetConfigWithAdditionalParameter("WithForceWriteFlag"));
+				replyWithConfigData("forceWriteFlag.foo=true");
+				assertThat(configData.get().getForceWriteFlag("foo"), is(true));
+			}
+
+			@Test
+			public void defaultFcpClientCanGetConfigWithShortDescription()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<ConfigData> configData = fcpClient.getConfig().withShortDescription().execute();
+				connectAndAssert(() -> matchesGetConfigWithAdditionalParameter("WithShortDescription"));
+				replyWithConfigData("shortDescription.foo=bar");
+				assertThat(configData.get().getShortDescription("foo"), is("bar"));
+			}
+
+			@Test
+			public void defaultFcpClientCanGetConfigWithLongDescription()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<ConfigData> configData = fcpClient.getConfig().withLongDescription().execute();
+				connectAndAssert(() -> matchesGetConfigWithAdditionalParameter("WithLongDescription"));
+				replyWithConfigData("longDescription.foo=bar");
+				assertThat(configData.get().getLongDescription("foo"), is("bar"));
+			}
+
+			@Test
+			public void defaultFcpClientCanGetConfigWithDataTypes()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<ConfigData> configData = fcpClient.getConfig().withDataTypes().execute();
+				connectAndAssert(() -> matchesGetConfigWithAdditionalParameter("WithDataTypes"));
+				replyWithConfigData("dataType.foo=number");
+				assertThat(configData.get().getDataType("foo"), is("number"));
+			}
+
+			private Matcher<List<String>> matchesGetConfigWithAdditionalParameter(String additionalParameter) {
+				return matchesFcpMessage(
+					"GetConfig",
+					"Identifier=" + identifier,
+					additionalParameter + "=true"
+				);
+			}
+
+		}
+
+		public class ModifyConfig {
+
+			@Test
+			public void defaultFcpClientCanModifyConfigData()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<ConfigData> newConfigData = fcpClient.modifyConfig().set("foo.bar").to("baz").execute();
+				connectAndAssert(() -> matchesFcpMessage(
+					"ModifyConfig",
+					"Identifier=" + identifier,
+					"foo.bar=baz"
+				));
+				replyWithConfigData("current.foo.bar=baz");
+				assertThat(newConfigData.get().getCurrent("foo.bar"), is("baz"));
+			}
+
+		}
+
+		private void replyWithConfigData(String... additionalLines) throws IOException {
+			fcpServer.writeLine("ConfigData", "Identifier=" + identifier);
+			fcpServer.writeLine(additionalLines);
+			fcpServer.writeLine("EndMessage");
 		}
 
 	}
