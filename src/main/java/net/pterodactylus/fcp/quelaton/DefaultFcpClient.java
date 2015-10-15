@@ -87,6 +87,11 @@ public class DefaultFcpClient implements FcpClient {
 	}
 
 	@Override
+	public ClientPutDiskDirCommand clientPutDiskDir() {
+		return new ClientPutDiskDirCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
+	}
+
+	@Override
 	public ListPeerCommand listPeer() {
 		return new ListPeerCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}

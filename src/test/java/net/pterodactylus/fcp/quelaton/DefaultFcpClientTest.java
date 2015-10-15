@@ -55,7 +55,10 @@ import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 
 /**
@@ -1614,6 +1617,39 @@ public class DefaultFcpClientTest {
 			replyWithPutSuccessful(identifier);
 			assertThat(key.get().get().getKey(), is("KSK@foo.txt"));
 			assertThat(generatedKeys, contains("KSK@foo.txt"));
+		}
+
+	}
+
+	public class ClientPutDiskDir {
+
+		private final TemporaryFolder folder = new TemporaryFolder();
+
+		@Before
+		public void setup() throws IOException {
+			folder.create();
+			Files.write("file1\n", folder.newFile("file1.txt"), StandardCharsets.UTF_8);
+			Files.write("file2\n", folder.newFile("file2.txt"), StandardCharsets.UTF_8);
+			File directory = folder.newFolder("dir");
+			Files.write("file3\n", new File(directory, "file3.txt"), StandardCharsets.UTF_8);
+		}
+
+		@After
+		public void removeFolder() {
+		    folder.delete();
+		}
+
+		@Test
+		public void commandIsSentCorrectly() throws InterruptedException, ExecutionException, IOException {
+			Future<Optional<Key>> key = fcpClient.clientPutDiskDir().fromDirectory(folder.getRoot()).uri("CHK@").execute();
+			connectAndAssert(() -> matchesFcpMessage(
+				"ClientPutDiskDir",
+				"Identifier=" + identifier,
+				"URI=CHK@",
+				"Filename=" + folder.getRoot().getPath()
+			));
+			fcpServer.writeLine("PutSuccessful", "Identifier=" + identifier, "URI=CHK@abc", "EndMessage");
+			assertThat(key.get().get().getKey(), is("CHK@abc"));
 		}
 
 	}
