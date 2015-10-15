@@ -215,6 +215,14 @@ public class DefaultFcpClientTest {
 		assertThat(lines, requestMatcher.get());
 	}
 
+	private void replyWithProtocolError() throws IOException {
+		fcpServer.writeLine(
+			"ProtocolError",
+			"Identifier=" + identifier,
+			"EndMessage"
+		);
+	}
+
 	public class ConnectionsAndKeyPairs {
 
 		public class Connections {
@@ -436,6 +444,14 @@ public class DefaultFcpClientTest {
 					)));
 					replyWithPeer("id1");
 					assertThat(peer.get().get().getIdentity(), is("id1"));
+				}
+
+				@Test
+				public void protocolErrorEndsCommand() throws InterruptedException, ExecutionException, IOException {
+					Future<Optional<Peer>> peer = fcpClient.addPeer().fromFile(new File("/tmp/ref.txt")).execute();
+					connectAndAssert(() -> allOf(matchesAddPeer(), hasItem("File=/tmp/ref.txt")));
+					replyWithProtocolError();
+					assertThat(peer.get().isPresent(), is(false));
 				}
 
 				private NodeRef createNodeRef() {
@@ -972,14 +988,6 @@ public class DefaultFcpClientTest {
 
 			}
 
-		}
-
-		private void replyWithProtocolError() throws IOException {
-			fcpServer.writeLine(
-				"ProtocolError",
-				"Identifier=" + identifier,
-				"EndMessage"
-			);
 		}
 
 		public class ReloadPlugin {
