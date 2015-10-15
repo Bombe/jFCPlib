@@ -56,6 +56,7 @@ public class TestDDAResponse extends FcpMessage {
 	 */
 	public TestDDAResponse(String directory, String readContent) {
 		super("TestDDAResponse");
+		setField("Directory", directory);
 		if (readContent != null) {
 			setField("ReadContent", readContent);
 		}

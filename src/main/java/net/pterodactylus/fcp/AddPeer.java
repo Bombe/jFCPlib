@@ -46,6 +46,11 @@ public class AddPeer extends FcpMessage {
 		setField("File", file);
 	}
 
+	public AddPeer(String identifier, String file) {
+		this(file);
+		setField("Identifier", identifier);
+	}
+
 	/**
 	 * Creates a new “AddPeer” request that reads the noderef of the peer from
 	 * the given URL.
@@ -56,6 +61,11 @@ public class AddPeer extends FcpMessage {
 	public AddPeer(URL url) {
 		this();
 		setField("URL", String.valueOf(url));
+	}
+
+	public AddPeer(String identifier, URL url) {
+		this(url);
+		setField("Identifier", identifier);
 	}
 
 	/**
@@ -69,6 +79,11 @@ public class AddPeer extends FcpMessage {
 		setNodeRef(nodeRef);
 	}
 
+	public AddPeer(String identifier, NodeRef nodeRef) {
+		this(nodeRef);
+		setField("Identifier", identifier);
+	}
+
 	//
 	// PRIVATE METHODS
 	//
@@ -80,7 +95,7 @@ public class AddPeer extends FcpMessage {
 	 *            The noderef of the peer
 	 */
 	private void setNodeRef(NodeRef nodeRef) {
-		setField("lastGoodVersion", nodeRef.getLastGoodVersion().toString());
+		setField("lastGoodVersion", String.valueOf(nodeRef.getLastGoodVersion()));
 		setField("opennet", String.valueOf(nodeRef.isOpennet()));
 		setField("identity", nodeRef.getIdentity());
 		setField("myName", nodeRef.getMyName());

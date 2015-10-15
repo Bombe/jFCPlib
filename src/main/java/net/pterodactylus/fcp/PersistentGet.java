@@ -33,7 +33,7 @@ public class PersistentGet extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PersistentGet(FcpMessage receivedMessage) {
+	public PersistentGet(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

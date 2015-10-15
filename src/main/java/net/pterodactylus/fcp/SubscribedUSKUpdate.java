@@ -36,7 +36,7 @@ public class SubscribedUSKUpdate extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	SubscribedUSKUpdate(FcpMessage receivedMessage) {
+	public SubscribedUSKUpdate(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

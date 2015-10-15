@@ -18,6 +18,8 @@
 
 package net.pterodactylus.fcp;
 
+import java.util.Optional;
+
 /**
  * The “ListPeer” request asks the node about the details of a given peer.
  *
@@ -35,7 +37,12 @@ public class ListPeer extends FcpMessage {
 	 *            The identifier of the node to get details about
 	 */
 	public ListPeer(String nodeIdentifier) {
+		this(null, nodeIdentifier);
+	}
+
+	public ListPeer(String identifier, String nodeIdentifier) {
 		super("ListPeer");
+		Optional.ofNullable(identifier).ifPresent(id -> setField("Identifier", id));
 		setField("NodeIdentifier", nodeIdentifier);
 	}
 

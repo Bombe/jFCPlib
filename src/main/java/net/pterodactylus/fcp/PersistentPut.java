@@ -32,7 +32,7 @@ public class PersistentPut extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PersistentPut(FcpMessage receivedMessage) {
+	public PersistentPut(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

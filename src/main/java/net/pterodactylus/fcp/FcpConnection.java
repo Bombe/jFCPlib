@@ -132,6 +132,10 @@ public class FcpConnection implements Closeable {
 		this.port = port;
 	}
 
+	public synchronized boolean isClosed() {
+		return connectionHandler == null;
+	}
+
 	//
 	// LISTENER MANAGEMENT
 	//
@@ -261,6 +265,8 @@ public class FcpConnection implements Closeable {
 			fcpListenerManager.fireReceivedDataFound(new DataFound(fcpMessage));
 		} else if ("SubscribedUSKUpdate".equals(messageName)) {
 			fcpListenerManager.fireReceivedSubscribedUSKUpdate(new SubscribedUSKUpdate(fcpMessage));
+		} else if ("SubscribedUSK".equals(messageName)) {
+			fcpListenerManager.fireReceivedSubscribedUSK(new SubscribedUSK(fcpMessage));
 		} else if ("IdentifierCollision".equals(messageName)) {
 			fcpListenerManager.fireReceivedIdentifierCollision(new IdentifierCollision(fcpMessage));
 		} else if ("AllData".equals(messageName)) {
@@ -297,6 +303,8 @@ public class FcpConnection implements Closeable {
 			}
 		} else if ("PluginInfo".equals(messageName)) {
 			fcpListenerManager.fireReceivedPluginInfo(new PluginInfo(fcpMessage));
+		} else if ("PluginRemoved".equals(messageName)) {
+			fcpListenerManager.fireReceivedPluginRemoved(new PluginRemoved(fcpMessage));
 		} else if ("NodeData".equals(messageName)) {
 			fcpListenerManager.fireReceivedNodeData(new NodeData(fcpMessage));
 		} else if ("TestDDAReply".equals(messageName)) {

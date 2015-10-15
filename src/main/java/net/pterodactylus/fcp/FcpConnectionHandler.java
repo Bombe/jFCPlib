@@ -18,6 +18,7 @@
 
 package net.pterodactylus.fcp;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -76,8 +77,9 @@ class FcpConnectionHandler implements Runnable {
 			}
 			try {
 				String line = readLine();
-				logger.log(Level.FINEST, "read line: %1$s", line);
+				logger.log(Level.FINEST, String.format("read line: %1$s", line));
 				if (line == null) {
+					throwable = new EOFException();
 					break;
 				}
 				if (line.length() == 0) {

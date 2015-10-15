@@ -33,7 +33,7 @@ public class FinishedCompression extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The message that was recevied
 	 */
-	FinishedCompression(FcpMessage receivedMessage) {
+	public FinishedCompression(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

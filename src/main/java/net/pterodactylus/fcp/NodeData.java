@@ -34,7 +34,7 @@ public class NodeData extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	NodeData(FcpMessage receivedMessage) {
+	public NodeData(FcpMessage receivedMessage) {
 		super(receivedMessage);
 		nodeRef = new NodeRef(receivedMessage);
 	}

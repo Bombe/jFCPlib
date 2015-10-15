@@ -253,6 +253,11 @@ public class FcpAdapter implements FcpListener {
 		/* empty. */
 	}
 
+	@Override
+	public void receivedSubscribedUSK(FcpConnection fcpConnection, SubscribedUSK subscribedUSK) {
+		/* empty. */
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -266,6 +271,14 @@ public class FcpAdapter implements FcpListener {
 	 */
 	@Override
 	public void receivedPluginInfo(FcpConnection fcpConnection, PluginInfo pluginInfo) {
+		/* empty. */
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void receivedPluginRemoved(FcpConnection fcpConnection, PluginRemoved pluginRemoved) {
 		/* empty. */
 	}
 

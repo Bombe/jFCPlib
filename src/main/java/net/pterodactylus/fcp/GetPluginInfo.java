@@ -26,18 +26,18 @@ package net.pterodactylus.fcp;
  */
 public class GetPluginInfo extends FcpMessage {
 
-	/**
-	 * Creates a new “GetPluginInfo” message.
-	 *
-	 * @param pluginName
-	 *            The name of the plugin
-	 * @param identifier
-	 *            The identifier of the request
-	 */
-	public GetPluginInfo(String pluginName, String identifier) {
+	public GetPluginInfo(String identifier) {
 		super("GetPluginInfo");
-		setField("PluginName", pluginName);
 		setField("Identifier", identifier);
+	}
+
+	public GetPluginInfo(String pluginName, String identifier) {
+		this(identifier);
+		setField("PluginName", pluginName);
+	}
+
+	public void setPluginName(String pluginName) {
+		setField("PluginName", pluginName);
 	}
 
 	/**

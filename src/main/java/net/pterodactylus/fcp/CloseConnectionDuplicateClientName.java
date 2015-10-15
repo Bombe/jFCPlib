@@ -32,7 +32,7 @@ public class CloseConnectionDuplicateClientName extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	CloseConnectionDuplicateClientName(FcpMessage receivedMessage) {
+	public CloseConnectionDuplicateClientName(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

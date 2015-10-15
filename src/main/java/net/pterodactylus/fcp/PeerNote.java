@@ -35,7 +35,7 @@ public class PeerNote extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PeerNote(FcpMessage receivedMessage) {
+	public PeerNote(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

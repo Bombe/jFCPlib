@@ -33,7 +33,7 @@ public class IdentifierCollision extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	IdentifierCollision(FcpMessage receivedMessage) {
+	public IdentifierCollision(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

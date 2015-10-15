@@ -33,7 +33,7 @@ public class PersistentRequestModified extends BaseMessage implements Identifiab
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PersistentRequestModified(FcpMessage receivedMessage) {
+	public PersistentRequestModified(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 
