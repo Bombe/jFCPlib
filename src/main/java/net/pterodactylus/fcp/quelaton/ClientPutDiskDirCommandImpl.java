@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.ClientPutDiskDir;
 import net.pterodactylus.fcp.Key;
+import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.PutSuccessful;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -62,6 +63,11 @@ public class ClientPutDiskDirCommandImpl implements ClientPutDiskDirCommand {
 		@Override
 		protected void consumePutSuccessful(PutSuccessful putSuccessful) {
 			setResult(Optional.of(new Key(putSuccessful.getURI())));
+		}
+
+		@Override
+		protected void consumeProtocolError(ProtocolError protocolError) {
+			finish();
 		}
 
 	}

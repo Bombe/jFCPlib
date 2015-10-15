@@ -1642,14 +1642,26 @@ public class DefaultFcpClientTest {
 		@Test
 		public void commandIsSentCorrectly() throws InterruptedException, ExecutionException, IOException {
 			Future<Optional<Key>> key = fcpClient.clientPutDiskDir().fromDirectory(folder.getRoot()).uri("CHK@").execute();
-			connectAndAssert(() -> matchesFcpMessage(
+			connectAndAssert(this::matchesClientPutDiskDir);
+			fcpServer.writeLine("PutSuccessful", "Identifier=" + identifier, "URI=CHK@abc", "EndMessage");
+			assertThat(key.get().get().getKey(), is("CHK@abc"));
+		}
+
+		@Test
+		public void protocolErrorAbortsCommand() throws InterruptedException, ExecutionException, IOException {
+			Future<Optional<Key>> key = fcpClient.clientPutDiskDir().fromDirectory(folder.getRoot()).uri("CHK@").execute();
+			connectAndAssert(this::matchesClientPutDiskDir);
+			replyWithProtocolError();
+			assertThat(key.get().isPresent(), is(false));
+		}
+
+		private Matcher<List<String>> matchesClientPutDiskDir() {
+			return matchesFcpMessage(
 				"ClientPutDiskDir",
 				"Identifier=" + identifier,
 				"URI=CHK@",
 				"Filename=" + folder.getRoot().getPath()
-			));
-			fcpServer.writeLine("PutSuccessful", "Identifier=" + identifier, "URI=CHK@abc", "EndMessage");
-			assertThat(key.get().get().getKey(), is("CHK@abc"));
+			);
 		}
 
 	}
