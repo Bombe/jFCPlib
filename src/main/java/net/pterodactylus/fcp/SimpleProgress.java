@@ -99,6 +99,14 @@ public class SimpleProgress extends BaseMessage implements Identifiable {
 		return Boolean.valueOf(getField("FinalizedTotal"));
 	}
 
+	public long getLastProgress() {
+		return Long.valueOf(getField("LastProgress"));
+	}
+
+	public int getMinSuccessFetchBlocks() {
+		return Integer.valueOf(getField("MinSuccessFetchBlocks"));
+	}
+
 	/**
 	 * Returns the identifier of the request.
 	 *

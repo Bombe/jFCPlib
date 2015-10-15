@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import net.pterodactylus.fcp.Key;
+import net.pterodactylus.fcp.RequestProgress;
 
 /**
  * FCP command that inserts data into Freenet.
@@ -14,6 +15,7 @@ import net.pterodactylus.fcp.Key;
  */
 public interface ClientPutCommand {
 
+	ClientPutCommand onProgress(Consumer<RequestProgress> requestProgressConsumer);
 	ClientPutCommand onKeyGenerated(Consumer<String> keyGenerated);
 	ClientPutCommand named(String targetFilename);
 	WithUri redirectTo(String uri);

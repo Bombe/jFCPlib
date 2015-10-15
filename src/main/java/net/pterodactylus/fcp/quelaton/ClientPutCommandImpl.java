@@ -21,12 +21,15 @@ import net.pterodactylus.fcp.Key;
 import net.pterodactylus.fcp.ProtocolError;
 import net.pterodactylus.fcp.PutFailed;
 import net.pterodactylus.fcp.PutSuccessful;
+import net.pterodactylus.fcp.RequestProgress;
+import net.pterodactylus.fcp.SimpleProgress;
 import net.pterodactylus.fcp.TestDDAComplete;
 import net.pterodactylus.fcp.TestDDAReply;
 import net.pterodactylus.fcp.TestDDARequest;
 import net.pterodactylus.fcp.TestDDAResponse;
 import net.pterodactylus.fcp.URIGenerated;
 import net.pterodactylus.fcp.UploadFrom;
+import net.pterodactylus.fcp.Verbosity;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -47,12 +50,19 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	private final AtomicReference<InputStream> payload = new AtomicReference<>();
 	private final AtomicLong length = new AtomicLong();
 	private final AtomicReference<String> targetFilename = new AtomicReference<>();
+	private final List<Consumer<RequestProgress>> requestProgressConsumers = new CopyOnWriteArrayList<>();
 	private final List<Consumer<String>> keyGenerateds = new CopyOnWriteArrayList<>();
 
 	public ClientPutCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
 		this.identifierGenerator = identifierGenerator;
+	}
+
+	@Override
+	public ClientPutCommand onProgress(Consumer<RequestProgress> requestProgressConsumer) {
+		requestProgressConsumers.add(Objects.requireNonNull(requestProgressConsumer));
+		return this;
 	}
 
 	@Override
@@ -113,6 +123,9 @@ class ClientPutCommandImpl implements ClientPutCommand {
 		if (targetFilename.get() != null) {
 			clientPut.setTargetFilename(targetFilename.get());
 		}
+		if (!requestProgressConsumers.isEmpty()) {
+			clientPut.setVerbosity(Verbosity.PROGRESS);
+		}
 		return clientPut;
 	}
 
@@ -152,6 +165,21 @@ class ClientPutCommandImpl implements ClientPutCommand {
 				directory.set(new File(filename).getParent());
 			}
 			return super.send(fcpMessage);
+		}
+
+		@Override
+		protected void consumeSimpleProgress(SimpleProgress simpleProgress) {
+			RequestProgress requestProgress = new RequestProgress(
+				simpleProgress.getTotal(),
+				simpleProgress.getRequired(),
+				simpleProgress.getFailed(),
+				simpleProgress.getFatallyFailed(),
+				simpleProgress.getLastProgress(),
+				simpleProgress.getSucceeded(),
+				simpleProgress.isFinalizedTotal(),
+				simpleProgress.getMinSuccessFetchBlocks()
+			);
+			requestProgressConsumers.stream().forEach(consumer -> consumer.accept(requestProgress));
 		}
 
 		@Override
