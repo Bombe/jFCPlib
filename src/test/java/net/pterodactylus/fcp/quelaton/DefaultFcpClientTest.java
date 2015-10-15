@@ -1030,6 +1030,15 @@ public class DefaultFcpClientTest {
 				verifyPluginInfo(pluginInfo);
 			}
 
+			@Test
+			public void protocolErrorIsRecognizedAsFailure()
+			throws InterruptedException, ExecutionException, IOException {
+				Future<Optional<PluginInfo>> pluginInfo = fcpClient.reloadPlugin().plugin(CLASS_NAME).execute();
+				connectAndAssert(() -> matchReloadPluginMessage());
+				replyWithProtocolError();
+				assertThat(pluginInfo.get().isPresent(), is(false));
+			}
+
 			private Matcher<List<String>> matchReloadPluginMessage() {
 				return matchesFcpMessage(
 					"ReloadPlugin",
