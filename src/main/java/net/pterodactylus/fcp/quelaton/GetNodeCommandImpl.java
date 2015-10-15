@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.GetNode;
@@ -67,25 +66,13 @@ public class GetNodeCommandImpl implements GetNodeCommand {
 
 	private class GetNodeDialog extends FcpDialog<NodeData> {
 
-		private final AtomicReference<NodeData> nodeData = new AtomicReference<>();
-
 		public GetNodeDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return nodeData.get() != null;
-		}
-
-		@Override
-		protected NodeData getResult() {
-			return nodeData.get();
+			super(threadPool, connectionSupplier.get(), null);
 		}
 
 		@Override
 		protected void consumeNodeData(NodeData nodeData) {
-			this.nodeData.set(nodeData);
+			setResult(nodeData);
 		}
 
 	}

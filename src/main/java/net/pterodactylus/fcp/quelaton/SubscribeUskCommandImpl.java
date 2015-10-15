@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.IdentifierCollision;
@@ -58,32 +57,18 @@ public class SubscribeUskCommandImpl implements SubscribeUskCommand {
 
 	private class SubscribeUskDialog extends FcpDialog<Boolean> {
 
-		private final AtomicBoolean finished = new AtomicBoolean();
-		private final AtomicBoolean success = new AtomicBoolean();
-
 		public SubscribeUskDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return finished.get();
-		}
-
-		@Override
-		protected Boolean getResult() {
-			return success.get();
+			super(threadPool, connectionSupplier.get(), false);
 		}
 
 		@Override
 		protected void consumeSubscribedUSK(SubscribedUSK subscribedUSK) {
-			success.set(true);
-			finished.set(true);
+			setResult(true);
 		}
 
 		@Override
 		protected void consumeIdentifierCollision(IdentifierCollision identifierCollision) {
-			finished.set(true);
+			finish();
 		}
 
 	}

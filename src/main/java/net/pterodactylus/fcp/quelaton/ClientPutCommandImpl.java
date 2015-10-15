@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -140,21 +139,9 @@ class ClientPutCommandImpl implements ClientPutCommand {
 
 		private final AtomicReference<FcpMessage> originalClientPut = new AtomicReference<>();
 		private final AtomicReference<String> directory = new AtomicReference<>();
-		private final AtomicReference<Key> finalKey = new AtomicReference<>();
-		private final AtomicBoolean putFinished = new AtomicBoolean();
 
 		public ClientPutDialog() throws IOException {
-			super(ClientPutCommandImpl.this.threadPool, ClientPutCommandImpl.this.connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return putFinished.get();
-		}
-
-		@Override
-		protected Optional<Key> getResult() {
-			return Optional.ofNullable(finalKey.get());
+			super(ClientPutCommandImpl.this.threadPool, ClientPutCommandImpl.this.connectionSupplier.get(), Optional.<Key>empty());
 		}
 
 		@Override
@@ -176,13 +163,12 @@ class ClientPutCommandImpl implements ClientPutCommand {
 
 		@Override
 		protected void consumePutSuccessful(PutSuccessful putSuccessful) {
-			finalKey.set(new Key(putSuccessful.getURI()));
-			putFinished.set(true);
+			setResult(Optional.of(new Key(putSuccessful.getURI())));
 		}
 
 		@Override
 		protected void consumePutFailed(PutFailed putFailed) {
-			putFinished.set(true);
+			finish();
 		}
 
 		@Override
@@ -191,7 +177,7 @@ class ClientPutCommandImpl implements ClientPutCommand {
 				setIdentifier(directory.get());
 				sendMessage(new TestDDARequest(directory.get(), true, false));
 			} else {
-				putFinished.set(true);
+				finish();
 			}
 		}
 

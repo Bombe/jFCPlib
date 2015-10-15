@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -77,32 +76,18 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 
 	private class AddPeerDialog extends FcpDialog<Optional<Peer>> {
 
-		private final AtomicBoolean finished = new AtomicBoolean();
-		private final AtomicReference<Peer> peer = new AtomicReference<>();
-
 		public AddPeerDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return finished.get();
-		}
-
-		@Override
-		protected Optional<Peer> getResult() {
-			return Optional.ofNullable(peer.get());
+			super(threadPool, connectionSupplier.get(), Optional.empty());
 		}
 
 		@Override
 		protected void consumePeer(Peer peer) {
-			this.peer.set(peer);
-			finished.set(true);
+			setResult(Optional.ofNullable(peer));
 		}
 
 		@Override
 		protected void consumeProtocolError(ProtocolError protocolError) {
-			finished.set(true);
+			finish();
 		}
 
 	}

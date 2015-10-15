@@ -3,7 +3,6 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -64,31 +63,18 @@ public class RemovePeerCommandImpl implements RemovePeerCommand {
 
 	private class RemovePeerDialog extends FcpDialog<Boolean> {
 
-		private final AtomicBoolean finished = new AtomicBoolean();
-		private final AtomicBoolean removed = new AtomicBoolean();
-
 		public RemovePeerDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return finished.get() || removed.get();
-		}
-
-		@Override
-		protected Boolean getResult() {
-			return removed.get();
+			super(threadPool, connectionSupplier.get(), false);
 		}
 
 		@Override
 		protected void consumePeerRemoved(PeerRemoved peerRemoved) {
-			removed.set(true);
+			setResult(true);
 		}
 
 		@Override
 		protected void consumeUnknownNodeIdentifier(UnknownNodeIdentifier unknownNodeIdentifier) {
-			finished.set(true);
+			finish();
 		}
 
 	}

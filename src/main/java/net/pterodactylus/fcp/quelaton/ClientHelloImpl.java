@@ -58,25 +58,13 @@ public class ClientHelloImpl {
 
 	private class ClientHelloDialog extends FcpDialog<Boolean> {
 
-		private final AtomicReference<NodeHello> receivedNodeHello = new AtomicReference<>();
-
 		public ClientHelloDialog(FcpConnection connection) {
-			super(ClientHelloImpl.this.threadPool, connection);
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return receivedNodeHello.get() != null;
-		}
-
-		@Override
-		protected Boolean getResult() {
-			return receivedNodeHello.get() != null;
+			super(ClientHelloImpl.this.threadPool, connection, false);
 		}
 
 		@Override
 		protected void consumeNodeHello(NodeHello nodeHello) {
-			receivedNodeHello.set(nodeHello);
+			setResult(true);
 		}
 
 	}

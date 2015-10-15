@@ -72,17 +72,31 @@ public abstract class FcpDialog<R> implements AutoCloseable, FcpListener {
 	private final AtomicReference<String> identifier = new AtomicReference<>();
 	private final AtomicBoolean connectionClosed = new AtomicBoolean();
 	private final AtomicReference<Throwable> connectionFailureReason = new AtomicReference<>();
+	private final AtomicBoolean finished = new AtomicBoolean();
+	private final AtomicReference<R> result = new AtomicReference<>();
 
-	public FcpDialog(ExecutorService executorService, FcpConnection fcpConnection) {
+	public FcpDialog(ExecutorService executorService, FcpConnection fcpConnection, R initialResult) {
 		this.executorService = MoreExecutors.listeningDecorator(executorService);
 		this.fcpConnection = fcpConnection;
+		result.set(initialResult);
 	}
 
 	protected void setIdentifier(String identifier) {
 		this.identifier.set(identifier);
 	}
 
-	protected abstract boolean isFinished();
+	public final boolean isFinished() {
+		return finished.get();
+	}
+
+	protected final void finish() {
+		finished.set(true);
+	}
+
+	protected final void setResult(R result) {
+		this.result.set(result);
+		finish();
+	}
 
 	public ListenableFuture<R> send(FcpMessage fcpMessage) throws IOException {
 		setIdentifier(fcpMessage.getField("Identifier"));
@@ -120,8 +134,8 @@ public abstract class FcpDialog<R> implements AutoCloseable, FcpListener {
 		}
 	}
 
-	protected R getResult() {
-		return null;
+	protected final R getResult() {
+		return result.get();
 	}
 
 	@Override

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -65,32 +64,18 @@ public class ListPeerCommandImpl implements ListPeerCommand {
 
 	private class ListPeerDialog extends FcpDialog<Peer> {
 
-		private final AtomicBoolean finished = new AtomicBoolean();
-		private final AtomicReference<Peer> peer = new AtomicReference<>();
-
 		public ListPeerDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return finished.get();
-		}
-
-		@Override
-		protected Peer getResult() {
-			return peer.get();
+			super(threadPool, connectionSupplier.get(), null);
 		}
 
 		@Override
 		protected void consumePeer(Peer peer) {
-			this.peer.set(peer);
-			finished.set(true);
+			setResult(peer);
 		}
 
 		@Override
 		protected void consumeUnknownNodeIdentifier(UnknownNodeIdentifier unknownNodeIdentifier) {
-			finished.set(true);
+			finish();
 		}
 
 	}

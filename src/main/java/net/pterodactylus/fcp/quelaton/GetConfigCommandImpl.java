@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.ConfigData;
@@ -109,25 +108,13 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 
 	private class GetConfigDialog extends FcpDialog<ConfigData> {
 
-		private final AtomicReference<ConfigData> configData = new AtomicReference<>();
-
 		public GetConfigDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return configData.get() != null;
-		}
-
-		@Override
-		protected ConfigData getResult() {
-			return configData.get();
+			super(threadPool, connectionSupplier.get(), null);
 		}
 
 		@Override
 		protected void consumeConfigData(ConfigData configData) {
-			this.configData.set(configData);
+			setResult(configData);
 		}
 
 	}

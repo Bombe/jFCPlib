@@ -2,6 +2,7 @@ package net.pterodactylus.fcp.quelaton;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -62,20 +63,9 @@ public class ListPeersCommandImpl implements ListPeersCommand {
 	private class ListPeersDialog extends FcpDialog<Collection<Peer>> {
 
 		private final Collection<Peer> peers = new HashSet<>();
-		private final AtomicBoolean finished = new AtomicBoolean(false);
 
 		public ListPeersDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return finished.get();
-		}
-
-		@Override
-		protected Collection<Peer> getResult() {
-			return peers;
+			super(threadPool, connectionSupplier.get(), Collections.<Peer>emptyList());
 		}
 
 		@Override
@@ -85,7 +75,7 @@ public class ListPeersCommandImpl implements ListPeersCommand {
 
 		@Override
 		protected void consumeEndListPeers(EndListPeers endListPeers) {
-			finished.set(true);
+			setResult(peers);
 		}
 
 	}

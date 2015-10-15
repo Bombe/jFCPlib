@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.LoadPlugin;
@@ -90,32 +88,18 @@ public class LoadPluginCommandImpl implements LoadPluginCommand {
 
 	private class LoadPluginDialog extends FcpDialog<Optional<PluginInfo>> {
 
-		private final AtomicBoolean finished = new AtomicBoolean();
-		private final AtomicReference<PluginInfo> pluginInfo = new AtomicReference<>();
-
 		public LoadPluginDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return finished.get();
-		}
-
-		@Override
-		protected Optional<PluginInfo> getResult() {
-			return Optional.ofNullable(pluginInfo.get());
+			super(threadPool, connectionSupplier.get(), Optional.<PluginInfo>empty());
 		}
 
 		@Override
 		protected void consumePluginInfo(PluginInfo pluginInfo) {
-			this.pluginInfo.set(pluginInfo);
-			finished.set(true);
+			setResult(Optional.ofNullable(pluginInfo));
 		}
 
 		@Override
 		protected void consumeProtocolError(ProtocolError protocolError) {
-			finished.set(true);
+			finish();
 		}
 
 	}

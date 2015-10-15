@@ -77,12 +77,11 @@ public class FcpDialogTest {
 	}
 
 	private FcpDialog createBasicDialog() {
-		return new FcpDialog(executorService, fcpConnection) {
-				@Override
-				protected boolean isFinished() {
-					return true;
-				}
-			};
+		return new FcpDialog(executorService, fcpConnection, true) {
+			{
+				finish();
+			}
+		};
 	}
 
 	@Test
@@ -329,24 +328,22 @@ public class FcpDialogTest {
 			private final AtomicBoolean gotPutFailed = new AtomicBoolean();
 			private final AtomicBoolean gotGetFailed = new AtomicBoolean();
 
-			@Override
-			protected boolean isFinished() {
-				return gotPutFailed.get() && gotGetFailed.get();
-			}
-
-			@Override
-			protected Boolean getResult() {
-				return isFinished();
+			private void checkIfBothFailedsWereReceived() {
+				if (gotPutFailed.get() && gotGetFailed.get()) {
+					setResult(true);
+				}
 			}
 
 			@Override
 			protected void consumePutFailed(PutFailed putFailed) {
 				gotPutFailed.set(true);
+				checkIfBothFailedsWereReceived();
 			}
 
 			@Override
 			protected void consumeGetFailed(GetFailed getFailed) {
 				gotGetFailed.set(true);
+				checkIfBothFailedsWereReceived();
 			}
 		};
 		Future<?> result = testFcpDialog.send(fcpMessage);
@@ -383,210 +380,205 @@ public class FcpDialogTest {
 
 	private static class TestFcpDialog extends FcpDialog<Boolean> {
 
-		private final AtomicReference<String> gotMessage = new AtomicReference<>();
 		private final AtomicReference<String> expectedMessage = new AtomicReference<>();
 
 		public TestFcpDialog(ExecutorService executorService, FcpConnection fcpConnection) {
-			super(executorService, fcpConnection);
+			super(executorService, fcpConnection, false);
 		}
 
 		public void setExpectedMessage(String expectedMessage) {
 			this.expectedMessage.set(expectedMessage);
 		}
 
-		@Override
-		protected boolean isFinished() {
-			return getResult();
-		}
-
-		@Override
-		protected Boolean getResult() {
-			return expectedMessage.get().equals(gotMessage.get());
+		private void verifyReceivedMessage(String message) {
+			if (expectedMessage.get().equals(message)) {
+				setResult(true);
+			}
 		}
 
 		@Override
 		protected void consumeNodeHello(NodeHello nodeHello) {
-			gotMessage.set(nodeHello.getName());
+			verifyReceivedMessage(nodeHello.getName());
 		}
 
 		@Override
 		protected void consumeSSKKeypair(SSKKeypair sskKeypair) {
-			gotMessage.set(sskKeypair.getName());
+			verifyReceivedMessage(sskKeypair.getName());
 		}
 
 		@Override
 		protected void consumePeer(Peer peer) {
-			gotMessage.set(peer.getName());
+			verifyReceivedMessage(peer.getName());
 		}
 
 		@Override
 		protected void consumeEndListPeers(EndListPeers endListPeers) {
-			gotMessage.set(endListPeers.getName());
+			verifyReceivedMessage(endListPeers.getName());
 		}
 
 		@Override
 		protected void consumePeerNote(PeerNote peerNote) {
-			gotMessage.set(peerNote.getName());
+			verifyReceivedMessage(peerNote.getName());
 		}
 
 		@Override
 		protected void consumeEndListPeerNotes(EndListPeerNotes endListPeerNotes) {
-			gotMessage.set(endListPeerNotes.getName());
+			verifyReceivedMessage(endListPeerNotes.getName());
 		}
 
 		@Override
 		protected void consumePeerRemoved(PeerRemoved peerRemoved) {
-			gotMessage.set(peerRemoved.getName());
+			verifyReceivedMessage(peerRemoved.getName());
 		}
 
 		@Override
 		protected void consumeNodeData(NodeData nodeData) {
-			gotMessage.set(nodeData.getName());
+			verifyReceivedMessage(nodeData.getName());
 		}
 
 		@Override
 		protected void consumeTestDDAReply(TestDDAReply testDDAReply) {
-			gotMessage.set(testDDAReply.getName());
+			verifyReceivedMessage(testDDAReply.getName());
 		}
 
 		@Override
 		protected void consumeTestDDAComplete(TestDDAComplete testDDAComplete) {
-			gotMessage.set(testDDAComplete.getName());
+			verifyReceivedMessage(testDDAComplete.getName());
 		}
 
 		@Override
 		protected void consumePersistentGet(PersistentGet persistentGet) {
-			gotMessage.set(persistentGet.getName());
+			verifyReceivedMessage(persistentGet.getName());
 		}
 
 		@Override
 		protected void consumePersistentPut(PersistentPut persistentPut) {
-			gotMessage.set(persistentPut.getName());
+			verifyReceivedMessage(persistentPut.getName());
 		}
 
 		@Override
 		protected void consumeEndListPersistentRequests(EndListPersistentRequests endListPersistentRequests) {
-			gotMessage.set(endListPersistentRequests.getName());
+			verifyReceivedMessage(endListPersistentRequests.getName());
 		}
 
 		@Override
 		protected void consumeURIGenerated(URIGenerated uriGenerated) {
-			gotMessage.set(uriGenerated.getName());
+			verifyReceivedMessage(uriGenerated.getName());
 		}
 
 		@Override
 		protected void consumeDataFound(DataFound dataFound) {
-			gotMessage.set(dataFound.getName());
+			verifyReceivedMessage(dataFound.getName());
 		}
 
 		@Override
 		protected void consumeAllData(AllData allData) {
-			gotMessage.set(allData.getName());
+			verifyReceivedMessage(allData.getName());
 		}
 
 		@Override
 		protected void consumeSimpleProgress(SimpleProgress simpleProgress) {
-			gotMessage.set(simpleProgress.getName());
+			verifyReceivedMessage(simpleProgress.getName());
 		}
 
 		@Override
 		protected void consumeStartedCompression(StartedCompression startedCompression) {
-			gotMessage.set(startedCompression.getName());
+			verifyReceivedMessage(startedCompression.getName());
 		}
 
 		@Override
 		protected void consumeFinishedCompression(FinishedCompression finishedCompression) {
-			gotMessage.set(finishedCompression.getName());
+			verifyReceivedMessage(finishedCompression.getName());
 		}
 
 		@Override
 		protected void consumeUnknownPeerNoteType(UnknownPeerNoteType unknownPeerNoteType) {
-			gotMessage.set(unknownPeerNoteType.getName());
+			verifyReceivedMessage(unknownPeerNoteType.getName());
 		}
 
 		@Override
 		protected void consumeUnknownNodeIdentifier(UnknownNodeIdentifier unknownNodeIdentifier) {
-			gotMessage.set(unknownNodeIdentifier.getName());
+			verifyReceivedMessage(unknownNodeIdentifier.getName());
 		}
 
 		@Override
 		protected void consumeConfigData(ConfigData configData) {
-			gotMessage.set(configData.getName());
+			verifyReceivedMessage(configData.getName());
 		}
 
 		@Override
 		protected void consumeGetFailed(GetFailed getFailed) {
-			gotMessage.set(getFailed.getName());
+			verifyReceivedMessage(getFailed.getName());
 		}
 
 		@Override
 		protected void consumePutFailed(PutFailed putFailed) {
-			gotMessage.set(putFailed.getName());
+			verifyReceivedMessage(putFailed.getName());
 		}
 
 		@Override
 		protected void consumeIdentifierCollision(IdentifierCollision identifierCollision) {
-			gotMessage.set(identifierCollision.getName());
+			verifyReceivedMessage(identifierCollision.getName());
 		}
 
 		@Override
 		protected void consumePersistentPutDir(PersistentPutDir persistentPutDir) {
-			gotMessage.set(persistentPutDir.getName());
+			verifyReceivedMessage(persistentPutDir.getName());
 		}
 
 		@Override
 		protected void consumePersistentRequestRemoved(PersistentRequestRemoved persistentRequestRemoved) {
-			gotMessage.set(persistentRequestRemoved.getName());
+			verifyReceivedMessage(persistentRequestRemoved.getName());
 		}
 
 		@Override
 		protected void consumeSubscribedUSKUpdate(SubscribedUSKUpdate subscribedUSKUpdate) {
-			gotMessage.set(subscribedUSKUpdate.getName());
+			verifyReceivedMessage(subscribedUSKUpdate.getName());
 		}
 
 		@Override
 		protected void consumePluginInfo(PluginInfo pluginInfo) {
-			gotMessage.set(pluginInfo.getName());
+			verifyReceivedMessage(pluginInfo.getName());
 		}
 
 		@Override
 		protected void consumeFCPPluginReply(FCPPluginReply fcpPluginReply) {
-			gotMessage.set(fcpPluginReply.getName());
+			verifyReceivedMessage(fcpPluginReply.getName());
 		}
 
 		@Override
 		protected void consumePersistentRequestModified(PersistentRequestModified persistentRequestModified) {
-			gotMessage.set(persistentRequestModified.getName());
+			verifyReceivedMessage(persistentRequestModified.getName());
 		}
 
 		@Override
 		protected void consumePutSuccessful(PutSuccessful putSuccessful) {
-			gotMessage.set(putSuccessful.getName());
+			verifyReceivedMessage(putSuccessful.getName());
 		}
 
 		@Override
 		protected void consumePutFetchable(PutFetchable putFetchable) {
-			gotMessage.set(putFetchable.getName());
+			verifyReceivedMessage(putFetchable.getName());
 		}
 
 		@Override
 		protected void consumeSentFeed(SentFeed sentFeed) {
-			gotMessage.set(sentFeed.getName());
+			verifyReceivedMessage(sentFeed.getName());
 		}
 
 		@Override
 		protected void consumeReceivedBookmarkFeed(ReceivedBookmarkFeed receivedBookmarkFeed) {
-			gotMessage.set(receivedBookmarkFeed.getName());
+			verifyReceivedMessage(receivedBookmarkFeed.getName());
 		}
 
 		@Override
 		protected void consumeProtocolError(ProtocolError protocolError) {
-			gotMessage.set(protocolError.getName());
+			verifyReceivedMessage(protocolError.getName());
 		}
 
 		@Override
 		protected void consumeUnknownMessage(FcpMessage fcpMessage) {
-			gotMessage.set(fcpMessage.getName());
+			verifyReceivedMessage(fcpMessage.getName());
 		}
 
 	}

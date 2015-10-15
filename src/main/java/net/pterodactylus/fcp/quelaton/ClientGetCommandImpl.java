@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.AllData;
@@ -116,25 +115,27 @@ class ClientGetCommandImpl implements ClientGetCommand {
 
 	private class ClientGetDialog extends FcpDialog<Optional<Data>> {
 
-		private final AtomicBoolean finished = new AtomicBoolean();
-		private final AtomicBoolean failed = new AtomicBoolean();
-
-		private String contentType;
-		private long dataLength;
-		private InputStream payload;
-
 		public ClientGetDialog() throws IOException {
-			super(ClientGetCommandImpl.this.threadPool, ClientGetCommandImpl.this.connectionSupplier.get());
+			super(ClientGetCommandImpl.this.threadPool, ClientGetCommandImpl.this.connectionSupplier.get(), Optional.<Data>empty());
 		}
 
 		@Override
-		protected boolean isFinished() {
-			return finished.get() || failed.get();
+		protected void consumeAllData(AllData allData) {
+			synchronized (this) {
+				String contentType = allData.getContentType();
+				long dataLength = allData.getDataLength();
+				try {
+					InputStream payload = new TempInputStream(allData.getPayloadInputStream(), dataLength);
+					setResult(Optional.of(createData(contentType, dataLength, payload)));
+				} catch (IOException e) {
+					// TODO – logging
+					finish();
+				}
+			}
 		}
 
-		@Override
-		protected Optional<Data> getResult() {
-			return failed.get() ? Optional.empty() : Optional.of(new Data() {
+		private Data createData(String contentType, long dataLength, InputStream payload) {
+			return new Data() {
 				@Override
 				public String getMimeType() {
 					return contentType;
@@ -149,27 +150,12 @@ class ClientGetCommandImpl implements ClientGetCommand {
 				public InputStream getInputStream() {
 					return payload;
 				}
-			});
-		}
-
-		@Override
-		protected void consumeAllData(AllData allData) {
-			synchronized (this) {
-				contentType = allData.getContentType();
-				dataLength = allData.getDataLength();
-				try {
-					payload = new TempInputStream(allData.getPayloadInputStream(), dataLength);
-					finished.set(true);
-				} catch (IOException e) {
-					// TODO – logging
-					failed.set(true);
-				}
-			}
+			};
 		}
 
 		@Override
 		protected void consumeGetFailed(GetFailed getFailed) {
-			failed.set(true);
+			finish();
 		}
 
 	}

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -66,36 +65,23 @@ public class ListPeerNotesCommandImpl implements ListPeerNotesCommand {
 
 	private class ListPeerNotesDialog extends FcpDialog<Optional<PeerNote>> {
 
-		private final AtomicReference<PeerNote> peerNote = new AtomicReference<>();
-		private final AtomicBoolean finished = new AtomicBoolean();
-
 		public ListPeerNotesDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return finished.get();
-		}
-
-		@Override
-		protected Optional<PeerNote> getResult() {
-			return Optional.ofNullable(peerNote.get());
+			super(threadPool, connectionSupplier.get(), Optional.<PeerNote>empty());
 		}
 
 		@Override
 		protected void consumePeerNote(PeerNote peerNote) {
-			this.peerNote.set(peerNote);
+			setResult(Optional.ofNullable(peerNote));
 		}
 
 		@Override
 		protected void consumeEndListPeerNotes(EndListPeerNotes endListPeerNotes) {
-			finished.set(true);
+			finish();
 		}
 
 		@Override
 		protected void consumeUnknownNodeIdentifier(UnknownNodeIdentifier unknownNodeIdentifier) {
-			finished.set(true);
+			finish();
 		}
 
 	}

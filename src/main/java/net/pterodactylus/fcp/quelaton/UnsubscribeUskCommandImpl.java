@@ -46,12 +46,8 @@ public class UnsubscribeUskCommandImpl implements UnsubscribeUskCommand {
 	private class UnsubscribeUskDialog extends FcpDialog<Void> {
 
 		public UnsubscribeUskDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return true;
+			super(threadPool, connectionSupplier.get(), null);
+			finish();
 		}
 
 	}

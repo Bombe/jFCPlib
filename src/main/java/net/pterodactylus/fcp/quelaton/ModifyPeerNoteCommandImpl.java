@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -82,32 +81,18 @@ public class ModifyPeerNoteCommandImpl implements ModifyPeerNoteCommand {
 
 	private class ModifyPeerNoteDialog extends FcpDialog<Boolean> {
 
-		private final AtomicBoolean finished = new AtomicBoolean();
-		private final AtomicBoolean successful = new AtomicBoolean();
-
 		public ModifyPeerNoteDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return finished.get();
-		}
-
-		@Override
-		protected Boolean getResult() {
-			return successful.get();
+			super(threadPool, connectionSupplier.get(), false);
 		}
 
 		@Override
 		protected void consumePeerNote(PeerNote peerNote) {
-			successful.set(true);
-			finished.set(true);
+			setResult(true);
 		}
 
 		@Override
 		protected void consumeUnknownNodeIdentifier(UnknownNodeIdentifier unknownNodeIdentifier) {
-			finished.set(true);
+			finish();
 		}
 
 	}

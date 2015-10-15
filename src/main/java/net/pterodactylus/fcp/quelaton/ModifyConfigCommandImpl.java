@@ -3,8 +3,6 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.ConfigData;
@@ -54,27 +52,13 @@ public class ModifyConfigCommandImpl implements ModifyConfigCommand {
 
 	private class ModifyConfigDialog extends FcpDialog<ConfigData> {
 
-		private final AtomicBoolean finished = new AtomicBoolean();
-		private final AtomicReference<ConfigData> configData = new AtomicReference<>();
-
 		public ModifyConfigDialog() throws IOException {
-			super(threadPool, connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return finished.get();
-		}
-
-		@Override
-		protected ConfigData getResult() {
-			return configData.get();
+			super(threadPool, connectionSupplier.get(), null);
 		}
 
 		@Override
 		protected void consumeConfigData(ConfigData configData) {
-			this.configData.set(configData);
-			finished.set(true);
+			setResult(configData);
 		}
 
 	}

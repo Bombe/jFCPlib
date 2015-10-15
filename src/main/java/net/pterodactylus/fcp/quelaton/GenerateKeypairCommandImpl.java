@@ -3,7 +3,6 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.fcp.FcpKeyPair;
 import net.pterodactylus.fcp.GenerateSSK;
@@ -41,25 +40,13 @@ class GenerateKeypairCommandImpl implements GenerateKeypairCommand {
 
 	private class FcpKeyPairDialog extends FcpDialog<FcpKeyPair> {
 
-		private AtomicReference<FcpKeyPair> keyPair = new AtomicReference<>();
-
 		public FcpKeyPairDialog() throws IOException {
-			super(GenerateKeypairCommandImpl.this.threadPool, GenerateKeypairCommandImpl.this.connectionSupplier.get());
-		}
-
-		@Override
-		protected boolean isFinished() {
-			return keyPair.get() != null;
-		}
-
-		@Override
-		protected FcpKeyPair getResult() {
-			return keyPair.get();
+			super(GenerateKeypairCommandImpl.this.threadPool, GenerateKeypairCommandImpl.this.connectionSupplier.get(), null);
 		}
 
 		@Override
 		protected void consumeSSKKeypair(SSKKeypair sskKeypair) {
-			keyPair.set(new FcpKeyPair(sskKeypair.getRequestURI(), sskKeypair.getInsertURI()));
+			setResult(new FcpKeyPair(sskKeypair.getRequestURI(), sskKeypair.getInsertURI()));
 		}
 
 	}
