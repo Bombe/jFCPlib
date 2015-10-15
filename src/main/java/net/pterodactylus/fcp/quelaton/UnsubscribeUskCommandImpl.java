@@ -3,6 +3,7 @@ package net.pterodactylus.fcp.quelaton;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.UnsubscribeUSK;
 
@@ -17,14 +18,14 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public class UnsubscribeUskCommandImpl implements UnsubscribeUskCommand {
 
-	private static final RandomIdentifierGenerator IDENTIFIER = new RandomIdentifierGenerator();
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
-	private final UnsubscribeUSK unsubscribeUSK = new UnsubscribeUSK(IDENTIFIER.generate());
+	private final UnsubscribeUSK unsubscribeUSK;
 
-	public UnsubscribeUskCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public UnsubscribeUskCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		unsubscribeUSK = new UnsubscribeUSK(identifierGenerator.get());
 	}
 
 	@Override

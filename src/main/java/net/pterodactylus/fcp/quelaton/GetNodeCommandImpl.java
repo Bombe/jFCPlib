@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.GetNode;
 import net.pterodactylus.fcp.NodeData;
@@ -22,13 +23,15 @@ public class GetNodeCommandImpl implements GetNodeCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final Supplier<String> identifierGenerator;
 	private final AtomicBoolean giveOpennetRef = new AtomicBoolean(false);
 	private final AtomicBoolean includePrivate = new AtomicBoolean(false);
 	private final AtomicBoolean includeVolatile = new AtomicBoolean(false);
 
-	public GetNodeCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public GetNodeCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		this.identifierGenerator = identifierGenerator;
 	}
 
 	@Override
@@ -55,7 +58,7 @@ public class GetNodeCommandImpl implements GetNodeCommand {
 	}
 
 	private NodeData executeDialog() throws InterruptedException, ExecutionException, IOException {
-		GetNode getNode = new GetNode(new RandomIdentifierGenerator().generate(), giveOpennetRef.get(),
+		GetNode getNode = new GetNode(identifierGenerator.get(), giveOpennetRef.get(),
 			includePrivate.get(), includeVolatile.get());
 		try (GetNodeDialog getNodeDialog = new GetNodeDialog()) {
 			return getNodeDialog.send(getNode).get();

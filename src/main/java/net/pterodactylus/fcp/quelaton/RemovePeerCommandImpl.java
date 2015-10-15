@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.PeerRemoved;
 import net.pterodactylus.fcp.RemovePeer;
@@ -23,11 +24,13 @@ public class RemovePeerCommandImpl implements RemovePeerCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final Supplier<String> identifierGenerator;
 	private final AtomicReference<String> nodeIdentifier = new AtomicReference<>();
 
-	public RemovePeerCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public RemovePeerCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		this.identifierGenerator = identifierGenerator;
 	}
 
 	@Override
@@ -53,7 +56,7 @@ public class RemovePeerCommandImpl implements RemovePeerCommand {
 	}
 
 	private boolean executeDialog() throws IOException, ExecutionException, InterruptedException {
-		RemovePeer removePeer = new RemovePeer(new RandomIdentifierGenerator().generate(), nodeIdentifier.get());
+		RemovePeer removePeer = new RemovePeer(identifierGenerator.get(), nodeIdentifier.get());
 		try (RemovePeerDialog removePeerDialog = new RemovePeerDialog()) {
 			return removePeerDialog.send(removePeer).get();
 		}

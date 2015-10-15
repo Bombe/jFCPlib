@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.PluginRemoved;
 import net.pterodactylus.fcp.ProtocolError;
@@ -20,14 +21,14 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public class RemovePluginCommandImpl implements RemovePluginCommand {
 
-	private static final RandomIdentifierGenerator IDENTIFIER = new RandomIdentifierGenerator();
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
-	private final RemovePlugin removePlugin = new RemovePlugin(IDENTIFIER.generate());
+	private final RemovePlugin removePlugin;
 
-	public RemovePluginCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public RemovePluginCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		removePlugin = new RemovePlugin(identifierGenerator.get());
 	}
 
 	@Override

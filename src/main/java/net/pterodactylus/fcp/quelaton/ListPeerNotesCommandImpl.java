@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.EndListPeerNotes;
 import net.pterodactylus.fcp.ListPeerNotes;
@@ -25,11 +26,13 @@ public class ListPeerNotesCommandImpl implements ListPeerNotesCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final Supplier<String> identifierGenerator;
 	private final AtomicReference<String> nodeIdentifier = new AtomicReference<>();
 
-	public ListPeerNotesCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public ListPeerNotesCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		this.identifierGenerator = identifierGenerator;
 	}
 
 	@Override
@@ -55,8 +58,7 @@ public class ListPeerNotesCommandImpl implements ListPeerNotesCommand {
 	}
 
 	private Optional<PeerNote> executeDialog() throws IOException, ExecutionException, InterruptedException {
-		ListPeerNotes listPeerNotes =
-			new ListPeerNotes(new RandomIdentifierGenerator().generate(), nodeIdentifier.get());
+		ListPeerNotes listPeerNotes = new ListPeerNotes(identifierGenerator.get(), nodeIdentifier.get());
 		try (ListPeerNotesDialog listPeerNotesDialog = new ListPeerNotesDialog()) {
 			return listPeerNotesDialog.send(listPeerNotes).get();
 		}

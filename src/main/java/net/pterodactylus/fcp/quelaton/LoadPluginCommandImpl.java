@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.LoadPlugin;
 import net.pterodactylus.fcp.LoadPlugin.OfficialSource;
@@ -24,14 +25,14 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public class LoadPluginCommandImpl implements LoadPluginCommand {
 
-	private static final RandomIdentifierGenerator IDENTIFIER = new RandomIdentifierGenerator();
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
-	private final LoadPlugin loadPlugin = new LoadPlugin(IDENTIFIER.generate());
+	private final LoadPlugin loadPlugin;
 
-	public LoadPluginCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public LoadPluginCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		loadPlugin = new LoadPlugin(identifierGenerator.get());
 	}
 
 	@Override

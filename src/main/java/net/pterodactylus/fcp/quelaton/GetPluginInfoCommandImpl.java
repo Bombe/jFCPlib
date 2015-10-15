@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.GetPluginInfo;
 import net.pterodactylus.fcp.PluginInfo;
@@ -22,14 +23,14 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public class GetPluginInfoCommandImpl implements GetPluginInfoCommand {
 
-	private static final RandomIdentifierGenerator IDENTIFIER = new RandomIdentifierGenerator();
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
-	private final GetPluginInfo getPluginInfo = new GetPluginInfo(IDENTIFIER.generate());
+	private final GetPluginInfo getPluginInfo;
 
-	public GetPluginInfoCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public GetPluginInfoCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		getPluginInfo = new GetPluginInfo(identifierGenerator.get());
 	}
 
 	@Override

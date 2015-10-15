@@ -18,6 +18,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public class DefaultFcpClient implements FcpClient {
 
+	private final RandomIdentifierGenerator randomIdentifierGenerator = new RandomIdentifierGenerator();
 	private final ListeningExecutorService threadPool;
 	private final String hostname;
 	private final int port;
@@ -57,17 +58,17 @@ public class DefaultFcpClient implements FcpClient {
 
 	@Override
 	public GetNodeCommand getNode() {
-		return new GetNodeCommandImpl(threadPool, this::connect);
+		return new GetNodeCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public GetConfigCommand getConfig() {
-		return new GetConfigCommandImpl(threadPool, this::connect);
+		return new GetConfigCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public ModifyConfigCommand modifyConfig() {
-		return new ModifyConfigCommandImpl(threadPool, this::connect);
+		return new ModifyConfigCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
@@ -77,76 +78,76 @@ public class DefaultFcpClient implements FcpClient {
 
 	@Override
 	public ClientGetCommand clientGet() {
-		return new ClientGetCommandImpl(threadPool, this::connect);
+		return new ClientGetCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public ClientPutCommand clientPut() {
-		return new ClientPutCommandImpl(threadPool, this::connect);
+		return new ClientPutCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public ListPeerCommand listPeer() {
-		return new ListPeerCommandImpl(threadPool, this::connect);
+		return new ListPeerCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public ListPeersCommand listPeers() {
-		return new ListPeersCommandImpl(threadPool, this::connect);
+		return new ListPeersCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public AddPeerCommand addPeer() {
-		return new AddPeerCommandImpl(threadPool, this::connect);
+		return new AddPeerCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public ModifyPeerCommand modifyPeer() {
-		return new ModifyPeerCommandImpl(threadPool, this::connect);
+		return new ModifyPeerCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public RemovePeerCommand removePeer() {
-		return new RemovePeerCommandImpl(threadPool, this::connect);
+		return new RemovePeerCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public ListPeerNotesCommand listPeerNotes() {
-		return new ListPeerNotesCommandImpl(threadPool, this::connect);
+		return new ListPeerNotesCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public ModifyPeerNoteCommand modifyPeerNote() {
-		return new ModifyPeerNoteCommandImpl(threadPool, this::connect);
+		return new ModifyPeerNoteCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public LoadPluginCommand loadPlugin() {
-		return new LoadPluginCommandImpl(threadPool, this::connect);
+		return new LoadPluginCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public ReloadPluginCommand reloadPlugin() {
-		return new ReloadPluginCommandImpl(threadPool, this::connect);
+		return new ReloadPluginCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public RemovePluginCommand removePlugin() {
-		return new RemovePluginCommandImpl(threadPool, this::connect);
+		return new RemovePluginCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public GetPluginInfoCommand getPluginInfo() {
-		return new GetPluginInfoCommandImpl(threadPool, this::connect);
+		return new GetPluginInfoCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 	@Override
 	public SubscribeUskCommand subscribeUsk() {
-		return new SubscribeUskCommandImpl(threadPool, this::connect, activeSubscriptions);
+		return new SubscribeUskCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate, activeSubscriptions);
 	}
 
 	private UnsubscribeUskCommand unsubscribeUsk() {
-		return new UnsubscribeUskCommandImpl(threadPool, this::connect);
+		return new UnsubscribeUskCommandImpl(threadPool, this::connect, randomIdentifierGenerator::generate);
 	}
 
 }

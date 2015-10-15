@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.ConfigData;
 import net.pterodactylus.fcp.GetConfig;
@@ -22,6 +23,7 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final Supplier<String> identifierGenerator;
 	private final AtomicBoolean withCurrent = new AtomicBoolean();
 	private final AtomicBoolean withDefaults = new AtomicBoolean();
 	private final AtomicBoolean withSortOrder = new AtomicBoolean();
@@ -31,9 +33,10 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 	private final AtomicBoolean withLongDescription = new AtomicBoolean();
 	private final AtomicBoolean withDataTypes = new AtomicBoolean();
 
-	public GetConfigCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public GetConfigCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		this.identifierGenerator = identifierGenerator;
 	}
 
 	@Override
@@ -90,7 +93,7 @@ public class GetConfigCommandImpl implements GetConfigCommand {
 	}
 
 	private ConfigData executeDialog() throws IOException, ExecutionException, InterruptedException {
-		GetConfig getConfig = new GetConfig(new RandomIdentifierGenerator().generate());
+		GetConfig getConfig = new GetConfig(identifierGenerator.get());
 		getConfig.setWithCurrent(withCurrent.get());
 		getConfig.setWithDefaults(withDefaults.get());
 		getConfig.setWithSortOrder(withSortOrder.get());

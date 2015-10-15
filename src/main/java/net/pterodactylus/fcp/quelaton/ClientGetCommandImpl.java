@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.AllData;
 import net.pterodactylus.fcp.ClientGet;
@@ -26,6 +27,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final Supplier<String> identifierGenerator;
 
 	private boolean ignoreDataStore;
 	private boolean dataStoreOnly;
@@ -34,9 +36,10 @@ class ClientGetCommandImpl implements ClientGetCommand {
 	private boolean realTime;
 	private boolean global;
 
-	public ClientGetCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public ClientGetCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		this.identifierGenerator = identifierGenerator;
 	}
 
 	@Override
@@ -88,7 +91,7 @@ class ClientGetCommandImpl implements ClientGetCommand {
 	}
 
 	private ClientGet createClientGetCommand(String uri) {
-		String identifier = new RandomIdentifierGenerator().generate();
+		String identifier = identifierGenerator.get();
 		ClientGet clientGet = new ClientGet(uri, identifier, ReturnType.direct);
 		if (ignoreDataStore) {
 			clientGet.setIgnoreDataStore(true);

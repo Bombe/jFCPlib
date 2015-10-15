@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.EndListPeers;
 import net.pterodactylus.fcp.ListPeers;
@@ -24,12 +25,14 @@ public class ListPeersCommandImpl implements ListPeersCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final Supplier<String> identifierGenerator;
 	private final AtomicBoolean includeMetadata = new AtomicBoolean(false);
 	private final AtomicBoolean includeVolatile = new AtomicBoolean(false);
 
-	public ListPeersCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public ListPeersCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		this.identifierGenerator = identifierGenerator;
 	}
 
 	@Override
@@ -50,8 +53,7 @@ public class ListPeersCommandImpl implements ListPeersCommand {
 	}
 
 	private Collection<Peer> executeDialog() throws InterruptedException, ExecutionException, IOException {
-		String identifier = new RandomIdentifierGenerator().generate();
-		ListPeers listPeers = new ListPeers(identifier, includeMetadata.get(), includeVolatile.get());
+		ListPeers listPeers = new ListPeers(identifierGenerator.get(), includeMetadata.get(), includeVolatile.get());
 		try (ListPeersDialog listPeersDialog = new ListPeersDialog()) {
 			return listPeersDialog.send(listPeers).get();
 		}

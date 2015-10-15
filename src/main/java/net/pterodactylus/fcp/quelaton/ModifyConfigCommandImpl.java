@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.ConfigData;
 import net.pterodactylus.fcp.ModifyConfig;
@@ -20,13 +21,14 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public class ModifyConfigCommandImpl implements ModifyConfigCommand {
 
-	private final ModifyConfig modifyConfig = new ModifyConfig(new RandomIdentifierGenerator().generate());
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final ModifyConfig modifyConfig;
 
-	public ModifyConfigCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public ModifyConfigCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		modifyConfig = new ModifyConfig(identifierGenerator.get());
 	}
 
 	@Override

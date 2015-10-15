@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.IdentifierCollision;
 import net.pterodactylus.fcp.SubscribeUSK;
@@ -21,18 +22,18 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public class SubscribeUskCommandImpl implements SubscribeUskCommand {
 
-	private static final RandomIdentifierGenerator IDENTIFIER = new RandomIdentifierGenerator();
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
-	private final SubscribeUSK subscribeUSK = new SubscribeUSK(IDENTIFIER.generate());
+	private final SubscribeUSK subscribeUSK;
 	private final ActiveSubscriptions activeSubscriptions;
 
 	public SubscribeUskCommandImpl(
-		ExecutorService threadPool, ConnectionSupplier connectionSupplier,
+		ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator,
 		ActiveSubscriptions activeSubscriptions) {
 		this.activeSubscriptions = activeSubscriptions;
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		subscribeUSK = new SubscribeUSK(identifierGenerator.get());
 	}
 
 	@Override

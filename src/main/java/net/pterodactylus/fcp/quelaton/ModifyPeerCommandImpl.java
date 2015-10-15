@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.ModifyPeer;
 import net.pterodactylus.fcp.Peer;
@@ -24,6 +25,7 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final Supplier<String> identifierGenerator;
 	private final AtomicReference<String> nodeIdentifier = new AtomicReference<>();
 	private final AtomicReference<Boolean> enabled = new AtomicReference<>();
 	private final AtomicReference<Boolean> allowLocalAddresses = new AtomicReference<>();
@@ -31,9 +33,10 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 	private final AtomicReference<Boolean> listenOnly = new AtomicReference<>();
 	private final AtomicReference<Boolean> ignoreSource = new AtomicReference<>();
 
-	public ModifyPeerCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public ModifyPeerCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		this.identifierGenerator = identifierGenerator;
 	}
 
 	@Override
@@ -119,7 +122,7 @@ public class ModifyPeerCommandImpl implements ModifyPeerCommand {
 	}
 
 	private Optional<Peer> executeDialog() throws IOException, ExecutionException, InterruptedException {
-		ModifyPeer modifyPeer = new ModifyPeer(new RandomIdentifierGenerator().generate(), nodeIdentifier.get());
+		ModifyPeer modifyPeer = new ModifyPeer(identifierGenerator.get(), nodeIdentifier.get());
 		Optional.ofNullable(enabled.get()).ifPresent(enabled -> modifyPeer.setEnabled(enabled));
 		Optional.ofNullable(allowLocalAddresses.get()).ifPresent(allowed -> modifyPeer.setAllowLocalAddresses(allowed));
 		Optional.ofNullable(burstOnly.get()).ifPresent(burstOnly -> modifyPeer.setBurstOnly(burstOnly));

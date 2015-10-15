@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.PluginInfo;
 import net.pterodactylus.fcp.ProtocolError;
@@ -22,14 +23,14 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public class ReloadPluginCommandImpl implements ReloadPluginCommand {
 
-	private static final RandomIdentifierGenerator IDENTIFIER = new RandomIdentifierGenerator();
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
-	private final ReloadPlugin reloadPlugin = new ReloadPlugin(IDENTIFIER.generate());
+	private final ReloadPlugin reloadPlugin;
 
-	public ReloadPluginCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public ReloadPluginCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		reloadPlugin = new ReloadPlugin(identifierGenerator.get());
 	}
 
 	@Override

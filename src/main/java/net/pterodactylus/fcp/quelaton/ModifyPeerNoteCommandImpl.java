@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.FreenetBase64;
 import net.pterodactylus.fcp.ModifyPeerNote;
@@ -26,15 +27,16 @@ import com.google.common.util.concurrent.MoreExecutors;
 public class ModifyPeerNoteCommandImpl implements ModifyPeerNoteCommand {
 
 	private static final FreenetBase64 BASE_64 = new FreenetBase64();
-	private static final RandomIdentifierGenerator RANDOM_IDENTIFIER_GENERATOR = new RandomIdentifierGenerator();
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final Supplier<String> identifierGenerator;
 	private final AtomicReference<String> nodeIdentifier = new AtomicReference<>();
 	private final AtomicReference<String> darknetComment = new AtomicReference<>();
 
-	public ModifyPeerNoteCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public ModifyPeerNoteCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		this.identifierGenerator = identifierGenerator;
 	}
 
 	@Override
@@ -70,7 +72,7 @@ public class ModifyPeerNoteCommandImpl implements ModifyPeerNoteCommand {
 
 	private Boolean executeDialog() throws IOException, ExecutionException, InterruptedException {
 		ModifyPeerNote modifyPeerNote =
-			new ModifyPeerNote(RANDOM_IDENTIFIER_GENERATOR.generate(), nodeIdentifier.get());
+			new ModifyPeerNote(identifierGenerator.get(), nodeIdentifier.get());
 		modifyPeerNote.setPeerNoteType(PeerNoteType.PRIVATE_DARKNET_COMMENT);
 		modifyPeerNote.setNoteText(BASE_64.encode(darknetComment.get().getBytes(StandardCharsets.UTF_8)));
 		try (ModifyPeerNoteDialog modifyPeerNoteDialog = new ModifyPeerNoteDialog()) {

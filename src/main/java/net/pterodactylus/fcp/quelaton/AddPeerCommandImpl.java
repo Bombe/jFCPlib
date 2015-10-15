@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.AddPeer;
 import net.pterodactylus.fcp.NodeRef;
@@ -27,11 +28,13 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final Supplier<String> identifierSupplier;
 	private final AtomicReference<File> file = new AtomicReference<>();
 	private final AtomicReference<URL> url = new AtomicReference<>();
 	private final AtomicReference<NodeRef> nodeRef = new AtomicReference<>();
 
-	public AddPeerCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public AddPeerCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierSupplier) {
+		this.identifierSupplier = identifierSupplier;
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
 	}
@@ -61,11 +64,11 @@ public class AddPeerCommandImpl implements AddPeerCommand {
 	private Optional<Peer> executeDialog() throws IOException, ExecutionException, InterruptedException {
 		AddPeer addPeer;
 		if (file.get() != null) {
-			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), file.get().getPath());
+			addPeer = new AddPeer(identifierSupplier.get(), file.get().getPath());
 		} else if (url.get() != null) {
-			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), url.get());
+			addPeer = new AddPeer(identifierSupplier.get(), url.get());
 		} else {
-			addPeer = new AddPeer(new RandomIdentifierGenerator().generate(), nodeRef.get());
+			addPeer = new AddPeer(identifierSupplier.get(), nodeRef.get());
 		}
 		try (AddPeerDialog addPeerDialog = new AddPeerDialog()) {
 			return addPeerDialog.send(addPeer).get();

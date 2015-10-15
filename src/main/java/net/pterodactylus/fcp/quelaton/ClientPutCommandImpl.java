@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import net.pterodactylus.fcp.ClientPut;
 import net.pterodactylus.fcp.FcpMessage;
@@ -41,6 +42,7 @@ class ClientPutCommandImpl implements ClientPutCommand {
 
 	private final ListeningExecutorService threadPool;
 	private final ConnectionSupplier connectionSupplier;
+	private final Supplier<String> identifierGenerator;
 	private final AtomicReference<String> redirectUri = new AtomicReference<>();
 	private final AtomicReference<File> file = new AtomicReference<>();
 	private final AtomicReference<InputStream> payload = new AtomicReference<>();
@@ -48,9 +50,10 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	private final AtomicReference<String> targetFilename = new AtomicReference<>();
 	private final List<Consumer<String>> keyGenerateds = new CopyOnWriteArrayList<>();
 
-	public ClientPutCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier) {
+	public ClientPutCommandImpl(ExecutorService threadPool, ConnectionSupplier connectionSupplier, Supplier<String> identifierGenerator) {
 		this.threadPool = MoreExecutors.listeningDecorator(threadPool);
 		this.connectionSupplier = connectionSupplier;
+		this.identifierGenerator = identifierGenerator;
 	}
 
 	@Override
@@ -93,8 +96,7 @@ class ClientPutCommandImpl implements ClientPutCommand {
 	}
 
 	private Optional<Key> execute(String uri) throws InterruptedException, ExecutionException, IOException {
-		String identifier = new RandomIdentifierGenerator().generate();
-		ClientPut clientPut = createClientPutCommand(uri, identifier);
+		ClientPut clientPut = createClientPutCommand(uri, identifierGenerator.get());
 		try (ClientPutDialog clientPutDialog = new ClientPutDialog()) {
 			return clientPutDialog.send(clientPut).get();
 		}
