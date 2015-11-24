@@ -76,7 +76,7 @@ class FcpConnectionHandler implements Runnable {
 			}
 			try {
 				String line = readLine();
-				logger.log(Level.FINEST, "read line: %1$s", line);
+				logger.log(Level.FINEST, String.format("read line: %1$s", line));
 				if (line == null) {
 					break;
 				}
