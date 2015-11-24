@@ -80,7 +80,7 @@ public class AddPeer extends FcpMessage {
 	 *            The noderef of the peer
 	 */
 	private void setNodeRef(NodeRef nodeRef) {
-		setField("lastGoodVersion", nodeRef.getLastGoodVersion().toString());
+		setField("lastGoodVersion", String.valueOf(nodeRef.getLastGoodVersion()));
 		setField("opennet", String.valueOf(nodeRef.isOpennet()));
 		setField("identity", nodeRef.getIdentity());
 		setField("myName", nodeRef.getMyName());
