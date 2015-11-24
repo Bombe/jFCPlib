@@ -18,12 +18,16 @@
 
 package net.pterodactylus.fcp;
 
+import com.google.common.base.Charsets;
+
 /**
  * The “ModifyPeerNote” command modifies a peer note.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class ModifyPeerNote extends FcpMessage {
+
+	private static final FreenetBase64 BASE64_ENCODER = new FreenetBase64();
 
 	public ModifyPeerNote(String identifier, String nodeIdentifier) {
 		super("ModifyPeerNote");
@@ -40,7 +44,7 @@ public class ModifyPeerNote extends FcpMessage {
 	}
 
 	public void setNoteText(String noteText) {
-		setField("NoteText", noteText);
+		setField("NoteText", BASE64_ENCODER.encode(noteText.getBytes(Charsets.UTF_8)));
 	}
 
 	public void setPeerNoteType(PeerNoteType peerNoteType) {

@@ -18,6 +18,8 @@
 
 package net.pterodactylus.fcp;
 
+import com.google.common.base.Charsets;
+
 /**
  * The “PeerNote” message contains a private note that has been entered for a
  * darknet peer.
@@ -25,6 +27,8 @@ package net.pterodactylus.fcp;
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
 public class PeerNote extends BaseMessage {
+
+	private static final FreenetBase64 BASE64_DECODER = new FreenetBase64();
 
 	/** The type for base64 encoded peer notes. */
 	public static final int TYPE_PRIVATE_PEER_NOTE = 1;
@@ -54,7 +58,7 @@ public class PeerNote extends BaseMessage {
 	 * @return The note text
 	 */
 	public String getNoteText() {
-		return getField("NoteText");
+		return new String(BASE64_DECODER.decode(getField("NoteText")), Charsets.UTF_8);
 	}
 
 	/**
