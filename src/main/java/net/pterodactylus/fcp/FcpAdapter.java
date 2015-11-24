@@ -273,6 +273,11 @@ public class FcpAdapter implements FcpListener {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void receivedPluginRemoved(FcpConnection fcpConnection, PluginRemoved pluginRemoved) {
+		/* empty. */
+	}
+
+	@Override
 	public void receivedFCPPluginReply(FcpConnection fcpConnection, FCPPluginReply fcpPluginReply) {
 		/* empty. */
 	}

@@ -329,6 +329,8 @@ public interface FcpListener extends EventListener {
 	 */
 	public void receivedPluginInfo(FcpConnection fcpConnection, PluginInfo pluginInfo);
 
+	void receivedPluginRemoved(FcpConnection fcpConnection, PluginRemoved pluginRemoved);
+
 	/**
 	 * Notifies a listener that an “FCPPluginReply“ message was received.
 	 *
