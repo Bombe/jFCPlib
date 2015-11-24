@@ -60,7 +60,7 @@ public class PluginInfo extends BaseMessage implements Identifiable {
 	 * @return The original URI of the plugin
 	 */
 	public String getOriginalURI() {
-		return getField("OriginalUri");
+		return getField("OriginUri");
 	}
 
 	/**
