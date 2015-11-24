@@ -49,7 +49,14 @@ public class GetNode extends FcpMessage {
 	 *            <code>true</code> to include volatile data in the noderef
 	 */
 	public GetNode(Boolean giveOpennetRef, Boolean withPrivate, Boolean withVolatile) {
+		this(null, giveOpennetRef, withPrivate, withVolatile);
+	}
+
+	public GetNode(String identifier, Boolean giveOpennetRef, Boolean withPrivate, Boolean withVolatile) {
 		super("GetNode");
+		if (identifier != null) {
+			setField("Identifier", identifier);
+		}
 		if (giveOpennetRef != null) {
 			setField("GiveOpennetRef", String.valueOf(giveOpennetRef));
 		}

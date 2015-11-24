@@ -36,7 +36,7 @@ public class Peer extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	Peer(FcpMessage receivedMessage) {
+	public Peer(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

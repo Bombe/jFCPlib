@@ -33,7 +33,7 @@ public class PutFetchable extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PutFetchable(FcpMessage receivedMessage) {
+	public PutFetchable(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

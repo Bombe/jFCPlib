@@ -31,7 +31,7 @@ public class NodeHello extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received FCP message
 	 */
-	NodeHello(FcpMessage receivedMessage) {
+	public NodeHello(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

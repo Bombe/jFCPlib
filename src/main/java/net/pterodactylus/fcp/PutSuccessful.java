@@ -32,7 +32,7 @@ public class PutSuccessful extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PutSuccessful(FcpMessage receivedMessage) {
+	public PutSuccessful(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

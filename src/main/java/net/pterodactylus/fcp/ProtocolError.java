@@ -31,7 +31,7 @@ public class ProtocolError extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	ProtocolError(FcpMessage receivedMessage) {
+	public ProtocolError(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

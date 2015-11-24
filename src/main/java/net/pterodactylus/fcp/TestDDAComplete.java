@@ -32,7 +32,7 @@ public class TestDDAComplete extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	TestDDAComplete(FcpMessage receivedMessage) {
+	public TestDDAComplete(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

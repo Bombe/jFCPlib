@@ -35,7 +35,14 @@ public class ListPeer extends FcpMessage {
 	 *            The identifier of the node to get details about
 	 */
 	public ListPeer(String nodeIdentifier) {
+		this(null, nodeIdentifier);
+	}
+
+	public ListPeer(String identifier, String nodeIdentifier) {
 		super("ListPeer");
+		if (identifier != null) {
+			setField("Identifier", identifier);
+		}
 		setField("NodeIdentifier", nodeIdentifier);
 	}
 

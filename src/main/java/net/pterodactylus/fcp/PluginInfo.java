@@ -31,7 +31,7 @@ public class PluginInfo extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PluginInfo(FcpMessage receivedMessage) {
+	public PluginInfo(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 
@@ -73,4 +73,15 @@ public class PluginInfo extends BaseMessage implements Identifiable {
 		return Boolean.valueOf("Started");
 	}
 
+	public boolean isTalkable() {
+		return Boolean.valueOf(getField("IsTalkable"));
+	}
+
+	public String getVersion() {
+		return getField("Version");
+	}
+
+	public String getLongVersion() {
+		return getField("LongVersion");
+	}
 }

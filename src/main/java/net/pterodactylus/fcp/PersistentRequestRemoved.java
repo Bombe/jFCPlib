@@ -33,7 +33,7 @@ public class PersistentRequestRemoved extends BaseMessage implements Identifiabl
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PersistentRequestRemoved(FcpMessage receivedMessage) {
+	public PersistentRequestRemoved(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

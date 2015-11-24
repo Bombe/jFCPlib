@@ -38,7 +38,7 @@ public class PutFailed extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PutFailed(FcpMessage receivedMessage) {
+	public PutFailed(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

@@ -33,7 +33,7 @@ public class DataFound extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	DataFound(FcpMessage receivedMessage) {
+	public DataFound(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

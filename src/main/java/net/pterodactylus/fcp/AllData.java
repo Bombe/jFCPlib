@@ -44,7 +44,7 @@ public class AllData extends BaseMessage implements Identifiable {
 	 * @param payloadInputStream
 	 *            The payload
 	 */
-	AllData(FcpMessage receivedMessage, InputStream payloadInputStream) {
+	public AllData(FcpMessage receivedMessage, InputStream payloadInputStream) {
 		super(receivedMessage);
 		this.payloadInputStream = payloadInputStream;
 	}

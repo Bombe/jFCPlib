@@ -32,7 +32,7 @@ public class ConfigData extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	ConfigData(FcpMessage receivedMessage) {
+	public ConfigData(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

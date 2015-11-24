@@ -33,7 +33,7 @@ public class URIGenerated extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	URIGenerated(FcpMessage receivedMessage) {
+	public URIGenerated(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 
