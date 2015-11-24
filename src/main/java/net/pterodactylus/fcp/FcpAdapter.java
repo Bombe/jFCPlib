@@ -253,6 +253,11 @@ public class FcpAdapter implements FcpListener {
 		/* empty. */
 	}
 
+	@Override
+	public void receivedSubscribedUSK(FcpConnection fcpConnection, SubscribedUSK subscribedUSK) {
+		/* empty. */
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

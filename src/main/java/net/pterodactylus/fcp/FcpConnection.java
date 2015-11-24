@@ -261,6 +261,8 @@ public class FcpConnection implements Closeable {
 			fcpListenerManager.fireReceivedDataFound(new DataFound(fcpMessage));
 		} else if ("SubscribedUSKUpdate".equals(messageName)) {
 			fcpListenerManager.fireReceivedSubscribedUSKUpdate(new SubscribedUSKUpdate(fcpMessage));
+		} else if ("SubscribedUSK".equals(messageName)) {
+			fcpListenerManager.fireReceivedSubscribedUSK(new SubscribedUSK(fcpMessage));
 		} else if ("IdentifierCollision".equals(messageName)) {
 			fcpListenerManager.fireReceivedIdentifierCollision(new IdentifierCollision(fcpMessage));
 		} else if ("AllData".equals(messageName)) {
