@@ -33,7 +33,7 @@ public class ModifyPeerNote extends FcpMessage {
 
 	@Deprecated
 	public ModifyPeerNote(String nodeIdentifier, String noteText, int peerNoteType) {
-		super("ModifyPeer");
+		super("ModifyPeerNote");
 		setField("NodeIdentifier", nodeIdentifier);
 		setField("NoteText", noteText);
 		setField("PeerNoteType", String.valueOf(peerNoteType));
