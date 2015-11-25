@@ -156,6 +156,10 @@ public class FcpConnection implements Closeable {
 		fcpListenerManager.removeListener(fcpListener);
 	}
 
+	public synchronized boolean isClosed() {
+		return connectionHandler != null;
+	}
+
 	//
 	// ACTIONS
 	//
