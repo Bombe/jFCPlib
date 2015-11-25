@@ -18,6 +18,8 @@
 
 package net.pterodactylus.fcp;
 
+import java.io.InputStream;
+
 /**
  * An “CPPluginMessage” sends a message with custom parameters and (optional)
  * payload to a plugin.
@@ -27,24 +29,23 @@ package net.pterodactylus.fcp;
 public class FCPPluginMessage extends FcpMessage {
 
 	/**
-	 * Creates a new “FCPPluginMessage” message for the given plugin.
-	 *
-	 * @param pluginClass
-	 *            The name of the plugin class
+	 * @deprecated Use {@link #FCPPluginMessage(String, String)} instead
 	 */
+	@Deprecated
 	public FCPPluginMessage(String pluginClass) {
 		super("FCPPluginMessage");
 		setField("PluginName", pluginClass);
 	}
 
+	public FCPPluginMessage(String identifier, String pluginClass) {
+		this(pluginClass);
+		setField("Identifier", identifier);
+	}
+
 	/**
-	 * Sets the identifier of the request. Though this is still optional you
-	 * are encouraged to include it because the plugin might reply in random
-	 * order to requests.
-	 *
-	 * @param identifier
-	 *            The identifier of the request
+	 * @deprecated Use {@link #FCPPluginMessage(String, String)} instead
 	 */
+	@Deprecated
 	public void setIdentifier(String identifier) {
 		setField("Identifier", identifier);
 	}
@@ -53,24 +54,25 @@ public class FCPPluginMessage extends FcpMessage {
 	 * Sets a custom parameter for the plugin.
 	 *
 	 * @param key
-	 *            The key of the parameter
+	 * 	The key of the parameter
 	 * @param value
-	 *            The value of the parameter
+	 * 	The value of the parameter
 	 */
 	public void setParameter(String key, String value) {
 		setField("Param." + key, value);
 	}
 
 	/**
-	 * Sets the length of data of the optional payload. If you call this method
-	 * you also have to call
-	 * {@link #setPayloadInputStream(java.io.InputStream)} !
-	 *
-	 * @param dataLength
-	 *            The length of data in the payload input stream
+	 * @deprecated Use {@link #setData(InputStream, long)} instead
 	 */
+	@Deprecated
 	public void setDataLength(long dataLength) {
 		setField("DataLength", String.valueOf(dataLength));
+	}
+
+	public void setData(InputStream payloadInputStream, long dataLength) {
+		setPayloadInputStream(payloadInputStream);
+		setDataLength(dataLength);
 	}
 
 }
