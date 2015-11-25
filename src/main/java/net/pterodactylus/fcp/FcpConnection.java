@@ -157,7 +157,7 @@ public class FcpConnection implements Closeable {
 	}
 
 	public synchronized boolean isClosed() {
-		return connectionHandler != null;
+		return connectionHandler == null;
 	}
 
 	//
