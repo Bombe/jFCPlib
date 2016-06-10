@@ -31,7 +31,7 @@ public class EndListPeers extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The message that was received
 	 */
-	EndListPeers(FcpMessage receivedMessage) {
+	public EndListPeers(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

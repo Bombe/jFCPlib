@@ -18,6 +18,8 @@
 
 package net.pterodactylus.fcp;
 
+import com.google.common.base.Charsets;
+
 /**
  * The “ModifyPeerNote” command modifies a peer note.
  *
@@ -25,25 +27,28 @@ package net.pterodactylus.fcp;
  */
 public class ModifyPeerNote extends FcpMessage {
 
-	/**
-	 * Creates a new “ModifyPeerNote” request that changes peer note of the
-	 * given type and node to the given text.
-	 *
-	 * @see PeerNote
-	 * @param nodeIdentifier
-	 *            The identifier of the node, i.e. name, identity, or IP
-	 *            address and port
-	 * @param noteText
-	 *            The base64-encoded text
-	 * @param peerNoteType
-	 *            The type of the note to change, possible values are only
-	 *            {@link PeerNote#TYPE_PRIVATE_PEER_NOTE} at the moment
-	 */
+	private static final FreenetBase64 BASE64_ENCODER = new FreenetBase64();
+
+	public ModifyPeerNote(String identifier, String nodeIdentifier) {
+		super("ModifyPeerNote");
+		setField("Identifier", identifier);
+		setField("NodeIdentifier", nodeIdentifier);
+	}
+
+	@Deprecated
 	public ModifyPeerNote(String nodeIdentifier, String noteText, int peerNoteType) {
-		super("ModifyPeer");
+		super("ModifyPeerNote");
 		setField("NodeIdentifier", nodeIdentifier);
 		setField("NoteText", noteText);
 		setField("PeerNoteType", String.valueOf(peerNoteType));
+	}
+
+	public void setNoteText(String noteText) {
+		setField("NoteText", BASE64_ENCODER.encode(noteText.getBytes(Charsets.UTF_8)));
+	}
+
+	public void setPeerNoteType(PeerNoteType peerNoteType) {
+		setField("PeerNoteType", peerNoteType.toString());
 	}
 
 }

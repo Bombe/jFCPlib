@@ -438,6 +438,12 @@ public class FcpListenerManager {
 		}
 	}
 
+	public void fireReceivedSubscribedUSK(SubscribedUSK subscribedUSK) {
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedSubscribedUSK(getSource(), subscribedUSK);
+		}
+	}
+
 	/**
 	 * Notifies all listeners that a “SubscribedUSKUpdate” message was
 	 * received.
@@ -463,6 +469,12 @@ public class FcpListenerManager {
 	public void fireReceivedPluginInfo(PluginInfo pluginInfo) {
 		for (FcpListener fcpListener : getListeners()) {
 			fcpListener.receivedPluginInfo(getSource(), pluginInfo);
+		}
+	}
+
+	public void fireReceivedPluginRemoved(PluginRemoved pluginRemoved) {
+		for (FcpListener fcpListener : getListeners()) {
+			fcpListener.receivedPluginRemoved(getSource(), pluginRemoved);
 		}
 	}
 

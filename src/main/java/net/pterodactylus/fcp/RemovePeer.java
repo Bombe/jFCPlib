@@ -25,16 +25,15 @@ package net.pterodactylus.fcp;
  */
 public class RemovePeer extends FcpMessage {
 
-	/**
-	 * Creates a new “RemovePeer” command that removes the given peer.
-	 *
-	 * @param nodeIdentifier
-	 *            The identifier of the node, i.e. its name, identity, or IP
-	 *            address and port pair
-	 */
+	@Deprecated
 	public RemovePeer(String nodeIdentifier) {
 		super("RemovePeer");
 		setField("NodeIdentifier", nodeIdentifier);
+	}
+
+	public RemovePeer(String identifier, String nodeIdentifier) {
+		this(nodeIdentifier);
+		setField("Identifier", identifier);
 	}
 
 }

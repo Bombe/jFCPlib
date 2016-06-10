@@ -31,7 +31,7 @@ public class PeerRemoved extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PeerRemoved(FcpMessage receivedMessage) {
+	public PeerRemoved(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

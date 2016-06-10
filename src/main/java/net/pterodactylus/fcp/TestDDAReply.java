@@ -36,7 +36,7 @@ public class TestDDAReply extends BaseMessage {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	TestDDAReply(FcpMessage receivedMessage) {
+	public TestDDAReply(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

@@ -38,7 +38,7 @@ public class GetFailed extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	GetFailed(FcpMessage receivedMessage) {
+	public GetFailed(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 

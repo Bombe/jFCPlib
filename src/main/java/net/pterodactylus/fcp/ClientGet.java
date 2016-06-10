@@ -131,6 +131,10 @@ public class ClientGet extends FcpMessage {
 		setField("PriorityClass", String.valueOf(priority));
 	}
 
+	public void setRealTimeFlag(boolean realTimeFlag) {
+		setField("RealTimeFlag", String.valueOf(realTimeFlag));
+	}
+
 	/**
 	 * Sets the persistence of the request.
 	 *

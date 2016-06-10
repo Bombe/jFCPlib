@@ -309,6 +309,8 @@ public interface FcpListener extends EventListener {
 	 */
 	public void receivedPersistentRequestRemoved(FcpConnection fcpConnection, PersistentRequestRemoved persistentRequestRemoved);
 
+	void receivedSubscribedUSK(FcpConnection fcpConnection, SubscribedUSK subscribedUSK);
+
 	/**
 	 * Notifies a listener that a “SubscribedUSKUpdate” message was received.
 	 *
@@ -328,6 +330,8 @@ public interface FcpListener extends EventListener {
 	 *            The “PluginInfo” message
 	 */
 	public void receivedPluginInfo(FcpConnection fcpConnection, PluginInfo pluginInfo);
+
+	void receivedPluginRemoved(FcpConnection fcpConnection, PluginRemoved pluginRemoved);
 
 	/**
 	 * Notifies a listener that an “FCPPluginReply“ message was received.

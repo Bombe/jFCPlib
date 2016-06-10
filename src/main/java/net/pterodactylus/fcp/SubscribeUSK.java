@@ -24,20 +24,33 @@ package net.pterodactylus.fcp;
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class SubscribeUSK extends FcpMessage {
+public class SubscribeUSK extends FcpMessage implements Identifiable {
 
-	/**
-	 * Creates a new “SubscribeUSK” message.
-	 *
-	 * @param uri
-	 *            The URI to watch for changes
-	 * @param identifier
-	 *            The identifier of the request
-	 */
-	public SubscribeUSK(String uri, String identifier) {
+	public SubscribeUSK(String identifier) {
 		super("SubscribeUSK");
-		setField("URI", uri);
 		setField("Identifier", identifier);
+	}
+
+	public SubscribeUSK(String uri, String identifier) {
+		this(identifier);
+		setField("URI", uri);
+	}
+
+	@Override
+	public String getIdentifier() {
+		return getField("Identifier");
+	}
+
+	public String getUri() {
+		return getField("URI");
+	}
+
+	public void setUri(String uri) {
+		setField("URI", uri);
+	}
+
+	public boolean isActive() {
+		return !Boolean.parseBoolean(getField("DontPoll"));
 	}
 
 	/**
@@ -50,6 +63,54 @@ public class SubscribeUSK extends FcpMessage {
 	 */
 	public void setActive(boolean active) {
 		setField("DontPoll", String.valueOf(!active));
+	}
+
+	public boolean isSparse() {
+		return Boolean.valueOf(getField("SparsePoll"));
+	}
+
+	public void setSparse(boolean sparse) {
+		setField("SparsePoll", String.valueOf(sparse));
+	}
+
+	public Priority getPriority() {
+		String priorityClass = getField("PriorityClass");
+		if (priorityClass != null) {
+			return Priority.valueOf(priorityClass);
+		}
+		return Priority.bulkSplitfile;
+	}
+
+	public void setPriority(Priority priority) {
+		setField("PriorityClass", priority.toString());
+	}
+
+	public Priority getActivePriority() {
+		String priorityClass = getField("PriorityClassProgress");
+		if (priorityClass != null) {
+			return Priority.valueOf(priorityClass);
+		}
+		return Priority.update;
+	}
+
+	public void setActivePriority(Priority activePriority) {
+		setField("PriorityClassProgress", activePriority.toString());
+	}
+
+	public boolean isRealTime() {
+		return Boolean.valueOf(getField("RealTimeFlag"));
+	}
+
+	public void setRealTime(boolean realTime) {
+		setField("RealTimeFlag", String.valueOf(realTime));
+	}
+
+	public boolean isIgnoreDateHints() {
+		return Boolean.valueOf(getField("IgnoreUSKDatehints"));
+	}
+
+	public void setIgnoreDateHints(boolean ignoreDateHints) {
+		setField("IgnoreUSKDatehints", String.valueOf(ignoreDateHints));
 	}
 
 }

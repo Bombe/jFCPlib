@@ -1,5 +1,5 @@
 /*
- * jFCPlib - SSKKeypair.java - Copyright © 2008 David Roden
+ * jFCPlib - SubscribedUSKUpdate.java - Copyright © 2008 David Roden
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,49 +19,27 @@
 package net.pterodactylus.fcp;
 
 /**
- * An “SSKKeypair” message that is sent as a response to a {@link GenerateSSK}
- * message.
+ * A “SubscribedUSK” message is sent when a {@link SubscribeUSK} was succesfully processed.
  *
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
  */
-public class SSKKeypair extends BaseMessage implements Identifiable {
+public class SubscribedUSK extends BaseMessage implements Identifiable {
 
-	/**
-	 * Creates a new “SSKKeypair” message that wraps the received message.
-	 *
-	 * @param receivedMessage
-	 *            The received message
-	 */
-	public SSKKeypair(FcpMessage receivedMessage) {
+	public SubscribedUSK(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 
-	/**
-	 * Returns the identifier of the request.
-	 *
-	 * @return The identifier of the request
-	 */
 	@Override
 	public String getIdentifier() {
 		return getField("Identifier");
 	}
 
-	/**
-	 * Returns the URI that must be used to insert data.
-	 *
-	 * @return The insert URI
-	 */
-	public String getInsertURI() {
-		return getField("InsertURI");
+	public String getURI() {
+		return getField("URI");
 	}
 
-	/**
-	 * Returns the URI that must be used to request data.
-	 *
-	 * @return The request URI
-	 */
-	public String getRequestURI() {
-		return getField("RequestURI");
+	public boolean isDontPoll() {
+		return Boolean.parseBoolean(getField("DontPoll"));
 	}
 
 }

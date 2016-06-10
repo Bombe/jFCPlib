@@ -32,6 +32,11 @@ public class ModifyConfig extends FcpMessage {
 		super("ModifyConfig");
 	}
 
+	public ModifyConfig(String identifier) {
+		this();
+		setField("Identifier", identifier);
+	}
+
 	/**
 	 * Sets the option with the given name to the given value.
 	 *

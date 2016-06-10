@@ -31,7 +31,7 @@ public class PluginInfo extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	PluginInfo(FcpMessage receivedMessage) {
+	public PluginInfo(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 
@@ -60,7 +60,7 @@ public class PluginInfo extends BaseMessage implements Identifiable {
 	 * @return The original URI of the plugin
 	 */
 	public String getOriginalURI() {
-		return getField("OriginalUri");
+		return getField("OriginUri");
 	}
 
 	/**
@@ -70,7 +70,18 @@ public class PluginInfo extends BaseMessage implements Identifiable {
 	 *         otherwise
 	 */
 	public boolean isStarted() {
-		return Boolean.valueOf("Started");
+		return Boolean.valueOf(getField("Started"));
 	}
 
+	public boolean isTalkable() {
+		return Boolean.valueOf(getField("IsTalkable"));
+	}
+
+	public String getVersion() {
+		return getField("Version");
+	}
+
+	public String getLongVersion() {
+		return getField("LongVersion");
+	}
 }

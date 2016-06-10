@@ -32,7 +32,7 @@ public class SimpleProgress extends BaseMessage implements Identifiable {
 	 * @param receivedMessage
 	 *            The received message
 	 */
-	SimpleProgress(FcpMessage receivedMessage) {
+	public SimpleProgress(FcpMessage receivedMessage) {
 		super(receivedMessage);
 	}
 
@@ -97,6 +97,14 @@ public class SimpleProgress extends BaseMessage implements Identifiable {
 	 */
 	public boolean isFinalizedTotal() {
 		return Boolean.valueOf(getField("FinalizedTotal"));
+	}
+
+	public long getLastProgress() {
+		return Long.valueOf(getField("LastProgress"));
+	}
+
+	public int getMinSuccessFetchBlocks() {
+		return Integer.valueOf(getField("MinSuccessFetchBlocks"));
 	}
 
 	/**
