@@ -170,12 +170,13 @@ public class FcpMessage implements Iterable<String> {
 		for (Entry<String, String> fieldEntry : fields.entrySet()) {
 			writeLine(outputStream, fieldEntry.getKey() + "=" + fieldEntry.getValue());
 		}
-		writeLine(outputStream, "EndMessage");
-		outputStream.flush();
 		if (payloadInputStream != null) {
+			writeLine(outputStream, "Data");
 			FcpUtils.copy(payloadInputStream, outputStream);
-			outputStream.flush();
+		} else {
+			writeLine(outputStream, "EndMessage");
 		}
+		outputStream.flush();
 	}
 
 	//
