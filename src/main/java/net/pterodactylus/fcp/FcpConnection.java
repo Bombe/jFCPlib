@@ -290,7 +290,7 @@ public class FcpConnection implements Closeable {
 		} else if ("UnknownNodeIdentifier".equals(messageName)) {
 			fcpListenerManager.fireReceivedUnknownNodeIdentifier(new UnknownNodeIdentifier(fcpMessage));
 		} else if ("FCPPluginReply".equals(messageName)) {
-			InputStream payloadInputStream = getInputStream(FcpUtils.safeParseLong(fcpMessage.getField("DataLength")));
+			InputStream payloadInputStream = getInputStream(FcpUtils.safeParseLong(fcpMessage.getField("DataLength"), 0));
 			fcpListenerManager.fireReceivedFCPPluginReply(new FCPPluginReply(fcpMessage, payloadInputStream));
 		} else if ("PluginInfo".equals(messageName)) {
 			fcpListenerManager.fireReceivedPluginInfo(new PluginInfo(fcpMessage));
