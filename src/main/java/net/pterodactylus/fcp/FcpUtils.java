@@ -353,7 +353,7 @@ public class FcpUtils {
 				FileOutputStream fileOutputStream = null;
 				try {
 					fileOutputStream = new FileOutputStream(tempFile);
-					FcpUtils.copy(originalInputStream, fileOutputStream);
+					FcpUtils.copy(originalInputStream, fileOutputStream, length);
 					fileInputStream = new FileInputStream(tempFile);
 				} finally {
 					FcpUtils.close(fileOutputStream);
