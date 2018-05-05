@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.pterodactylus</groupId>
 	<artifactId>jFCPlib</artifactId>
-	<version>0.1.6-SNAPSHOT</version>
+	<version>0.1.6</version>
 	<name>jFCPlib</name>
 	<packaging>jar</packaging>
 	<distributionManagement>
