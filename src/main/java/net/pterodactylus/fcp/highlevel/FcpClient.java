@@ -19,9 +19,7 @@ package net.pterodactylus.fcp.highlevel;
 
 import static com.google.common.collect.FluentIterable.from;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -35,41 +33,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import net.pterodactylus.fcp.AddPeer;
-import net.pterodactylus.fcp.AllData;
-import net.pterodactylus.fcp.ClientGet;
-import net.pterodactylus.fcp.ClientHello;
-import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
-import net.pterodactylus.fcp.DataFound;
-import net.pterodactylus.fcp.EndListPeerNotes;
-import net.pterodactylus.fcp.EndListPeers;
-import net.pterodactylus.fcp.EndListPersistentRequests;
-import net.pterodactylus.fcp.FCPPluginMessage;
-import net.pterodactylus.fcp.FCPPluginReply;
-import net.pterodactylus.fcp.FcpAdapter;
-import net.pterodactylus.fcp.FcpConnection;
-import net.pterodactylus.fcp.FcpListener;
-import net.pterodactylus.fcp.GenerateSSK;
-import net.pterodactylus.fcp.GetFailed;
-import net.pterodactylus.fcp.GetNode;
-import net.pterodactylus.fcp.ListPeerNotes;
-import net.pterodactylus.fcp.ListPeers;
-import net.pterodactylus.fcp.ListPersistentRequests;
-import net.pterodactylus.fcp.ModifyPeer;
-import net.pterodactylus.fcp.ModifyPeerNote;
-import net.pterodactylus.fcp.NodeData;
-import net.pterodactylus.fcp.NodeHello;
-import net.pterodactylus.fcp.NodeRef;
-import net.pterodactylus.fcp.Peer;
-import net.pterodactylus.fcp.PeerNote;
-import net.pterodactylus.fcp.PeerRemoved;
-import net.pterodactylus.fcp.PersistentGet;
-import net.pterodactylus.fcp.PersistentPut;
-import net.pterodactylus.fcp.ProtocolError;
-import net.pterodactylus.fcp.RemovePeer;
-import net.pterodactylus.fcp.SSKKeypair;
-import net.pterodactylus.fcp.SimpleProgress;
-import net.pterodactylus.fcp.WatchGlobal;
+import net.pterodactylus.fcp.*;
 
 import com.google.common.base.Predicate;
 
@@ -321,6 +285,206 @@ public class FcpClient implements Closeable {
 	public GetResult getURI(final String uri) throws IOException, FcpException {
 		return getURI(uri, true);
 	}
+
+	/**
+	 * TODO: Turn this into a DDAHandshake function where read and write can be specified through arguments. Handle errors better.
+	 * If we haven't established DDA for a specific directory, do that.
+	 * @param directory - The directory you want to establish Direct-Disk Access for.
+	 *
+	 * @return
+	 * @throws IOException
+	 * @throws FcpException
+	 */
+	public void DDAReadHandshake(final String directory) throws IOException, FcpException{
+
+		new PhageFCPClient.ExtendedAdapter(){
+
+			@Override
+			public void run() throws IOException{
+				TestDDARequest tr = new TestDDARequest(new File(directory).getPath(), true, false);
+				fcpConnection.sendMessage(tr);
+			}
+
+			@Override
+			public void receivedProtocolError(FcpConnection fcpConnection, ProtocolError protocolError){
+				System.out.println(protocolError.getCodeDescription());
+				System.out.println(protocolError.getCode());
+				System.out.println(protocolError.getExtraDescription());
+			}
+
+			@Override
+			public void receivedTestDDAReply(FcpConnection fcpConnection, TestDDAReply testDDAReply){
+				try {
+					BufferedReader br = new BufferedReader(new FileReader((testDDAReply.getReadFilename())));
+					String line = br.readLine();
+					br.close();
+					TestDDAResponse TDR = new TestDDAResponse(testDDAReply.getDirectory(), line);
+					fcpConnection.sendMessage(TDR);
+				}
+				catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void receivedTestDDAComplete(FcpConnection fcpConnection, TestDDAComplete testDDAComplete){
+				//If the Complete is for our directory of interest...
+				if(testDDAComplete.getDirectory().equals(new File(directory).getPath())){
+					completionLatch.countDown();
+				}
+			}
+		}.execute();
+
+
+	}
+
+	/**
+	 * Insert a directory of data. Useful for USKs/site inserts.
+	 * The insert is recursive.
+	 * @param dirpath
+	 * @param
+	 */
+	public void putDir(final String dirpath, final String sitename, final String privateKey, final String defaultFile, final boolean USK) throws IOException, FcpException{
+
+		new ExtendedAdapter(){
+			public void run() throws IOException {
+				ClientPutComplexDir pdir;
+				if(USK){
+					String newuri = privateKey.replace("SSK@", "USK@");
+					pdir = new ClientPutComplexDir(sitename, newuri + sitename + "/0");
+				}
+				else {
+					pdir = new ClientPutComplexDir(sitename, privateKey + sitename);
+				}
+				if(defaultFile != null){
+					pdir.setDefaultName(defaultFile);
+				}
+				File folder = new File(dirpath);
+				for(File f: folder.listFiles()){
+					pdir.addFileEntry(FileEntry.createDiskFileEntry(f.getName(),f.getAbsolutePath(),null,-1));
+				}
+				pdir.setPersistence(Persistence.forever);
+				pdir.setGlobal(true);
+				fcpConnection.sendMessage(pdir);
+			}
+
+			@Override
+			public void receivedProtocolError(FcpConnection fcpConnection, ProtocolError protocolError){
+				System.out.println(protocolError.getFields());
+			}
+
+			@Override
+			public void receivedPersistentPutDir(FcpConnection fcpConnection, PersistentPutDir persistentPutDir){
+				System.out.println(persistentPutDir.getFields());
+				completionLatch.countDown();
+			}
+		}.execute();
+
+	}
+
+
+	/**
+	 * Function for easy CHKing of raw data
+	 * @param data
+	 */
+	public String putData(byte[] data) throws IOException, FcpException {
+
+		return putData(null, data, null, null, null, false);
+
+	}
+
+	/**
+	 * Put some raw data directly into Freenet
+	 */
+	public String putData(final String KSKName, byte[] data, final String privateKey, final String filename, final String mimetype, final boolean USK) {
+
+		final byte[] ndata = data;
+		final StringBuilder finalURI = new StringBuilder();
+		Random rand = new Random();
+		try {
+			final String identifier = nodeHello.getConnectionIdentifier() + rand.nextDouble();
+
+			new ExtendedAdapter() {
+
+				@Override
+				public void run() {
+
+					try {
+						String uri = "";
+						UploadFrom fromDirect = UploadFrom.direct;
+
+						if (privateKey != null && privateKey != "" && USK) {
+							uri = privateKey.replace("SSK@", "USK@") + filename + "/0";
+						} else if (privateKey != null && privateKey != "") {
+							uri = privateKey + filename;
+
+						} else if (KSKName != null && KSKName != "") {
+							uri = "KSK@" + KSKName;
+						} else {
+							uri = "CHK@";
+						}
+						ClientPut cp = new ClientPut(uri, identifier, fromDirect);
+						if (filename != null && filename != "") {
+							cp.setFilename(filename);
+						}
+						if (mimetype != null) {
+							cp.setMetadataContentType(mimetype);
+						}
+						if (USK) {
+							cp.setPriority(Priority.maximum);
+							cp.setField("RealTimeFlag", "true");
+
+						}
+						cp.setDataLength(ndata.length);
+						cp.setPayloadInputStream(new ByteArrayInputStream(ndata));
+						cp.setPersistence(Persistence.forever);
+						cp.setGlobal(false);
+
+						fcpConnection.sendMessage(cp);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+				/**
+				 * We know our Put was successfully started when we receive the ExpectedHashes message from the node.
+				 *
+				 * @param fcpConnection
+				 * @param fcpMessage
+				 */
+				@Override
+				public void receivedPutSuccessful(FcpConnection fcpConnection, PutSuccessful putSuccessful) {
+					if (putSuccessful.getIdentifier().equals(identifier)) {
+						finalURI.append(putSuccessful.getURI());
+						completionLatch.countDown();
+					}
+
+				}
+
+				@Override
+				public void receivedProtocolError(FcpConnection fcpConnection, ProtocolError protocolError) {
+
+					System.out.println(protocolError.getFields());
+					completionLatch.countDown();
+
+				}
+
+				@Override
+				public void receivedMessage(FcpConnection fcpConnection, FcpMessage fcpMessage) {
+					//System.out.println(fcpMessage.getFields());
+
+				}
+
+
+			}.execute();
+		}
+		catch (Exception e){
+			e.printStackTrace();;
+		}
+
+		return finalURI.toString();
+	}
+
 
 	/**
 	 * Returns the file with the given URI.
