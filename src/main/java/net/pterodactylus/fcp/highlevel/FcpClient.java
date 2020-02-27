@@ -301,7 +301,7 @@ public class FcpClient implements Closeable {
 			@SuppressWarnings("synthetic-access")
 			public void receivedNodeHello(FcpConnection fcpConnection, NodeHello nodeHello) {
 				FcpClient.this.nodeHello = nodeHello;
-				completionLatch.countDown();
+				complete();
 			}
 		}.execute();
 	}
@@ -367,11 +367,11 @@ public class FcpClient implements Closeable {
 						fcpConnection.sendMessage(clientGet);
 					} catch (IOException ioe1) {
 						getResult.success(false).exception(ioe1);
-						completionLatch.countDown();
+						complete();
 					}
 				} else {
 					getResult.success(false).errorCode(getFailed.getCode());
-					completionLatch.countDown();
+					complete();
 				}
 			}
 
@@ -381,7 +381,7 @@ public class FcpClient implements Closeable {
 					return;
 				}
 				getResult.success(true).contentType(allData.getContentType()).contentLength(allData.getDataLength()).inputStream(allData.getPayloadInputStream());
-				completionLatch.countDown();
+				complete();
 			}
 
 		}.execute();
@@ -473,7 +473,7 @@ public class FcpClient implements Closeable {
 			@Override
 			public void receivedEndListPeers(FcpConnection fcpConnection, EndListPeers endListPeers) {
 				if (endListPeers.getIdentifier().equals(identifier)) {
-					completionLatch.countDown();
+					complete();
 				}
 			}
 		}.execute();
@@ -640,7 +640,7 @@ public class FcpClient implements Closeable {
 			 */
 			@Override
 			public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
-				completionLatch.countDown();
+				complete();
 			}
 		}.execute();
 	}
@@ -683,7 +683,7 @@ public class FcpClient implements Closeable {
 			 */
 			@Override
 			public void receivedPeer(FcpConnection fcpConnection, Peer peer) {
-				completionLatch.countDown();
+				complete();
 			}
 		}.execute();
 	}
@@ -715,7 +715,7 @@ public class FcpClient implements Closeable {
 			 */
 			@Override
 			public void receivedPeerRemoved(FcpConnection fcpConnection, PeerRemoved peerRemoved) {
-				completionLatch.countDown();
+				complete();
 			}
 		}.execute();
 	}
@@ -763,7 +763,7 @@ public class FcpClient implements Closeable {
 			 */
 			@Override
 			public void receivedEndListPeerNotes(FcpConnection fcpConnection, EndListPeerNotes endListPeerNotes) {
-				completionLatch.countDown();
+				complete();
 			}
 		}.execute();
 		return objectWrapper.get();
@@ -802,7 +802,7 @@ public class FcpClient implements Closeable {
 			@Override
 			public void receivedPeer(FcpConnection fcpConnection, Peer receivedPeer) {
 				if (receivedPeer.getIdentity().equals(peer.getIdentity())) {
-					completionLatch.countDown();
+					complete();
 				}
 			}
 		}.execute();
@@ -840,7 +840,7 @@ public class FcpClient implements Closeable {
 			@Override
 			public void receivedSSKKeypair(FcpConnection fcpConnection, SSKKeypair sskKeypair) {
 				sskKeypairWrapper.set(sskKeypair);
-				completionLatch.countDown();
+				complete();
 			}
 		}.execute();
 		return sskKeypairWrapper.get();
@@ -1005,7 +1005,7 @@ public class FcpClient implements Closeable {
 			 */
 			@Override
 			public void receivedEndListPersistentRequests(FcpConnection fcpConnection, EndListPersistentRequests endListPersistentRequests) {
-				completionLatch.countDown();
+				complete();
 			}
 		}.execute();
 		return requests.values();
@@ -1078,7 +1078,7 @@ public class FcpClient implements Closeable {
 					return;
 				}
 				pluginReplies.putAll(fcpPluginReply.getReplies());
-				completionLatch.countDown();
+				complete();
 			}
 
 		}.execute();
@@ -1121,7 +1121,7 @@ public class FcpClient implements Closeable {
 			@Override
 			public void receivedNodeData(FcpConnection fcpConnection, NodeData nodeData) {
 				nodeDataWrapper.set(nodeData);
-				completionLatch.countDown();
+				complete();
 			}
 		}.execute();
 		return nodeDataWrapper.get();
@@ -1173,7 +1173,7 @@ public class FcpClient implements Closeable {
 	private abstract class ExtendedFcpAdapter extends FcpAdapter {
 
 		/** The count down latch used to wait for completion. */
-		protected final CountDownLatch completionLatch = new CountDownLatch(1);
+		private final CountDownLatch completionLatch = new CountDownLatch(1);
 
 		/** The FCP exception, if any. */
 		protected FcpException fcpException;
@@ -1227,6 +1227,13 @@ public class FcpClient implements Closeable {
 		 *             if an I/O error occurs
 		 */
 		public abstract void run() throws IOException;
+
+		/**
+		 * Signals completion of the command processing.
+		 */
+		protected void complete() {
+			completionLatch.countDown();
+		}
 
 		/**
 		 * {@inheritDoc}
