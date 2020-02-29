@@ -1304,7 +1304,7 @@ public class FcpClient implements Closeable {
 		 */
 		@Override
 		public void receivedProtocolError(FcpConnection fcpConnection, ProtocolError protocolError) {
-			fcpException = new FcpException("Protocol error (" + protocolError.getCode() + ", " + protocolError.getCodeDescription());
+			fcpException = FcpProtocolException.from(protocolError);
 			completionLatch.countDown();
 		}
 
