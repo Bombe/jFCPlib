@@ -18,6 +18,7 @@
 package net.pterodactylus.fcp.highlevel;
 
 import static com.google.common.collect.FluentIterable.from;
+import static java.util.stream.Collectors.toMap;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -40,6 +41,7 @@ import net.pterodactylus.fcp.AllData;
 import net.pterodactylus.fcp.ClientGet;
 import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
+import net.pterodactylus.fcp.ConfigData;
 import net.pterodactylus.fcp.DataFound;
 import net.pterodactylus.fcp.EndListPeerNotes;
 import net.pterodactylus.fcp.EndListPeers;
@@ -50,6 +52,7 @@ import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
 import net.pterodactylus.fcp.GenerateSSK;
+import net.pterodactylus.fcp.GetConfig;
 import net.pterodactylus.fcp.GetFailed;
 import net.pterodactylus.fcp.GetNode;
 import net.pterodactylus.fcp.ListPeerNotes;
@@ -1125,6 +1128,49 @@ public class FcpClient implements Closeable {
 			}
 		}.execute();
 		return nodeDataWrapper.get();
+	}
+
+	//
+	// CONFIG MANAGEMENT
+	//
+
+	public Map<String, String> getConfig() throws IOException, FcpException {
+		Map<String, String> results = new HashMap<>();
+		new ExtendedFcpAdapter() {
+			@Override
+			public void run() throws IOException {
+				GetConfig getConfig = new GetConfig(createIdentifier("get-config"));
+				getConfig.setWithCurrent(true);
+				getConfig.setWithDefaults(true);
+				getConfig.setWithShortDescription(true);
+				getConfig.setWithLongDescription(true);
+				getConfig.setWithDataTypes(true);
+				getConfig.setWithExpertFlag(true);
+				getConfig.setWithForceWriteFlag(true);
+				getConfig.setWithSortOrder(true);
+				fcpConnection.sendMessage(getConfig);
+			}
+
+			@Override
+			public void receivedConfigData(FcpConnection fcpConnection, ConfigData configData) {
+				results.putAll(filterByResponseType(configData, "current"));
+				results.putAll(filterByResponseType(configData, "default"));
+				results.putAll(filterByResponseType(configData, "shortDescription"));
+				results.putAll(filterByResponseType(configData, "longDescription"));
+				results.putAll(filterByResponseType(configData, "expertFlag"));
+				results.putAll(filterByResponseType(configData, "dataType"));
+				results.putAll(filterByResponseType(configData, "sortOrder"));
+				results.putAll(filterByResponseType(configData, "forceWriteFlag"));
+				complete();
+			}
+
+			private Map<String, String> filterByResponseType(ConfigData configData, String responseType) {
+				return configData.getFields().entrySet().stream()
+					.filter(e -> e.getKey().startsWith(responseType + "."))
+					.collect(toMap(Entry::getKey, Entry::getValue));
+			}
+		}.execute();
+		return results;
 	}
 
 	//
