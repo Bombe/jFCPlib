@@ -1261,7 +1261,10 @@ public class FcpClient implements Closeable {
 				fcpConnection.removeFcpListener(this);
 			}
 			if (fcpException != null) {
-				setDisconnected();
+				// FORGIVE ME: this should be a property of the exception, “close connection after this”
+				if (!(fcpException instanceof FcpProtocolException)) {
+					setDisconnected();
+				}
 				throw fcpException;
 			}
 		}
