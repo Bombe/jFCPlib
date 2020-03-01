@@ -59,6 +59,7 @@ import net.pterodactylus.fcp.GetNode;
 import net.pterodactylus.fcp.ListPeerNotes;
 import net.pterodactylus.fcp.ListPeers;
 import net.pterodactylus.fcp.ListPersistentRequests;
+import net.pterodactylus.fcp.ModifyConfig;
 import net.pterodactylus.fcp.ModifyPeer;
 import net.pterodactylus.fcp.ModifyPeerNote;
 import net.pterodactylus.fcp.NodeData;
@@ -1172,6 +1173,22 @@ public class FcpClient implements Closeable {
 			}
 		}.execute();
 		return results;
+	}
+
+	public void modifyConfig(Map<String, String> options) throws IOException, FcpException {
+		new ExtendedFcpAdapter() {
+			@Override
+			public void run() throws IOException {
+				ModifyConfig modifyConfig = new ModifyConfig();
+				options.forEach(modifyConfig::setOption);
+				sendMessage(modifyConfig);
+			}
+
+			@Override
+			public void receivedConfigData(FcpConnection fcpConnection, ConfigData configData) {
+				complete();
+			}
+		}.execute();
 	}
 
 	//
