@@ -51,6 +51,7 @@ import net.pterodactylus.fcp.FCPPluginReply;
 import net.pterodactylus.fcp.FcpAdapter;
 import net.pterodactylus.fcp.FcpConnection;
 import net.pterodactylus.fcp.FcpListener;
+import net.pterodactylus.fcp.FcpMessage;
 import net.pterodactylus.fcp.GenerateSSK;
 import net.pterodactylus.fcp.GetConfig;
 import net.pterodactylus.fcp.GetFailed;
@@ -292,9 +293,9 @@ public class FcpClient implements Closeable {
 			public void run() throws IOException {
 				fcpConnection.connect();
 				ClientHello clientHello = new ClientHello(name);
-				fcpConnection.sendMessage(clientHello);
+				sendMessage(clientHello);
 				WatchGlobal watchGlobal = new WatchGlobal(true);
-				fcpConnection.sendMessage(watchGlobal);
+				sendMessage(watchGlobal);
 			}
 
 			/**
@@ -352,7 +353,7 @@ public class FcpClient implements Closeable {
 			public void run() throws IOException {
 				ClientGet clientGet = new ClientGet(uri, identifier);
 				clientGet.setFilterData(filterData);
-				fcpConnection.sendMessage(clientGet);
+				sendMessage(clientGet);
 			}
 
 			@Override
@@ -457,7 +458,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(new ListPeers(identifier, withMetadata, withVolatile));
+				sendMessage(new ListPeers(identifier, withMetadata, withVolatile));
 			}
 
 			/**
@@ -635,7 +636,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(addPeer);
+				sendMessage(addPeer);
 			}
 
 			/**
@@ -678,7 +679,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(new ModifyPeer(peer.getIdentity(), allowLocalAddresses, disabled, listenOnly));
+				sendMessage(new ModifyPeer(peer.getIdentity(), allowLocalAddresses, disabled, listenOnly));
 			}
 
 			/**
@@ -710,7 +711,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(new RemovePeer(peer.getIdentity()));
+				sendMessage(new RemovePeer(peer.getIdentity()));
 			}
 
 			/**
@@ -748,7 +749,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(new ListPeerNotes(peer.getIdentity()));
+				sendMessage(new ListPeerNotes(peer.getIdentity()));
 			}
 
 			/**
@@ -796,7 +797,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(new ModifyPeerNote(peer.getIdentity(), noteText, noteType));
+				sendMessage(new ModifyPeerNote(peer.getIdentity(), noteText, noteType));
 			}
 
 			/**
@@ -834,7 +835,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(new GenerateSSK());
+				sendMessage(new GenerateSSK());
 			}
 
 			/**
@@ -920,7 +921,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				fcpConnection.sendMessage(new ListPersistentRequests());
+				sendMessage(new ListPersistentRequests());
 			}
 
 			/**
@@ -1069,7 +1070,7 @@ public class FcpClient implements Closeable {
 					fcpPluginMessage.setDataLength(dataLength);
 					fcpPluginMessage.setPayloadInputStream(dataInputStream);
 				}
-				fcpConnection.sendMessage(fcpPluginMessage);
+				sendMessage(fcpPluginMessage);
 			}
 
 			/**
@@ -1115,7 +1116,7 @@ public class FcpClient implements Closeable {
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
 				GetNode getNodeMessage = new GetNode(giveOpennetRef, withPrivate, withVolatile);
-				fcpConnection.sendMessage(getNodeMessage);
+				sendMessage(getNodeMessage);
 			}
 
 			/**
@@ -1148,7 +1149,7 @@ public class FcpClient implements Closeable {
 				getConfig.setWithExpertFlag(true);
 				getConfig.setWithForceWriteFlag(true);
 				getConfig.setWithSortOrder(true);
-				fcpConnection.sendMessage(getConfig);
+				sendMessage(getConfig);
 			}
 
 			@Override
@@ -1276,6 +1277,10 @@ public class FcpClient implements Closeable {
 		 *             if an I/O error occurs
 		 */
 		public abstract void run() throws IOException;
+
+		protected void sendMessage(FcpMessage fcpMessage) throws IOException {
+			fcpConnection.sendMessage(fcpMessage);
+		}
 
 		/**
 		 * Signals completion of the command processing.
