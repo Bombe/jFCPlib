@@ -33,7 +33,7 @@ public class PutRequest extends Request {
 	 *            The FCP message to wrap
 	 */
 	PutRequest(PersistentPut persistentPut) {
-		super(persistentPut.getIdentifier(), persistentPut.getClientToken(), persistentPut.isGlobal());
+		super(persistentPut.getIdentifier(), persistentPut.getURI(), persistentPut.getClientToken(), persistentPut.isGlobal());
 	}
 
 }

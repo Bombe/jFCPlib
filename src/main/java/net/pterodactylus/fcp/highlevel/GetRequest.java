@@ -33,7 +33,7 @@ public class GetRequest extends Request {
 	 *            The persistent Get request to wrap
 	 */
 	GetRequest(PersistentGet persistentGet) {
-		super(persistentGet.getIdentifier(), persistentGet.getClientToken(), persistentGet.isGlobal());
+		super(persistentGet.getIdentifier(), persistentGet.getURI(), persistentGet.getClientToken(), persistentGet.isGlobal());
 	}
 
 }

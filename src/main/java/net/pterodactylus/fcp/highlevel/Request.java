@@ -31,6 +31,9 @@ public abstract class Request {
 	/** The identifier of the request. */
 	private final String identifier;
 
+	/** The URI of the request. */
+	private final String uri;
+
 	/** The client token of the request. */
 	private final String clientToken;
 
@@ -78,14 +81,17 @@ public abstract class Request {
 	 *
 	 * @param identifier
 	 *            The identifier of the request
+	 * @param uri
+	 *            The URI of the request
 	 * @param clientToken
 	 *            The client token of the request
 	 * @param global
 	 *            <code>true</code> if the request is on the global queue,
 	 *            <code>false</code> otherwise
 	 */
-	protected Request(String identifier, String clientToken, boolean global) {
+	protected Request(String identifier, String uri, String clientToken, boolean global) {
 		this.identifier = identifier;
+		this.uri = uri;
 		this.clientToken = clientToken;
 		this.global = global;
 	}
@@ -97,6 +103,15 @@ public abstract class Request {
 	 */
 	public String getIdentifier() {
 		return identifier;
+	}
+
+	/**
+	 * Returns the URI of the request.
+	 *
+	 * @return The request’s URI
+	 */
+	public String getUri() {
+		return uri;
 	}
 
 	/**
