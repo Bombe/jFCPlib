@@ -43,6 +43,7 @@ import net.pterodactylus.fcp.ClientHello;
 import net.pterodactylus.fcp.CloseConnectionDuplicateClientName;
 import net.pterodactylus.fcp.ConfigData;
 import net.pterodactylus.fcp.DataFound;
+import net.pterodactylus.fcp.DefaultFcpConnection;
 import net.pterodactylus.fcp.EndListPeerNotes;
 import net.pterodactylus.fcp.EndListPeers;
 import net.pterodactylus.fcp.EndListPersistentRequests;
@@ -123,7 +124,7 @@ public class FcpClient implements Closeable {
 	 *             if the given hostname can not be resolved
 	 */
 	public FcpClient(String hostname) throws UnknownHostException {
-		this(hostname, FcpConnection.DEFAULT_PORT);
+		this(hostname, DefaultFcpConnection.DEFAULT_PORT);
 	}
 
 	/**
@@ -147,7 +148,7 @@ public class FcpClient implements Closeable {
 	 *            The host address of the Freenet node
 	 */
 	public FcpClient(InetAddress host) {
-		this(host, FcpConnection.DEFAULT_PORT);
+		this(host, DefaultFcpConnection.DEFAULT_PORT);
 	}
 
 	/**
@@ -159,7 +160,7 @@ public class FcpClient implements Closeable {
 	 *            The Freenet node’s FCP port
 	 */
 	public FcpClient(InetAddress host, int port) {
-		this(new FcpConnection(host, port), false);
+		this(new DefaultFcpConnection(host, port), false);
 	}
 
 	/**
