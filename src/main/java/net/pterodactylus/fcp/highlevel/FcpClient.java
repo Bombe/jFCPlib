@@ -583,7 +583,7 @@ public class FcpClient implements Closeable {
 	 *             if an FCP error occurs
 	 */
 	public void addPeer(NodeRef nodeRef) throws IOException, FcpException {
-		addPeer(new AddPeer(nodeRef));
+		addPeer(new AddPeer(null, null, nodeRef)); // FIXME – add parameters
 	}
 
 	/**
@@ -597,7 +597,7 @@ public class FcpClient implements Closeable {
 	 *             if an FCP error occurs
 	 */
 	public void addPeer(URL url) throws IOException, FcpException {
-		addPeer(new AddPeer(url));
+		addPeer(new AddPeer(null, null, url)); // FIXME – add parameters
 	}
 
 	/**
@@ -613,7 +613,7 @@ public class FcpClient implements Closeable {
 	 *             if an FCP error occurs
 	 */
 	public void addPeer(String file) throws IOException, FcpException {
-		addPeer(new AddPeer(file));
+		addPeer(new AddPeer(null, null, file)); // FIXME – add parameters
 	}
 
 	/**

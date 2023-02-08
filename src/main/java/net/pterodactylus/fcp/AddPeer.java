@@ -27,10 +27,22 @@ import java.net.URL;
 public class AddPeer extends FcpMessage {
 
 	/**
+	 * Represents the trust values for a peer.
+	 */
+	public enum Trust {LOW, NORMAL, HIGH}
+
+	/**
+	 * Represents the visibility values for a peer.
+	 */
+	public enum Visibility {NO, NAME_ONLY, YES}
+
+	/**
 	 * Creates a new “AddPeer” request.
 	 */
-	private AddPeer() {
+	private AddPeer(Trust trust, Visibility visibility) {
 		super("AddPeer");
+		setField("Trust", trust.name());
+		setField("Visibility", visibility.name());
 	}
 
 	/**
@@ -40,13 +52,13 @@ public class AddPeer extends FcpMessage {
 	 * @param file
 	 *            The file to read the noderef from
 	 */
-	public AddPeer(String file) {
-		this();
+	public AddPeer(Trust trust, Visibility visibility, String file) {
+		this(trust, visibility);
 		setField("File", file);
 	}
 
-	public AddPeer(String identifier, String file) {
-		this(file);
+	public AddPeer(Trust trust, Visibility visibility, String identifier, String file) {
+		this(trust, visibility, file);
 		setField("Identifier", identifier);
 	}
 
@@ -57,13 +69,13 @@ public class AddPeer extends FcpMessage {
 	 * @param url
 	 *            The URL to read the noderef from
 	 */
-	public AddPeer(URL url) {
-		this();
+	public AddPeer(Trust trust, Visibility visibility, URL url) {
+		this(trust, visibility);
 		setField("URL", String.valueOf(url));
 	}
 
-	public AddPeer(String identifier, URL url) {
-		this(url);
+	public AddPeer(Trust trust, Visibility visibility, String identifier, URL url) {
+		this(trust, visibility, url);
 		setField("Identifier", identifier);
 	}
 
@@ -73,13 +85,13 @@ public class AddPeer extends FcpMessage {
 	 * @param nodeRef
 	 *            The noderef of the peer
 	 */
-	public AddPeer(NodeRef nodeRef) {
-		this();
+	public AddPeer(Trust trust, Visibility visibility, NodeRef nodeRef) {
+		this(trust, visibility);
 		setNodeRef(nodeRef);
 	}
 
-	public AddPeer(String identifier, NodeRef nodeRef) {
-		this(nodeRef);
+	public AddPeer(Trust trust, Visibility visibility, String identifier, NodeRef nodeRef) {
+		this(trust, visibility, nodeRef);
 		setField("Identifier", identifier);
 	}
 
