@@ -33,7 +33,7 @@ import java.io.InputStream;
 public class AllData extends BaseMessage implements Identifiable {
 
 	/** The payload. */
-	private InputStream payloadInputStream;
+	private final InputStream payloadInputStream;
 
 	/**
 	 * Creates an “AllData” message that wraps the received message.
