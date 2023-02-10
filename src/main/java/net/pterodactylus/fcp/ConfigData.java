@@ -17,6 +17,8 @@
 
 package net.pterodactylus.fcp;
 
+import static java.lang.Boolean.parseBoolean;
+
 /**
  * A “ConfigData” message contains various aspects of the node’s configuration.
  *
@@ -110,7 +112,7 @@ public class ConfigData extends BaseMessage {
 	 * @return The expert flag of the option
 	 */
 	public boolean getExpertFlag(String option) {
-		return Boolean.valueOf(getField("expertFlag." + option));
+		return parseBoolean(getField("expertFlag." + option));
 	}
 
 	/**
@@ -121,7 +123,7 @@ public class ConfigData extends BaseMessage {
 	 * @return The force-write flag of the given option
 	 */
 	public boolean getForceWriteFlag(String option) {
-		return Boolean.valueOf(getField("forceWriteFlag." + option));
+		return parseBoolean(getField("forceWriteFlag." + option));
 	}
 
 }
