@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.pterodactylus.fcp.FcpUtils.TempInputStream;
+import net.pterodactylus.fcp.io.TempInputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 

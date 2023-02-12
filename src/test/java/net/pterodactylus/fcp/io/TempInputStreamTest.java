@@ -1,4 +1,4 @@
-package net.pterodactylus.fcp;
+package net.pterodactylus.fcp.io;
 
 import org.junit.Test;
 
@@ -6,6 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+
+import net.pterodactylus.fcp.io.TempInputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -25,7 +27,7 @@ public class TempInputStreamTest {
 	private void checkTempInputStreamStoresPartOfAnotherStream(int length, int maxMemoryLength) throws IOException {
 		byte[] originalData = prepareArrayOfNBytes(length + 1);
 		InputStream anotherStream = new ByteArrayInputStream(originalData);
-		FcpUtils.TempInputStream cut = new FcpUtils.TempInputStream(anotherStream, length, maxMemoryLength);
+		TempInputStream cut = new TempInputStream(anotherStream, length, maxMemoryLength);
 
 		// check length bytes are read from anotherStream and are accessible from cut
 		byte[] buffer = new byte[length];
