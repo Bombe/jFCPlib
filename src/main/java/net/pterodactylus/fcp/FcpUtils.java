@@ -17,19 +17,19 @@
 
 package net.pterodactylus.fcp;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static java.lang.String.format;
+import static java.lang.String.join;
+import static java.lang.System.currentTimeMillis;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Helper class with utility methods for the FCP protocol.
@@ -47,7 +47,7 @@ public class FcpUtils {
 	 * @return A unique identifier
 	 */
 	public static String getUniqueIdentifier() {
-		return new StringBuilder().append(System.currentTimeMillis()).append('-').append(counter.getAndIncrement()).toString();
+		return format("%d-%d", currentTimeMillis(), counter.getAndIncrement());
 	}
 
 	/**
@@ -60,14 +60,7 @@ public class FcpUtils {
 	 *             if a value can not be converted to a number
 	 */
 	public static int[] decodeMultiIntegerField(String field) throws NumberFormatException {
-		StringTokenizer fieldTokens = new StringTokenizer(field, ";");
-		int[] result = new int[fieldTokens.countTokens()];
-		int counter = 0;
-		while (fieldTokens.hasMoreTokens()) {
-			String fieldToken = fieldTokens.nextToken();
-			result[counter++] = Integer.valueOf(fieldToken);
-		}
-		return result;
+		return stream(field.split(";")).mapToInt(Integer::parseInt).toArray();
 	}
 
 	/**
@@ -79,14 +72,7 @@ public class FcpUtils {
 	 * @return The encoded values
 	 */
 	public static String encodeMultiIntegerField(int[] values) {
-		StringBuilder encodedField = new StringBuilder();
-		for (int value : values) {
-			if (encodedField.length() > 0) {
-				encodedField.append(';');
-			}
-			encodedField.append(value);
-		}
-		return encodedField.toString();
+		return stream(values).mapToObj(String::valueOf).collect(joining(";"));
 	}
 
 	/**
@@ -98,14 +84,7 @@ public class FcpUtils {
 	 * @return The encoded values
 	 */
 	public static String encodeMultiStringField(String[] values) {
-		StringBuilder encodedField = new StringBuilder();
-		for (String value : values) {
-			if (encodedField.length() > 0) {
-				encodedField.append(';');
-			}
-			encodedField.append(value);
-		}
-		return encodedField.toString();
+		return join(";", values);
 	}
 
 	/**
@@ -132,7 +111,7 @@ public class FcpUtils {
 	 */
 	public static int safeParseInt(String value, int defaultValue) {
 		try {
-			return Integer.valueOf(value);
+			return Integer.parseInt(value);
 		} catch (NumberFormatException nfe1) {
 			return defaultValue;
 		}
@@ -162,7 +141,7 @@ public class FcpUtils {
 	 */
 	public static long safeParseLong(String value, long defaultValue) {
 		try {
-			return Integer.valueOf(value);
+			return Long.parseLong(value);
 		} catch (NumberFormatException nfe1) {
 			return defaultValue;
 		}
