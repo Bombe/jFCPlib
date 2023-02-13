@@ -22,90 +22,77 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.pterodactylus.fcp.UploadFrom.direct;
+import static net.pterodactylus.fcp.UploadFrom.disk;
+import static net.pterodactylus.fcp.UploadFrom.redirect;
+
 /**
  * Container class for file entry data.
  *
- * @see ClientPutComplexDir#addFileEntry(FileEntry)
  * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
+ * @see ClientPutComplexDir#addFileEntry(FileEntry)
  */
-public abstract class FileEntry {
-
-	/** The name of the file. */
-	protected final String name;
-
-	/** The upload source of the file. */
-	protected final UploadFrom uploadFrom;
-
-	/**
-	 * Creates a new file entry with the given name and upload source.
-	 *
-	 * @param name
-	 *            The name of the file
-	 * @param uploadFrom
-	 *            The upload source of the file
-	 */
-	protected FileEntry(String name, UploadFrom uploadFrom) {
-		this.name = name;
-		this.uploadFrom = uploadFrom;
-	}
+public class FileEntry {
 
 	/**
 	 * Creates a new file entry for a file that should be transmitted to the
 	 * node in the payload of the message.
 	 *
-	 * @param name
-	 *            The name of the file
-	 * @param contentType
-	 *            The content type of the file, or <code>null</code> to let the
-	 *            node auto-detect it
-	 * @param length
-	 *            The length of the file
-	 * @param dataInputStream
-	 *            The input stream of the file
+	 * @param name            The name of the file
+	 * @param contentType     The content type of the file, or <code>null</code> to let the
+	 *                        node auto-detect it
+	 * @param length          The length of the file
+	 * @param dataInputStream The input stream of the file
 	 * @return A file entry
 	 */
 	public static FileEntry createDirectFileEntry(String name, String contentType, long length, InputStream dataInputStream) {
-		return new DirectFileEntry(name, contentType, length, dataInputStream);
+		FileEntry directFileEntry = new FileEntry(name, direct) {
+			@Override
+			public InputStream getInputStream() {
+				return dataInputStream;
+			}
+		};
+		directFileEntry.fields.put("DataLength", String.valueOf(length));
+		if (contentType != null) {
+			directFileEntry.fields.put("Metadata.ContentType", contentType);
+		}
+		return directFileEntry;
 	}
 
 	/**
 	 * Creates a new file entry for a file that should be uploaded from disk.
 	 *
-	 * @param name
-	 *            The name of the file
-	 * @param filename
-	 *            The name of the file on disk
-	 * @param contentType
-	 *            The content type of the file, or <code>null</code> to let the
-	 *            node auto-detect it
-	 * @param length
-	 *            The length of the file, or <code>-1</code> to not specify a
-	 *            size
+	 * @param name        The name of the file
+	 * @param filename    The name of the file on disk
+	 * @param contentType The content type of the file, or <code>null</code> to let the
+	 *                    node auto-detect it
 	 * @return A file entry
 	 */
-	public static FileEntry createDiskFileEntry(String name, String filename, String contentType, long length) {
-		return new DiskFileEntry(name, filename, contentType, length);
+	public static FileEntry createDiskFileEntry(String name, String filename, String contentType) {
+		FileEntry fileEntry = new FileEntry(name, disk);
+		fileEntry.fields.put("Filename", filename);
+		if (contentType != null) {
+			fileEntry.fields.put("Metadata.ContentType", contentType);
+		}
+		return fileEntry;
 	}
 
 	/**
 	 * Creates a new file entry for a file that redirects to another URI.
 	 *
-	 * @param name
-	 *            The name of the file
-	 * @param targetURI
-	 *            The target URI of the redirect
+	 * @param name      The name of the file
+	 * @param targetURI The target URI of the redirect
 	 * @return A file entry
 	 */
 	public static FileEntry createRedirectFileEntry(String name, String targetURI) {
-		return new RedirectFileEntry(name, targetURI);
+		FileEntry fileEntry = new FileEntry(name, redirect);
+		fileEntry.fields.put("TargetURI", targetURI);
+		return fileEntry;
 	}
 
-	/**
-	 * Returns the fields for this file entry.
-	 *
-	 * @return The fields for this file entry
-	 */
-	protected abstract Map<String, String> getFields();
+	public Map<String, String> getFields() {
+		return fields;
+	}
 
 	/**
 	 * Returns an {@link InputStream} delivering the content of this file. If
@@ -120,188 +107,16 @@ public abstract class FileEntry {
 	}
 
 	/**
-	 * A file entry for a file that should be transmitted in the payload of the
-	 * {@link ClientPutComplexDir} message.
+	 * Creates a new file entry with the given name and upload source.
 	 *
-	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
+	 * @param name       The name of the file
+	 * @param uploadFrom The upload source of the file
 	 */
-	static class DirectFileEntry extends FileEntry {
-
-		/** The content type of the data. */
-		private final String contentType;
-
-		/** The length of the data. */
-		private final long length;
-
-		/** The input stream of the data. */
-		private final InputStream inputStream;
-
-		/**
-		 * Creates a new direct file entry with content type auto-detection.
-		 *
-		 * @param name
-		 *            The name of the file
-		 * @param length
-		 *            The length of the file
-		 * @param inputStream
-		 *            The input stream of the file
-		 */
-		public DirectFileEntry(String name, long length, InputStream inputStream) {
-			this(name, null, length, inputStream);
-		}
-
-		/**
-		 * Creates a new direct file entry.
-		 *
-		 * @param name
-		 *            The name of the file
-		 * @param contentType
-		 *            The content type of the file, or <code>null</code> to let
-		 *            the node auto-detect it
-		 * @param length
-		 *            The length of the file
-		 * @param inputStream
-		 *            The input stream of the file
-		 */
-		public DirectFileEntry(String name, String contentType, long length, InputStream inputStream) {
-			super(name, UploadFrom.direct);
-			this.contentType = contentType;
-			this.length = length;
-			this.inputStream = inputStream;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		protected Map<String, String> getFields() {
-			Map<String, String> fields = new HashMap<String, String>();
-			fields.put("Name", name);
-			fields.put("UploadFrom", String.valueOf(uploadFrom));
-			fields.put("DataLength", String.valueOf(length));
-			if (contentType != null) {
-				fields.put("Metadata.ContentType", contentType);
-			}
-			return fields;
-		}
-
-		/**
-		 * Returns the input stream of the file.
-		 *
-		 * @return The input stream of the file
-		 */
-		@Override
-		public InputStream getInputStream() {
-			return inputStream;
-		}
-
+	private FileEntry(String name, UploadFrom uploadFrom) {
+		fields.put("Name", name);
+		fields.put("UploadFrom", String.valueOf(uploadFrom));
 	}
 
-	/**
-	 * A file entry for a file that should be uploaded from the disk.
-	 *
-	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
-	 */
-	static class DiskFileEntry extends FileEntry {
-
-		/** The name of the on-disk file. */
-		private final String filename;
-
-		/** The content type of the file. */
-		private final String contentType;
-
-		/** The length of the file. */
-		private final long length;
-
-		/**
-		 * Creates a new disk file entry.
-		 *
-		 * @param name
-		 *            The name of the file
-		 * @param filename
-		 *            The name of the on-disk file
-		 * @param length
-		 *            The length of the file
-		 */
-		public DiskFileEntry(String name, String filename, long length) {
-			this(name, filename, null, length);
-		}
-
-		/**
-		 * Creates a new disk file entry.
-		 *
-		 * @param name
-		 *            The name of the file
-		 * @param filename
-		 *            The name of the on-disk file
-		 * @param contentType
-		 *            The content type of the file, or <code>null</code> to let
-		 *            the node auto-detect it
-		 * @param length
-		 *            The length of the file
-		 */
-		public DiskFileEntry(String name, String filename, String contentType, long length) {
-			super(name, UploadFrom.disk);
-			this.filename = filename;
-			this.contentType = contentType;
-			this.length = length;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		protected Map<String, String> getFields() {
-			Map<String, String> fields = new HashMap<String, String>();
-			fields.put("Name", name);
-			fields.put("UploadFrom", String.valueOf(uploadFrom));
-			fields.put("Filename", filename);
-			if (length > -1) {
-				fields.put("DataSize", String.valueOf(length));
-			}
-			if (contentType != null) {
-				fields.put("Metadata.ContentType", contentType);
-			}
-			return fields;
-		}
-
-	}
-
-	/**
-	 * A file entry for a file that redirects to another URI.
-	 *
-	 * @author David ‘Bombe’ Roden &lt;bombe@freenetproject.org&gt;
-	 */
-	static class RedirectFileEntry extends FileEntry {
-
-		/** The target URI of the redirect. */
-		private String targetURI;
-
-		/**
-		 * Creates a new redirect file entry.
-		 *
-		 * @param name
-		 *            The name of the file
-		 * @param targetURI
-		 *            The target URI of the redirect
-		 */
-		public RedirectFileEntry(String name, String targetURI) {
-			super(name, UploadFrom.redirect);
-			this.targetURI = targetURI;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		protected Map<String, String> getFields() {
-			Map<String, String> fields = new HashMap<String, String>();
-			fields.put("Name", name);
-			fields.put("UploadFrom", String.valueOf(uploadFrom));
-			fields.put("TargetURI", targetURI);
-			return fields;
-		}
-
-	}
+	private final Map<String, String> fields = new HashMap<>();
 
 }

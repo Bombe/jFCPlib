@@ -134,7 +134,7 @@ public class ClientPutComplexDirTest {
 
 	@Test
 	public void diskFileEntryIsAddedCorrectly() {
-		clientPutComplexDir.addFileEntry(FileEntry.createDiskFileEntry("file1.dat", "/file/name", "text/plain1", 10));
+		clientPutComplexDir.addFileEntry(FileEntry.createDiskFileEntry("file1.dat", "/file/name", "text/plain1"));
 		assertThat(clientPutComplexDir, isDataMessage("ClientPutComplexDir", allOf(
 				hasItem("Files.0.Name=file1.dat"),
 				hasItem("Files.0.UploadFrom=disk"),

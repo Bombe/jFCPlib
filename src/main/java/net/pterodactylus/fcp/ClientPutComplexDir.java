@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.pterodactylus.fcp.FileEntry.DirectFileEntry;
-
 /**
  * The “ClientPutComplexDir” lets you upload a directory with different sources
  * for each file.
@@ -39,8 +37,8 @@ public class ClientPutComplexDir extends FcpMessage {
 	/** The index for added file entries. */
 	private int fileIndex = 0;
 
-	/** The input streams from {@link DirectFileEntry}s. */
-	private final List<InputStream> directFileInputStreams = new ArrayList<InputStream>();
+	/** The input streams from {@link FileEntry}s. */
+	private final List<InputStream> directFileInputStreams = new ArrayList<>();
 
 	/**
 	 * Creates a new “ClientPutComplexDir” with the given identifier and URI.
