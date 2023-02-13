@@ -24,8 +24,6 @@ import java.io.SequenceInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import net.pterodactylus.fcp.FileEntry.DirectFileEntry;
 
@@ -214,14 +212,9 @@ public class ClientPutComplexDir extends FcpMessage {
 	 *            The file entry to add
 	 */
 	public void addFileEntry(FileEntry fileEntry) {
-		Map<String, String> fields = fileEntry.getFields();
-		for (Entry<String, String> fieldEntry : fields.entrySet()) {
-			setField("Files." + fileIndex + "." + fieldEntry.getKey(), fieldEntry.getValue());
-		}
+		fileEntry.getFields().forEach((key, value) -> setField("Files." + fileIndex + "." + key, value));
+		directFileInputStreams.add(fileEntry.getInputStream());
 		fileIndex++;
-		if (fileEntry instanceof FileEntry.DirectFileEntry) {
-			directFileInputStreams.add(((DirectFileEntry) fileEntry).getInputStream());
-		}
 	}
 
 	/**

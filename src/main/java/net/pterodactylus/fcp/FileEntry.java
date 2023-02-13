@@ -17,6 +17,7 @@
 
 package net.pterodactylus.fcp;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -104,7 +105,19 @@ public abstract class FileEntry {
 	 *
 	 * @return The fields for this file entry
 	 */
-	abstract Map<String, String> getFields();
+	protected abstract Map<String, String> getFields();
+
+	/**
+	 * Returns an {@link InputStream} delivering the content of this file. If
+	 * this file entry is not of type {@link UploadFrom#direct}, the input
+	 * stream returned by this method is empty.
+	 *
+	 * @return An {@link InputStream} delivering the content of a
+	 * {@link UploadFrom#direct} file entry, or an empty input stream
+	 */
+	public InputStream getInputStream() {
+		return new ByteArrayInputStream(new byte[0]);
+	}
 
 	/**
 	 * A file entry for a file that should be transmitted in the payload of the
@@ -161,7 +174,7 @@ public abstract class FileEntry {
 		 * {@inheritDoc}
 		 */
 		@Override
-		Map<String, String> getFields() {
+		protected Map<String, String> getFields() {
 			Map<String, String> fields = new HashMap<String, String>();
 			fields.put("Name", name);
 			fields.put("UploadFrom", String.valueOf(uploadFrom));
@@ -177,7 +190,8 @@ public abstract class FileEntry {
 		 *
 		 * @return The input stream of the file
 		 */
-		InputStream getInputStream() {
+		@Override
+		public InputStream getInputStream() {
 			return inputStream;
 		}
 
@@ -237,7 +251,7 @@ public abstract class FileEntry {
 		 * {@inheritDoc}
 		 */
 		@Override
-		Map<String, String> getFields() {
+		protected Map<String, String> getFields() {
 			Map<String, String> fields = new HashMap<String, String>();
 			fields.put("Name", name);
 			fields.put("UploadFrom", String.valueOf(uploadFrom));
@@ -280,7 +294,7 @@ public abstract class FileEntry {
 		 * {@inheritDoc}
 		 */
 		@Override
-		Map<String, String> getFields() {
+		protected Map<String, String> getFields() {
 			Map<String, String> fields = new HashMap<String, String>();
 			fields.put("Name", name);
 			fields.put("UploadFrom", String.valueOf(uploadFrom));
