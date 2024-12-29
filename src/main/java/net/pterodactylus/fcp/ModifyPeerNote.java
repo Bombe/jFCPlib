@@ -17,7 +17,7 @@
 
 package net.pterodactylus.fcp;
 
-import com.google.common.base.Charsets;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * The “ModifyPeerNote” command modifies a peer note.
@@ -43,7 +43,7 @@ public class ModifyPeerNote extends FcpMessage {
 	}
 
 	public void setNoteText(String noteText) {
-		setField("NoteText", BASE64_ENCODER.encode(noteText.getBytes(Charsets.UTF_8)));
+		setField("NoteText", BASE64_ENCODER.encode(noteText.getBytes(UTF_8)));
 	}
 
 	public void setPeerNoteType(PeerNoteType peerNoteType) {

@@ -3,9 +3,6 @@ package net.pterodactylus.fcp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import com.google.common.io.ByteStreams;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

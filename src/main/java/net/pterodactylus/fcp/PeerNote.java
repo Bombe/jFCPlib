@@ -17,7 +17,7 @@
 
 package net.pterodactylus.fcp;
 
-import com.google.common.base.Charsets;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * The “PeerNote” message contains a private note that has been entered for a
@@ -57,7 +57,7 @@ public class PeerNote extends BaseMessage {
 	 * @return The note text
 	 */
 	public String getNoteText() {
-		return new String(BASE64_DECODER.decode(getField("NoteText")), Charsets.UTF_8);
+		return new String(BASE64_DECODER.decode(getField("NoteText")), UTF_8);
 	}
 
 	/**
