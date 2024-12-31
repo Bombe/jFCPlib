@@ -36,14 +36,13 @@ public class GenerateSSK extends FcpMessage {
 	}
 
 	/**
-	 * Creates a new “GenerateSSK” message with the given client identifier.
+	 * Creates a new “GenerateSSK” message with the given identifier.
 	 *
-	 * @param clientIdentifier
-	 *            The client identifier
+	 * @param identifier The identifier
 	 */
-	public GenerateSSK(String clientIdentifier) {
+	public GenerateSSK(String identifier) {
 		super("GenerateSSK");
-		setField("Identifier", clientIdentifier);
+		setField("Identifier", identifier);
 	}
 
 }
