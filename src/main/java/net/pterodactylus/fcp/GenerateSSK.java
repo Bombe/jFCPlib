@@ -27,7 +27,10 @@ public class GenerateSSK extends FcpMessage {
 
 	/**
 	 * Creates a new “GenerateSSK” message.
+	 *
+	 * @deprecated Use {@link #GenerateSSK(String)} instead
 	 */
+	@Deprecated
 	public GenerateSSK() {
 		this(FcpUtils.getUniqueIdentifier());
 	}
