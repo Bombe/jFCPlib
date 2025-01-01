@@ -25,6 +25,10 @@ package net.pterodactylus.fcp;
  */
 public class GetPluginInfo extends FcpMessage {
 
+	/**
+	 * @deprecated Use {@link #GetPluginInfo(String, String)} instead.
+	 */
+	@Deprecated
 	public GetPluginInfo(String identifier) {
 		super("GetPluginInfo");
 		setField("Identifier", identifier);
@@ -35,6 +39,10 @@ public class GetPluginInfo extends FcpMessage {
 		setField("PluginName", pluginName);
 	}
 
+	/**
+	 * Use {@link #GetPluginInfo(String, String)} instead.
+	 */
+	@Deprecated
 	public void setPluginName(String pluginName) {
 		setField("PluginName", pluginName);
 	}
