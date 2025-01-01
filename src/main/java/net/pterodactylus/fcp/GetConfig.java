@@ -27,14 +27,19 @@ public class GetConfig extends FcpMessage {
 
 	/**
 	 * Creates a new “GetConfig” command.
+	 *
+	 * @deprecated Use {@link #GetConfig(String)} instead
 	 */
+	@Deprecated
 	public GetConfig() {
-		super("GetConfig");
+		this(null);
 	}
 
 	public GetConfig(String identifer) {
-		this();
-		setField("Identifier", identifer);
+		super("GetConfig");
+		if (identifer != null) {
+			setField("Identifier", identifer);
+		}
 	}
 
 	/**
