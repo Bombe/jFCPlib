@@ -35,10 +35,10 @@ public class GetConfig extends FcpMessage {
 		this(null);
 	}
 
-	public GetConfig(String identifer) {
+	public GetConfig(String identifier) {
 		super("GetConfig");
-		if (identifer != null) {
-			setField("Identifier", identifer);
+		if (identifier != null) {
+			setField("Identifier", identifier);
 		}
 	}
 
