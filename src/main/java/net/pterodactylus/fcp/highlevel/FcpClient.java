@@ -884,7 +884,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				sendMessage(new GenerateSSK());
+				sendMessage(new GenerateSSK(createIdentifier("generate-ssk")));
 			}
 
 			/**
