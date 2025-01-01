@@ -24,7 +24,6 @@ pipeline {
             post {
                 always {
                     junit 'target/surefire-reports/*.xml'
-                    jacoco classPattern: 'target/classes/*/main', sourcePattern: '**/src/main/'
                     recordCoverage(tools: [[parser: 'JACOCO', pattern: '**/jacoco.xml']])
                 }
             }
