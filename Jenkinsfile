@@ -35,6 +35,7 @@ pipeline {
             steps {
                 sh './mvnw -DskipTests=true package'
                 archiveArtifacts artifacts: 'target/jFCPlib-*.jar', fingerprint: true
+                javadoc javadocDir: 'target/apidocs', keepAll: true
             }
         }
         stage('Compatibility (Java 17)') {
