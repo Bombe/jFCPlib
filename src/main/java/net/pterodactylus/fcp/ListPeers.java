@@ -32,7 +32,8 @@ public class ListPeers extends FcpMessage {
 	 *            The identifier of the request
 	 */
 	public ListPeers(String identifier) {
-		this(identifier, false, false);
+		super("ListPeers");
+		setField("Identifier", identifier);
 	}
 
 	/**
@@ -47,11 +48,22 @@ public class ListPeers extends FcpMessage {
 	 * @param withVolatile
 	 *            if <code>true</code> volatile data of the peers is included
 	 *            in the reply
+	 * @deprecated Use {@link #ListPeers(String)},
+	 * {@link #setWithMetadata(boolean)},
+	 * and {@link #setWithVolatile(boolean)} instead.
 	 */
+	@Deprecated
 	public ListPeers(String identifier, boolean withMetadata, boolean withVolatile) {
-		super("ListPeers");
-		setField("Identifier", identifier);
+		this(identifier);
 		setField("WithMetadata", String.valueOf(withMetadata));
+		setField("WithVolatile", String.valueOf(withVolatile));
+	}
+
+	public void setWithMetadata(boolean withMetadata) {
+		setField("WithMetadata", String.valueOf(withMetadata));
+	}
+
+	public void setWithVolatile(boolean withVolatile) {
 		setField("WithVolatile", String.valueOf(withVolatile));
 	}
 

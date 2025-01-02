@@ -463,7 +463,10 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				sendMessage(new ListPeers(identifier, withMetadata, withVolatile));
+				ListPeers listPeers = new ListPeers(identifier);
+				listPeers.setWithMetadata(withMetadata);
+				listPeers.setWithVolatile(withVolatile);
+				sendMessage(listPeers);
 			}
 
 			/**
