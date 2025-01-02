@@ -29,14 +29,22 @@ public class ListPeerNotes extends FcpMessage {
 	 * Creates a new “ListPeerNotes” request that lists all notes of the
 	 * specified node.
 	 *
-	 * @param nodeIdentifier
-	 *            The identifier of the node
+	 * @param nodeIdentifier The identifier of the node
+	 * @deprecated Use {@link #ListPeerNotes(String, String)} instead.
 	 */
+	@Deprecated
 	public ListPeerNotes(String nodeIdentifier) {
 		super("ListPeerNotes");
 		setField("NodeIdentifier", nodeIdentifier);
 	}
 
+	/**
+	 * Creates a new “ListPeerNotes” request that lists all notes of the
+	 * specified node.
+	 *
+	 * @param identifier The identifier for the replies
+	 * @param nodeIdentifier The identifier of the node
+	 */
 	public ListPeerNotes(String identifier, String nodeIdentifier) {
 		this(nodeIdentifier);
 		setField("Identifier", identifier);

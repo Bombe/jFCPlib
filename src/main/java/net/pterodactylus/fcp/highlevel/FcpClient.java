@@ -777,7 +777,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				sendMessage(new ListPeerNotes(peer.getIdentity()));
+				sendMessage(new ListPeerNotes(createIdentifier("list-peer-notes"), peer.getIdentity()));
 			}
 
 			/**
