@@ -32,7 +32,9 @@ public class ListPeer extends FcpMessage {
 	 *
 	 * @param nodeIdentifier
 	 *            The identifier of the node to get details about
+	 * @deprecated Use {@link #ListPeer(String, String)} instead
 	 */
+	@Deprecated
 	public ListPeer(String nodeIdentifier) {
 		this(null, nodeIdentifier);
 	}
