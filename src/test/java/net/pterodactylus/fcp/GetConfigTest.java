@@ -2,11 +2,7 @@ package net.pterodactylus.fcp;
 
 import org.junit.Test;
 
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
+import static net.pterodactylus.fcp.test.MessageTests.verifyFieldValueAfterSettingFlag;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
@@ -42,12 +38,12 @@ public class GetConfigTest {
 
 	@Test
 	public void settingWithCurrentToTrueResultsInFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithCurrent, "WithCurrent", true);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithCurrent, "WithCurrent", true);
 	}
 
 	@Test
 	public void settingWithCurrentToFalseResultsInFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithCurrent, "WithCurrent", false);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithCurrent, "WithCurrent", false);
 	}
 
 	@Test
@@ -57,12 +53,12 @@ public class GetConfigTest {
 
 	@Test
 	public void settingWithDefaultsToTrueResultsInFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithDefaults, "WithDefaults", true);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithDefaults, "WithDefaults", true);
 	}
 
 	@Test
 	public void settingWithDefaultsToFalseResultsInFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithDefaults, "WithDefaults", false);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithDefaults, "WithDefaults", false);
 	}
 
 	@Test
@@ -72,12 +68,12 @@ public class GetConfigTest {
 
 	@Test
 	public void settingWithSortOrderToTrueResultsInFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithSortOrder, "WithSortOrder", true);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithSortOrder, "WithSortOrder", true);
 	}
 
 	@Test
 	public void settingWithSortOrderToFalseResultsInFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithSortOrder, "WithSortOrder", false);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithSortOrder, "WithSortOrder", false);
 	}
 
 	@Test
@@ -87,12 +83,12 @@ public class GetConfigTest {
 
 	@Test
 	public void settingWithExpertFlagToTrueResultsInFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithExpertFlag, "WithExpertFlag", true);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithExpertFlag, "WithExpertFlag", true);
 	}
 
 	@Test
 	public void settingWithExpertFlagToFalseResultsInFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithExpertFlag, "WithExpertFlag", false);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithExpertFlag, "WithExpertFlag", false);
 	}
 
 	@Test
@@ -102,12 +98,12 @@ public class GetConfigTest {
 
 	@Test
 	public void settingWithForceWriteFlagToTrueResultsInFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithForceWriteFlag, "WithForceWriteFlag", true);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithForceWriteFlag, "WithForceWriteFlag", true);
 	}
 
 	@Test
 	public void settingWithForceWriteFlagToFalseResultsInFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithForceWriteFlag, "WithForceWriteFlag", false);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithForceWriteFlag, "WithForceWriteFlag", false);
 	}
 
 	@Test
@@ -117,12 +113,12 @@ public class GetConfigTest {
 
 	@Test
 	public void settingWithShortDescriptionToTrueResultsInFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithShortDescription, "WithShortDescription", true);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithShortDescription, "WithShortDescription", true);
 	}
 
 	@Test
 	public void settingWithShortDescriptionToFalseResultsInFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithShortDescription, "WithShortDescription", false);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithShortDescription, "WithShortDescription", false);
 	}
 
 	@Test
@@ -132,12 +128,12 @@ public class GetConfigTest {
 
 	@Test
 	public void settingWithLongDescriptionToTrueResultsInFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithLongDescription, "WithLongDescription", true);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithLongDescription, "WithLongDescription", true);
 	}
 
 	@Test
 	public void settingWithLongDescriptionToFalseResultsInFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithLongDescription, "WithLongDescription", false);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithLongDescription, "WithLongDescription", false);
 	}
 
 	@Test
@@ -147,17 +143,12 @@ public class GetConfigTest {
 
 	@Test
 	public void settingWithDataTypesToTrueResultsInFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithDataTypes, "WithDataTypes", true);
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithDataTypes, "WithDataTypes", true);
 	}
 
 	@Test
 	public void settingWithDataTypesToFalseResultsInFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(GetConfig::setWithDataTypes, "WithDataTypes", false);
-	}
-
-	private void verifyFieldValueAfterSettingFlag(BiConsumer<GetConfig, Boolean> setter, String fieldName, boolean flag) {
-		setter.accept(getConfig, flag);
-		assertThat(getConfig.getField(fieldName), equalTo(String.valueOf(flag)));
+		verifyFieldValueAfterSettingFlag(getConfig, GetConfig::setWithDataTypes, "WithDataTypes", false);
 	}
 
 	private final GetConfig getConfig = new GetConfig();

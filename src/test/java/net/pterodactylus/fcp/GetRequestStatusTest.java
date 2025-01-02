@@ -21,12 +21,12 @@ public class GetRequestStatusTest {
 
 	@Test
 	public void getRequestStatusWithGlobalSetToTrueResultsInGlobalFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(getRequestStatus, GetRequestStatus::setGlobal, m -> m.getField("Global"), true);
+		verifyFieldValueAfterSettingFlag(getRequestStatus, GetRequestStatus::setGlobal, "Global", true);
 	}
 
 	@Test
 	public void getRequestStatusWithGlobalSetToFalseResultsInGlobalFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(getRequestStatus, GetRequestStatus::setGlobal, m -> m.getField("Global"), false);
+		verifyFieldValueAfterSettingFlag(getRequestStatus, GetRequestStatus::setGlobal, "Global", false);
 	}
 
 	@Test
@@ -36,12 +36,12 @@ public class GetRequestStatusTest {
 
 	@Test
 	public void getRequestStatusWithOnlyDataSetToTrueResultsInOnlyDataFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(getRequestStatus, GetRequestStatus::setOnlyData, m -> m.getField("OnlyData"), true);
+		verifyFieldValueAfterSettingFlag(getRequestStatus, GetRequestStatus::setOnlyData, "OnlyData", true);
 	}
 
 	@Test
 	public void getRequestStatusWithOnlyDataSetToFalseResultsInOnlyDataFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(getRequestStatus, GetRequestStatus::setOnlyData, m -> m.getField("OnlyData"), false);
+		verifyFieldValueAfterSettingFlag(getRequestStatus, GetRequestStatus::setOnlyData, "OnlyData", false);
 	}
 
 	private final GetRequestStatus getRequestStatus = new GetRequestStatus("test-identifier");

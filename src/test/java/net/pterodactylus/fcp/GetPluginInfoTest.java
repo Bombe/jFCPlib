@@ -2,10 +2,7 @@ package net.pterodactylus.fcp;
 
 import org.junit.Test;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
+import static net.pterodactylus.fcp.test.MessageTests.verifyFieldValueAfterSettingFlag;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
@@ -38,17 +35,12 @@ public class GetPluginInfoTest {
 
 	@Test
 	public void settingDetailedToTrueResultsInFieldBeingSetToTrue() {
-		verifyFieldValueAfterSettingFlag(getPluginInfo::setDetailed, m -> m.getField("Detailed"), true);
+		verifyFieldValueAfterSettingFlag(getPluginInfo, GetPluginInfo::setDetailed, "Detailed", true);
 	}
 
 	@Test
 	public void settingDetailedToFalseResultsInFieldBeingSetToFalse() {
-		verifyFieldValueAfterSettingFlag(getPluginInfo::setDetailed, m -> m.getField("Detailed"), false);
-	}
-
-	private void verifyFieldValueAfterSettingFlag(Consumer<Boolean> setter, Function<? super FcpMessage, String> getter, boolean flag) {
-		setter.accept(flag);
-		assertThat(getter.apply(getPluginInfo), equalTo(String.valueOf(flag)));
+		verifyFieldValueAfterSettingFlag(getPluginInfo, GetPluginInfo::setDetailed, "Detailed", false);
 	}
 
 	private final GetPluginInfo getPluginInfo = new GetPluginInfo("test.Plugin", "test-identifier");
