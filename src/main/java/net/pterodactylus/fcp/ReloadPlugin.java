@@ -24,11 +24,31 @@ package net.pterodactylus.fcp;
  */
 public class ReloadPlugin extends FcpMessage {
 
+	/**
+	 * @deprecated Use {@link #ReloadPlugin(String, String)} instead
+	 */
+	@Deprecated
 	public ReloadPlugin(String identifier) {
 		super("ReloadPlugin");
 		setField("Identifier", identifier);
 	}
 
+	/**
+	 * Creates a new “ReloadPlugin” message.
+	 *
+	 * @param identifier The identifier of the message
+	 * @param pluginName The name of the plugin to reload
+	 */
+	public ReloadPlugin(String identifier, String pluginName) {
+		super("ReloadPlugin");
+		setField("Identifier", identifier);
+		setField("PluginName", pluginName);
+	}
+
+	/**
+	 * @deprecated Use {@link #ReloadPlugin(String, String)} instead
+	 */
+	@Deprecated
 	public void setPluginName(String pluginName) {
 		setField("PluginName", pluginName);
 	}

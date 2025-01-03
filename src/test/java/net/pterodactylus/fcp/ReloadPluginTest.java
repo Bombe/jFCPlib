@@ -10,7 +10,13 @@ import static org.hamcrest.Matchers.equalTo;
 public class ReloadPluginTest {
 
 	@Test
-	public void reloadPluginMessageHasCorrectName() {
+	public void reloadPluginMessageWithIdentifierHasCorrectName() {
+		ReloadPlugin reloadPlugin = new ReloadPlugin("identifier");
+		assertThat(reloadPlugin.getName(), equalTo("ReloadPlugin"));
+	}
+
+	@Test
+	public void reloadPluginMessageWithIdentifierAndPluginNameHasCorrectName() {
 		assertThat(reloadPlugin.getName(), equalTo("ReloadPlugin"));
 	}
 
@@ -20,8 +26,13 @@ public class ReloadPluginTest {
 	}
 
 	@Test
+	public void reloadPluginSetsPluginName() {
+		assertThat(reloadPlugin.getField("PluginName"), equalTo("test.Plugin"));
+	}
+
+	@Test
 	public void settingThePluginNameSetsTheFieldCorrectly() {
-		verifyFieldValueAfterSettingProperty(reloadPlugin, ReloadPlugin::setPluginName, "PluginName", "test.Plugin");
+		verifyFieldValueAfterSettingProperty(reloadPlugin, ReloadPlugin::setPluginName, "PluginName", "test.other.Plugin");
 	}
 
 	@Test
@@ -49,6 +60,6 @@ public class ReloadPluginTest {
 		verifyFieldValueAfterSettingFlag(reloadPlugin, ReloadPlugin::setStore, "Store", true);
 	}
 
-	private final ReloadPlugin reloadPlugin = new ReloadPlugin("identifier");
+	private final ReloadPlugin reloadPlugin = new ReloadPlugin("identifier", "test.Plugin");
 
 }
