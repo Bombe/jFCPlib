@@ -24,14 +24,24 @@ package net.pterodactylus.fcp;
  */
 public class RemovePeer extends FcpMessage {
 
+	/**
+	 * @deprecated Use {@link #RemovePeer(String, String)} instead
+	 */
 	@Deprecated
 	public RemovePeer(String nodeIdentifier) {
 		super("RemovePeer");
 		setField("NodeIdentifier", nodeIdentifier);
 	}
 
+	/**
+	 * Creates a “RemovePeer” message.
+	 *
+	 * @param identifier The identifier of the message
+	 * @param nodeIdentifier The identifier of the node to remove
+	 */
 	public RemovePeer(String identifier, String nodeIdentifier) {
-		this(nodeIdentifier);
+		super("RemovePeer");
+		setField("NodeIdentifier", nodeIdentifier);
 		setField("Identifier", identifier);
 	}
 
