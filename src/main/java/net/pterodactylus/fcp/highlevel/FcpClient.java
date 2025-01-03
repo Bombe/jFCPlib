@@ -1220,7 +1220,7 @@ public class FcpClient implements Closeable {
 		new ExtendedFcpAdapter() {
 			@Override
 			public void run() throws IOException {
-				ModifyConfig modifyConfig = new ModifyConfig();
+				ModifyConfig modifyConfig = new ModifyConfig(createIdentifier("modify-config"));
 				options.forEach(modifyConfig::setOption);
 				sendMessage(modifyConfig);
 			}

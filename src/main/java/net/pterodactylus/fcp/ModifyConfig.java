@@ -26,11 +26,19 @@ public class ModifyConfig extends FcpMessage {
 
 	/**
 	 * Creates a new “ModifyConfig” message.
+	 *
+	 * @deprecated Use {@link #ModifyConfig(String)} instead
 	 */
+	@Deprecated
 	public ModifyConfig() {
 		super("ModifyConfig");
 	}
 
+	/**
+	 * Creates a new “ModifyConfig” message.
+	 *
+	 * @param identifier The identifier of the message
+	 */
 	public ModifyConfig(String identifier) {
 		this();
 		setField("Identifier", identifier);
