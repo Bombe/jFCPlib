@@ -34,4 +34,16 @@ public class ListPersistentRequests extends FcpMessage {
 		super("ListPersistentRequests");
 	}
 
+	/**
+	 * Creates a new “ListPersistentRequests” command that lists all persistent
+	 * requests in the current queue. The given identifier will be set as
+	 * “ListRequestIdentifier” on all replies this message generates.
+	 *
+	 * @param identifier The identifier for the request
+	 */
+	public ListPersistentRequests(String identifier) {
+		super("ListPersistentRequests");
+		setField("Identifier", identifier);
+	}
+
 }
