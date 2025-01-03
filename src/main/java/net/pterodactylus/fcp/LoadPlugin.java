@@ -33,6 +33,10 @@ public class LoadPlugin extends FcpMessage {
 
 	}
 
+	/**
+	 * @deprecated The corresponding functionality has been removed in Hyphanet build 1498.
+	 */
+	@Deprecated
 	public enum OfficialSource {
 
 		FREENET,
@@ -57,6 +61,10 @@ public class LoadPlugin extends FcpMessage {
 		setField("Store", String.valueOf(store));
 	}
 
+	/**
+	 * @deprecated The corresponding functionality has been removed in Hyphanet build 1498.
+	 */
+	@Deprecated
 	public void setOfficialSource(OfficialSource officialSource) {
 		setField("OfficialSource", officialSource.toString().toLowerCase());
 	}
