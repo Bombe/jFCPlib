@@ -963,7 +963,7 @@ public class FcpClient implements Closeable {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() throws IOException {
-				sendMessage(new ListPersistentRequests());
+				sendMessage(new ListPersistentRequests(createIdentifier("list-persistent-requests")));
 			}
 
 			/**

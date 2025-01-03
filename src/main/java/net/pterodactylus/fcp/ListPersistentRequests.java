@@ -29,7 +29,10 @@ public class ListPersistentRequests extends FcpMessage {
 	/**
 	 * Creates a new “ListPersistentRequests” command that lists all persistent
 	 * requests in the current queue.
+	 *
+	 * @deprecated Use {@link #ListPersistentRequests(String)} instead
 	 */
+	@Deprecated
 	public ListPersistentRequests() {
 		super("ListPersistentRequests");
 	}
